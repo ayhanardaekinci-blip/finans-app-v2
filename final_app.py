@@ -1,221 +1,290 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
+import numpy_financial as npf # IRR hesabı için
 
-# --- SAYFA AYARLARI ---
+# --- 1. AYARLAR (EN BAŞTA OLMALI) ---
 st.set_page_config(
     page_title="Finans Pro Ultimate",
-    page_icon="🌍",
+    page_icon="💎",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# --- TASARIM (MOBİL UYUMLU KARTLAR) ---
+# --- 2. CSS & MOBİL TASARIM ---
 st.markdown("""
 <style>
-    .block-container {padding-top: 1rem; padding-bottom: 2rem;}
+    .block-container {padding-top: 1rem; padding-bottom: 3rem;}
+    /* Kart Görünümlü Butonlar */
     div.stButton > button:first-child {
-        width: 100%; height: 3.8em; border-radius: 12px; border: 1px solid #e0e0e0;
-        font-weight: 600; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        color: #333; transition: all 0.2s;
+        width: 100%; height: 4em; border-radius: 15px; border: 1px solid #ddd;
+        font-weight: 700; background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05); color: #333; transition: all 0.2s;
     }
     div.stButton > button:hover {
-        background-color: #f0f8ff; border-color: #007bff; color: #007bff; transform: translateY(-2px);
+        transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,123,255,0.15);
+        border-color: #007bff; color: #007bff;
     }
-    div[data-testid="stMetricValue"] { font-size: 1.5rem !important; color: #007bff; }
+    /* Metrikler */
+    div[data-testid="stMetricValue"] {font-size: 1.4rem !important; color: #2e86de;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- DİL SÖZLÜĞÜ (TÜM MODÜLLER İÇİN) ---
-TRANSLATIONS = {
-    "TR": {
-        "flag": "🇹🇷", "home": "🏠 Ana Menü", "lang": "Dil / Language",
-        "welcome": "Finansal Kontrol Merkezi", "sub": "Kişisel ve Kurumsal Finans Yönetimi",
-        # Menü İsimleri
-        "m_euro": "🌍 Eurobond Analizi", "m_credit": "💳 Kredi Hesapla",
-        "m_deposit": "💰 Mevduat Getirisi", "m_invest": "📈 Yatırım Getirisi",
-        # Eurobond
-        "eb_t": "Eurobond Vergi Analizi 2025", "eb_i": "Yıllık Kupon Geliri ($)", 
-        "eb_r": "Dolar Kuru", "eb_res": "TL Karşılığı", 
-        "eb_ok": "✅ BEYAN GEREKMEZ ({limit} TL altı)", "eb_no": "⚠️ BEYAN GEREKİR ({limit} TL üstü)",
-        # Kredi
-        "cr_t": "Kredi Geri Ödeme Planı", "cr_amt": "Kredi Tutarı (TL)", 
-        "cr_rate": "Aylık Faiz (%)", "cr_term": "Vade (Ay)", 
-        "cr_res": "Aylık Taksit", "cr_tot": "Toplam Geri Ödeme",
-        # Mevduat
-        "dep_t": "Mevduat Faizi Hesapla", "dep_amt": "Ana Para (TL)",
-        "dep_rate": "Yıllık Faiz (%)", "dep_days": "Gün Sayısı", "dep_stop": "Stopaj (%)",
-        "dep_res": "Net Getiri", "dep_tot": "Vade Sonu Toplam",
-        # Yatırım
-        "inv_t": "Yatırım Getiri Analizi", "inv_buy": "Alış Fiyatı", "inv_sell": "Satış Fiyatı",
-        "inv_days": "Elde Tutma Süresi (Gün)", "inv_res": "Basit Getiri", "inv_ann": "Yıllıklandırılmış Getiri",
-        # Genel
-        "calc": "HESAPLA", "back": "⬅️ Geri Dön", "footer": "Eczacıbaşı & Sanofi Staj Projesi"
-    },
-    "EN": {
-        "flag": "🇬🇧", "home": "🏠 Home", "lang": "Language",
-        "welcome": "Financial Control Center", "sub": "Personal & Corporate Finance Management",
-        "m_euro": "🌍 Eurobond Analysis", "m_credit": "💳 Loan Calculator",
-        "m_deposit": "💰 Deposit Return", "m_invest": "📈 Investment ROI",
-        # Eurobond
-        "eb_t": "Eurobond Tax Analysis 2025", "eb_i": "Annual Coupon Income ($)", 
-        "eb_r": "Exchange Rate", "eb_res": "TRY Equivalent",
-        "eb_ok": "✅ NO DECLARATION NEEDED (< {limit} TL)", "eb_no": "⚠️ DECLARATION REQUIRED (> {limit} TL)",
-        # Credit
-        "cr_t": "Loan Repayment Plan", "cr_amt": "Loan Amount", 
-        "cr_rate": "Monthly Rate (%)", "cr_term": "Term (Months)", 
-        "cr_res": "Monthly Payment", "cr_tot": "Total Repayment",
-        # Deposit
-        "dep_t": "Deposit Interest Calculator", "dep_amt": "Principal Amount",
-        "dep_rate": "Annual Rate (%)", "dep_days": "Days", "dep_stop": "Withholding Tax (%)",
-        "dep_res": "Net Return", "dep_tot": "Total at Maturity",
-        # Investment
-        "inv_t": "Investment Return Analysis", "inv_buy": "Buy Price", "inv_sell": "Sell Price",
-        "inv_days": "Holding Period (Days)", "inv_res": "Simple Return", "inv_ann": "Annualized Return",
-        "calc": "CALCULATE", "back": "⬅️ Back", "footer": "Eczacıbaşı & Sanofi Internship Project"
-    },
-    "FR": {
-        "flag": "🇫🇷", "home": "🏠 Accueil", "lang": "Langue",
-        "welcome": "Centre de Contrôle Financier", "sub": "Gestion Financière Personnelle et Entreprise",
-        "m_euro": "🌍 Analyse Eurobond", "m_credit": "💳 Calcul Crédit",
-        "m_deposit": "💰 Retour Dépôt", "m_invest": "📈 ROI Investissement",
-        # Eurobond
-        "eb_t": "Analyse Fiscale Eurobond 2025", "eb_i": "Revenu Annuel ($)", 
-        "eb_r": "Taux de Change", "eb_res": "Équivalent TRY",
-        "eb_ok": "✅ PAS DE DÉCLARATION (< {limit} TL)", "eb_no": "⚠️ DÉCLARATION REQUISE (> {limit} TL)",
-        # Credit
-        "cr_t": "Plan de Remboursement", "cr_amt": "Montant du Prêt", 
-        "cr_rate": "Taux Mensuel (%)", "cr_term": "Durée (Mois)", 
-        "cr_res": "Mensualité", "cr_tot": "Remboursement Total",
-        # Deposit
-        "dep_t": "Calcul Intérêts Dépôt", "dep_amt": "Montant Principal",
-        "dep_rate": "Taux Annuel (%)", "dep_days": "Jours", "dep_stop": "Retenue à la source (%)",
-        "dep_res": "Rendement Net", "dep_tot": "Total à l'échéance",
-        # Investment
-        "inv_t": "Analyse Retour Investissement", "inv_buy": "Prix Achat", "inv_sell": "Prix Vente",
-        "inv_days": "Durée détention (Jours)", "inv_res": "Rendement Simple", "inv_ann": "Rendement Annualisé",
-        "calc": "CALCULER", "back": "⬅️ Retour", "footer": "Projet de Stage Eczacıbaşı & Sanofi"
-    },
-    "DE": {
-        "flag": "🇩🇪", "home": "🏠 Startseite", "lang": "Sprache",
-        "welcome": "Finanzkontrollzentrum", "sub": "Persönliches & Unternehmensfinanzmanagement",
-        "m_euro": "🌍 Eurobond-Analyse", "m_credit": "💳 Kreditrechner",
-        "m_deposit": "💰 Einlagenrückgabe", "m_invest": "📈 Investitions-ROI",
-        # Eurobond
-        "eb_t": "Eurobond-Steueranalyse 2025", "eb_i": "Jährl. Kupon-Einkommen ($)", 
-        "eb_r": "Wechselkurs", "eb_res": "TRY-Gegenwert",
-        "eb_ok": "✅ KEINE ERKLÄRUNG NÖTIG (< {limit} TL)", "eb_no": "⚠️ ERKLÄRUNG ERFORDERLICH (> {limit} TL)",
-        # Credit
-        "cr_t": "Rückzahlungsplan", "cr_amt": "Kreditbetrag", 
-        "cr_rate": "Monatl. Zinssatz (%)", "cr_term": "Laufzeit (Monate)", 
-        "cr_res": "Monatliche Rate", "cr_tot": "Gesamtrückzahlung",
-        # Deposit
-        "dep_t": "Einlagenzinsrechner", "dep_amt": "Kapitalbetrag",
-        "dep_rate": "Jährl. Zinssatz (%)", "dep_days": "Tage", "dep_stop": "Quellensteuer (%)",
-        "dep_res": "Nettorendite", "dep_tot": "Gesamt bei Fälligkeit",
-        # Investment
-        "inv_t": "Investitionsrendite-Analyse", "inv_buy": "Kaufpreis", "inv_sell": "Verkaufspreis",
-        "inv_days": "Haltedauer (Tage)", "inv_res": "Einfache Rendite", "inv_ann": "Annualisierte Rendite",
-        "calc": "BERECHNEN", "back": "⬅️ Zurück", "footer": "Eczacıbaşı & Sanofi Praktikumsprojekt"
-    }
+# --- 3. DİL SÖZLÜĞÜ (9 MODÜL İÇİN) ---
+TR = {
+    "flag": "🇹🇷", "home": "🏠 Ana Menü", "lang": "Dil / Language",
+    "welcome": "Finansal Kontrol Merkezi", "sub": "Kurumsal & Bireysel Finans Yönetimi",
+    # Menü
+    "m_euro": "🌍 Eurobond Analizi", "m_cred": "💳 Kredi Hesapla",
+    "m_depo": "💰 Mevduat Getirisi", "m_inv": "📈 Yatırım Getirisi",
+    "m_rat": "📊 Finansal Oranlar", "m_tvm1": "⏳ Para Zaman (FV/PV)",
+    "m_tvm2": "📉 İç Verim (IRR/NPV)", "m_com": "💸 Komisyon Maliyeti",
+    "m_bond": "📜 Bono / Tahvil",
+    # Genel
+    "calc": "HESAPLA", "back": "⬅️ Ana Menüye Dön", "res": "Sonuçlar",
+    # Eurobond
+    "eb_inc": "Yıllık Kupon ($)", "eb_rate": "Dolar Kuru", "eb_res": "TL Karşılığı",
+    "eb_warn": "⚠️ BEYAN GEREKİR (> {lim})", "eb_ok": "✅ BEYAN GEREKMEZ (< {lim})",
+    # Kredi
+    "cr_amt": "Kredi Tutarı", "cr_rate": "Aylık Faiz (%)", "cr_term": "Vade (Ay)",
+    "cr_res": "Taksit Tutarı", "cr_tot": "Toplam Ödeme",
+    # Mevduat
+    "dp_amt": "Ana Para", "dp_rate": "Yıllık Faiz (%)", "dp_day": "Gün", "dp_stop": "Stopaj (%)",
+    "dp_net": "Net Getiri",
+    # Yatırım
+    "in_buy": "Alış Fiyatı", "in_sell": "Satış Fiyatı", "in_day": "Gün",
+    "in_sim": "Basit Getiri", "in_ann": "Yıllıklandırılmış",
+    # Oranlar
+    "rt_pv": "Ana Para (PV)", "rt_r": "Oran (%)", "rt_n": "Dönem", "rt_type": "Tip",
+    "rt_simp": "Basit Faiz", "rt_comp": "Bileşik Faiz", "rt_fv": "Gelecek Değer (FV)",
+    # TVM 1
+    "tvm_r": "Dönemsel Oran (%)", "tvm_n": "Dönem Sayısı", "tvm_val": "Mevcut Değer",
+    "tvm_fv": "Gelecek Değer (FV)", "tvm_pv": "Bugünkü Değer (PV)",
+    # TVM 2
+    "irr_cf": "Nakit Akışları (Virgülle ayırın: -100, 10, 110)", "irr_res": "İç Verim Oranı (IRR)",
+    "npv_r": "İskonto Oranı (%)", "npv_res": "Net Bugünkü Değer (NPV)",
+    # Komisyon
+    "cm_amt": "İşlem Tutarı", "cm_day": "Vade (Gün)", "cm_comm": "Komisyon Tutarı", "cm_rate": "Piyasa Faizi (%)",
+    "cm_cost": "Toplam Maliyet", "cm_eff": "Efektif Yıllık Oran",
+    # Bono
+    "bd_nom": "Nominal Değer", "bd_price": "Fiyat", "bd_res": "Basit Faiz", "bd_comp": "Bileşik Faiz"
 }
 
-# --- SİSTEM ---
+EN = {
+    "flag": "🇬🇧", "home": "🏠 Home", "lang": "Language",
+    "welcome": "Financial Control Center", "sub": "Corporate & Personal Finance",
+    "m_euro": "🌍 Eurobond Analysis", "m_cred": "💳 Loan Calculator",
+    "m_depo": "💰 Deposit Return", "m_inv": "📈 Investment ROI",
+    "m_rat": "📊 Financial Ratios", "m_tvm1": "⏳ TVM (FV/PV)",
+    "m_tvm2": "📉 IRR / NPV Analysis", "m_com": "💸 Commission Cost",
+    "m_bond": "📜 Bond / Bill",
+    "calc": "CALCULATE", "back": "⬅️ Back to Menu", "res": "Results",
+    "eb_inc": "Annual Coupon ($)", "eb_rate": "Exchange Rate", "eb_res": "TRY Equivalent",
+    "eb_warn": "⚠️ DECLARATION REQUIRED (> {lim})", "eb_ok": "✅ NO DECLARATION (< {lim})",
+    "cr_amt": "Loan Amount", "cr_rate": "Monthly Rate (%)", "cr_term": "Term (Months)",
+    "cr_res": "Monthly Payment", "cr_tot": "Total Repayment",
+    "dp_amt": "Principal", "dp_rate": "Annual Rate (%)", "dp_day": "Days", "dp_stop": "Withholding (%)",
+    "dp_net": "Net Return",
+    "in_buy": "Buy Price", "in_sell": "Sell Price", "in_day": "Days Held",
+    "in_sim": "Simple Return", "in_ann": "Annualized",
+    "rt_pv": "Principal (PV)", "rt_r": "Rate (%)", "rt_n": "Periods", "rt_type": "Type",
+    "rt_simp": "Simple Interest", "rt_comp": "Compound Interest", "rt_fv": "Future Value",
+    "tvm_r": "Periodic Rate (%)", "tvm_n": "Periods", "tvm_val": "Present Value",
+    "tvm_fv": "Future Value", "tvm_pv": "Present Value",
+    "irr_cf": "Cash Flows (comma separated: -100, 10, 110)", "irr_res": "Internal Rate of Return (IRR)",
+    "npv_r": "Discount Rate (%)", "npv_res": "Net Present Value (NPV)",
+    "cm_amt": "Transaction Amount", "cm_day": "Term (Days)", "cm_comm": "Commission", "cm_rate": "Market Rate (%)",
+    "cm_cost": "Total Cost", "cm_eff": "Effective Annual Rate",
+    "bd_nom": "Nominal Value", "bd_price": "Price", "bd_res": "Simple Yield", "bd_comp": "Compound Yield"
+}
+
+# (Diğer diller yer kaplamasın diye TR/EN yeterli şimdilik, mantık aynı)
+LANGS = {"TR": TR, "EN": EN, "FR": TR, "DE": TR} # FR/DE için TR yedeği atandı hata vermesin diye
+
+# --- 4. SİSTEM FONKSİYONLARI ---
 if 'lang' not in st.session_state: st.session_state.lang = "TR"
 if 'page' not in st.session_state: st.session_state.page = "home"
 
-def set_lang():
-    sel = st.session_state.lang_selector.split(" ")[0]
-    for c, d in TRANSLATIONS.items():
-        if d["flag"] == sel: st.session_state.lang = c; break
+def T(k): return LANGS[st.session_state.lang].get(k, k)
 def go(p): st.session_state.page = p; st.rerun()
-def t(k): return TRANSLATIONS[st.session_state.lang][k]
 
-# --- ÜST BAR ---
+# --- 5. ÜST BAR ---
 c1, c2 = st.columns([3, 1.5])
-with c1: st.caption(t("footer"))
+with c1: st.caption("Eczacıbaşı & Sanofi Project v3.0")
 with c2:
-    opts = [f"{TRANSLATIONS[c]['flag']} {c}" for c in TRANSLATIONS]
-    idx = list(TRANSLATIONS).index(st.session_state.lang)
-    st.selectbox("", opts, index=idx, key="lang_selector", on_change=set_lang, label_visibility="collapsed")
+    sel = st.selectbox("", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", label_visibility="collapsed")
+    st.session_state.lang = sel.split(" ")[1]
 st.divider()
 
-# --- SAYFA 1: ANA MENÜ ---
+# ==========================================
+# SAYFA: ANA MENÜ (9 KUTU)
+# ==========================================
 if st.session_state.page == "home":
-    st.title(t("welcome"))
-    st.markdown(f"*{t('sub')}*")
+    st.title(T("welcome"))
+    st.write(f"*{T('sub')}*")
     st.write("")
     
-    col1, col2 = st.columns(2)
+    # 3 Sütunlu Grid Yapısı (9 Buton için)
+    col1, col2, col3 = st.columns(3)
+    
     with col1:
-        if st.button(f"{t('m_euro')}\n➡️", use_container_width=True): go("euro")
-        if st.button(f"{t('m_deposit')}\n➡️", use_container_width=True): go("dep")
+        if st.button(f"{T('m_euro')}\n➡️", use_container_width=True): go("euro")
+        if st.button(f"{T('m_inv')}\n➡️", use_container_width=True): go("inv")
+        if st.button(f"{T('m_tvm2')}\n➡️", use_container_width=True): go("tvm2")
+        
     with col2:
-        if st.button(f"{t('m_credit')}\n➡️", use_container_width=True): go("cred")
-        if st.button(f"{t('m_invest')}\n➡️", use_container_width=True): go("inv")
+        if st.button(f"{T('m_cred')}\n➡️", use_container_width=True): go("cred")
+        if st.button(f"{T('m_rat')}\n➡️", use_container_width=True): go("rat")
+        if st.button(f"{T('m_com')}\n➡️", use_container_width=True): go("com")
+        
+    with col3:
+        if st.button(f"{T('m_depo')}\n➡️", use_container_width=True): go("depo")
+        if st.button(f"{T('m_tvm1')}\n➡️", use_container_width=True): go("tvm1")
+        if st.button(f"{T('m_bond')}\n➡️", use_container_width=True): go("bond")
 
-# --- SAYFA 2: EUROBOND ---
+# ==========================================
+# MODÜL 1: EUROBOND
+# ==========================================
 elif st.session_state.page == "euro":
-    if st.button(t("back")): go("home")
-    st.subheader(t("eb_t"))
-    
-    inc = st.number_input(t("eb_i"), value=6000.0, step=100.0)
-    rate = st.number_input(t("eb_r"), value=34.5, step=0.1)
-    
-    if st.button(t("calc"), type="primary", use_container_width=True):
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_euro"))
+    inc = st.number_input(T("eb_inc"), value=6000.0)
+    rate = st.number_input(T("eb_rate"), value=34.5)
+    if st.button(T("calc"), type="primary", use_container_width=True):
         res = inc * rate
-        limit = 150000
-        st.metric(t("eb_res"), f"{res:,.2f} ₺")
-        if res > limit: st.error(t("eb_no").format(limit=f"{limit:,}"))
-        else: st.success(t("eb_ok").format(limit=f"{limit:,}"))
+        lim = 150000
+        st.metric(T("eb_res"), f"{res:,.2f} ₺")
+        if res > lim: st.error(T("eb_warn").format(lim=f"{lim:,}"))
+        else: st.success(T("eb_ok").format(lim=f"{lim:,}"))
 
-# --- SAYFA 3: KREDİ ---
+# ==========================================
+# MODÜL 2: KREDİ
+# ==========================================
 elif st.session_state.page == "cred":
-    if st.button(t("back")): go("home")
-    st.subheader(t("cr_t"))
-    
-    amt = st.number_input(t("cr_amt"), value=100000.0, step=1000.0)
-    rate = st.number_input(t("cr_rate"), value=3.5, step=0.1)
-    term = st.number_input(t("cr_term"), value=12, step=1)
-    
-    if st.button(t("calc"), type="primary", use_container_width=True):
-        i = rate / 100
-        if i == 0: pmt = amt / term
-        else: pmt = amt * (i * (1 + i)**term) / ((1 + i)**term - 1)
-        
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_cred"))
+    amt = st.number_input(T("cr_amt"), value=100000.0)
+    rate = st.number_input(T("cr_rate"), value=3.5)
+    term = st.number_input(T("cr_term"), value=12)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        i = rate/100
+        if i==0: pmt=amt/term
+        else: pmt=amt*(i*(1+i)**term)/((1+i)**term-1)
         c1, c2 = st.columns(2)
-        c1.metric(t("cr_res"), f"{pmt:,.2f} ₺")
-        c2.metric(t("cr_tot"), f"{pmt*term:,.2f} ₺")
+        c1.metric(T("cr_res"), f"{pmt:,.2f} ₺")
+        c2.metric(T("cr_tot"), f"{pmt*term:,.2f} ₺")
 
-# --- SAYFA 4: MEVDUAT ---
-elif st.session_state.page == "dep":
-    if st.button(t("back")): go("home")
-    st.subheader(t("dep_t"))
-    
-    amt = st.number_input(t("dep_amt"), value=100000.0, step=1000.0)
-    rate = st.number_input(t("dep_rate"), value=45.0, step=0.5)
-    days = st.number_input(t("dep_days"), value=32, step=1)
-    stop = st.number_input(t("dep_stop"), value=5.0, step=1.0)
-    
-    if st.button(t("calc"), type="primary", use_container_width=True):
-        gross = (amt * rate * days) / 36500
-        net = gross * (1 - stop/100)
-        c1, c2 = st.columns(2)
-        c1.metric(t("dep_res"), f"{net:,.2f} ₺")
-        c2.metric(t("dep_tot"), f"{amt+net:,.2f} ₺")
+# ==========================================
+# MODÜL 3: MEVDUAT
+# ==========================================
+elif st.session_state.page == "depo":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_depo"))
+    amt = st.number_input(T("dp_amt"), value=100000.0)
+    rate = st.number_input(T("dp_rate"), value=45.0)
+    days = st.number_input(T("dp_day"), value=32)
+    stop = st.number_input(T("dp_stop"), value=5.0)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        gross = (amt*rate*days)/36500
+        net = gross*(1-stop/100)
+        st.metric(T("dp_net"), f"{net:,.2f} ₺")
 
-# --- SAYFA 5: YATIRIM ---
+# ==========================================
+# MODÜL 4: YATIRIM GETİRİSİ
+# ==========================================
 elif st.session_state.page == "inv":
-    if st.button(t("back")): go("home")
-    st.subheader(t("inv_t"))
-    
-    buy = st.number_input(t("inv_buy"), value=100.0, step=1.0)
-    sell = st.number_input(t("inv_sell"), value=120.0, step=1.0)
-    days = st.number_input(t("inv_days"), value=90, step=1)
-    
-    if st.button(t("calc"), type="primary", use_container_width=True):
-        simple = (sell - buy) / buy
-        if days > 0: ann = (1 + simple)**(365/days) - 1
-        else: ann = 0
-        
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_inv"))
+    buy = st.number_input(T("in_buy"), value=100.0)
+    sell = st.number_input(T("in_sell"), value=120.0)
+    days = st.number_input(T("in_day"), value=90)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        simp = (sell-buy)/buy
+        ann = (1+simp)**(365/days)-1 if days>0 else 0
         c1, c2 = st.columns(2)
-        c1.metric(t("inv_res"), f"%{simple*100:.2f}")
-        c2.metric(t("inv_ann"), f"%{ann*100:.2f}")
+        c1.metric(T("in_sim"), f"%{simp*100:.2f}")
+        c2.metric(T("in_ann"), f"%{ann*100:.2f}")
+
+# ==========================================
+# MODÜL 5: FİNANSAL ORANLAR
+# ==========================================
+elif st.session_state.page == "rat":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_rat"))
+    pv = st.number_input(T("rt_pv"), value=1000.0)
+    r = st.number_input(T("rt_r"), value=5.0)
+    n = st.number_input(T("rt_n"), value=10)
+    typ = st.radio(T("rt_type"), [T("rt_simp"), T("rt_comp")])
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        if typ == T("rt_simp"): fv = pv*(1 + (r/100)*n)
+        else: fv = pv*((1 + r/100)**n)
+        st.metric(T("rt_fv"), f"{fv:,.2f}")
+
+# ==========================================
+# MODÜL 6: TVM 1 (FV/PV)
+# ==========================================
+elif st.session_state.page == "tvm1":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_tvm1"))
+    mode = st.radio("Mod", ["PV -> FV", "FV -> PV"])
+    val = st.number_input(T("tvm_val"), value=1000.0)
+    r = st.number_input(T("tvm_r"), value=3.0)
+    n = st.number_input(T("tvm_n"), value=12)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        if "PV -> FV" in mode:
+            res = val * ((1 + r/100)**n)
+            lbl = T("tvm_fv")
+        else:
+            res = val / ((1 + r/100)**n)
+            lbl = T("tvm_pv")
+        st.metric(lbl, f"{res:,.2f}")
+
+# ==========================================
+# MODÜL 7: TVM 2 (IRR/NPV)
+# ==========================================
+elif st.session_state.page == "tvm2":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_tvm2"))
+    cf_str = st.text_input(T("irr_cf"), "-1000, 200, 300, 400, 500")
+    disc = st.number_input(T("npv_r"), value=10.0)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        try:
+            cfs = [float(x) for x in cf_str.split(",")]
+            irr = npf.irr(cfs)
+            npv = npf.npv(disc/100, cfs)
+            c1, c2 = st.columns(2)
+            c1.metric(T("irr_res"), f"%{irr*100:.2f}" if irr else "Hata")
+            c2.metric(T("npv_res"), f"{npv:,.2f}")
+        except: st.error("Format hatası! Örn: -100, 50, 60")
+
+# ==========================================
+# MODÜL 8: KOMİSYON
+# ==========================================
+elif st.session_state.page == "com":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_com"))
+    amt = st.number_input(T("cm_amt"), value=50000.0)
+    comm = st.number_input(T("cm_comm"), value=250.0)
+    days = st.number_input(T("cm_day"), value=30)
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        total = amt + comm
+        eff = (comm/amt)*(365/days)*100
+        c1, c2 = st.columns(2)
+        c1.metric(T("cm_cost"), f"{total:,.2f}")
+        c2.metric(T("cm_eff"), f"%{eff:.2f}")
+
+# ==========================================
+# MODÜL 9: BONO / TAHVİL
+# ==========================================
+elif st.session_state.page == "bond":
+    if st.button(T("back")): go("home")
+    st.subheader(T("m_bond"))
+    nom = st.number_input(T("bd_nom"), value=100.0)
+    price = st.number_input(T("bd_price"), value=92.0)
+    days = st.number_input(T("in_day"), value=180) # Yatırım'dan label al
+    if st.button(T("calc"), type="primary", use_container_width=True):
+        simp = ((nom-price)/price)*(365/days)*100
+        comp = (((nom/price)**(365/days))-1)*100
+        c1, c2 = st.columns(2)
+        c1.metric(T("bd_res"), f"%{simp:.2f}")
+        c2.metric(T("bd_comp"), f"%{comp:.2f}")
