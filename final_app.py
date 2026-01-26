@@ -1,213 +1,184 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 
-# --- SAYFA AYARLARI ---
+# --- SAYFA AYARLARI (APP GÖRÜNÜMÜ) ---
 st.set_page_config(
-    page_title="Finans Pro Ultimate",
-    page_icon="💸",
-    layout="centered"
+    page_title="Finans Pro Global",
+    page_icon="🌍",
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
-# --- TASARIM DÜZELTME (SİYAH YAZI GARANTİSİ) ---
+# --- CSS İLE MODERN MOBİL TASARIM ---
 st.markdown("""
 <style>
+    /* Gereksiz boşlukları al */
+    .block-container {padding-top: 1rem; padding-bottom: 0rem;}
+    
+    /* Butonları Kart Gibi Yap */
     div.stButton > button:first-child {
-        height: 4em;
         width: 100%;
-        font-size: 16px;
-        font-weight: bold;
+        height: 4em;
         border-radius: 12px;
-        
-        /* ÖNEMLİ: Arka plan Beyaz, Yazı Siyah olsun */
-        background-color: #ffffff !important; 
-        color: #000000 !important; 
-        border: 2px solid #e0e0e0;
-        
-        transition: all 0.3s;
+        border: 1px solid #e0e0e0;
+        font-weight: 600;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+        color: #333;
     }
     div.stButton > button:hover {
-        /* Üstüne gelince Kırmızı/Beyaz olsun */
-        border-color: #ff4b4b;
-        color: #ff4b4b !important;
-        background-color: #fff0f0 !important;
+        background-color: #f8f9fa;
+        border-color: #007bff;
+        color: #007bff;
         transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    /* Metrik Kutuları */
+    div[data-testid="stMetricValue"] {
+        font-size: 1.6rem !important;
+        color: #007bff;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- OTURUM YÖNETİMİ ---
-if 'page' not in st.session_state:
-    st.session_state.page = "Ana Sayfa"
-if 'sub_mode' not in st.session_state:
-    st.session_state.sub_mode = "Varsayilan"
+# --- DİL SÖZLÜĞÜ (4 DİL) ---
+TRANSLATIONS = {
+    "TR": {
+        "flag": "🇹🇷",
+        "welcome": "Finansal Kontrol Merkezi",
+        "subtitle": "Kişisel ve Kurumsal Finans Yönetimi",
+        "menu_home": "🏠 Ana Menü",
+        "menu_eurobond": "🌍 Eurobond Analizi",
+        "menu_coming_soon": "🔜 Yakında",
+        "lang_select": "Dil Seçimi",
+        "eb_title": "Eurobond Vergi Analizi 2025",
+        "eb_income": "Yıllık Toplam Kupon Geliri ($)",
+        "eb_rate": "Ortalama Dolar Kuru",
+        "eb_btn": "HESAPLA",
+        "eb_result": "TL Karşılığı",
+        "eb_safe": "✅ GÜVENLİ: {limit} TL sınırı aşılmadı. Beyan gerekmez.",
+        "eb_risk": "⚠️ DİKKAT: {limit} TL sınırı aşıldı! Beyanname vermelisiniz.",
+        "footer": "Eczacıbaşı & Sanofi Staj Projesi"
+    },
+    "EN": {
+        "flag": "🇬🇧",
+        "welcome": "Financial Control Center",
+        "subtitle": "Personal & Corporate Finance Management",
+        "menu_home": "🏠 Home Menu",
+        "menu_eurobond": "🌍 Eurobond Analysis",
+        "menu_coming_soon": "🔜 Coming Soon",
+        "lang_select": "Language",
+        "eb_title": "Eurobond Tax Analysis 2025",
+        "eb_income": "Total Annual Coupon Income ($)",
+        "eb_rate": "Avg. Exchange Rate",
+        "eb_btn": "ANALYZE",
+        "eb_result": "TRY Equivalent",
+        "eb_safe": "✅ SAFE: Limit of {limit} TL not exceeded.",
+        "eb_risk": "⚠️ WARNING: Limit of {limit} TL exceeded! Declaration required.",
+        "footer": "Developed for Eczacıbaşı & Sanofi Internship"
+    },
+    "FR": {
+        "flag": "🇫🇷",
+        "welcome": "Centre de Contrôle Financier",
+        "subtitle": "Gestion Financière Personnelle et Entreprise",
+        "menu_home": "🏠 Menu Principal",
+        "menu_eurobond": "🌍 Analyse Eurobond",
+        "menu_coming_soon": "🔜 Bientôt",
+        "lang_select": "Langue",
+        "eb_title": "Analyse Fiscale Eurobond 2025",
+        "eb_income": "Revenu Annuel Total ($)",
+        "eb_rate": "Taux de Change Moyen",
+        "eb_btn": "ANALYSER",
+        "eb_result": "Équivalent TRY",
+        "eb_safe": "✅ SÛR : Limite de {limit} TL non dépassée.",
+        "eb_risk": "⚠️ ATTENTION : Limite de {limit} TL dépassée !",
+        "footer": "Projet de Stage Eczacıbaşı & Sanofi"
+    },
+    "DE": {
+        "flag": "🇩🇪",
+        "welcome": "Finanzkontrollzentrum",
+        "subtitle": "Persönliches & Unternehmensfinanzmanagement",
+        "menu_home": "🏠 Hauptmenü",
+        "menu_eurobond": "🌍 Eurobond-Analyse",
+        "menu_coming_soon": "🔜 Bald",
+        "lang_select": "Sprache",
+        "eb_title": "Eurobond-Steueranalyse 2025",
+        "eb_income": "Jährliche Kupon-Einnahmen ($)",
+        "eb_rate": "Wechselkurs",
+        "eb_btn": "ANALYSIEREN",
+        "eb_result": "TRY-Gegenwert",
+        "eb_safe": "✅ SICHER: Grenze von {limit} TL nicht überschritten.",
+        "eb_risk": "⚠️ ACHTUNG: Grenze von {limit} TL überschritten!",
+        "footer": "Eczacıbaşı & Sanofi Praktikumsprojekt"
+    }
+}
 
-def git(sayfa, mod="Varsayilan"):
-    st.session_state.page = sayfa
-    st.session_state.sub_mode = mod
+# --- OTURUM YÖNETİMİ ---
+if 'lang' not in st.session_state:
+    st.session_state.lang = "TR"
+if 'page' not in st.session_state:
+    st.session_state.page = "home"
+
+def set_lang():
+    selected_flag = st.session_state.lang_selector.split(" ")[0]
+    for code, data in TRANSLATIONS.items():
+        if data["flag"] == selected_flag:
+            st.session_state.lang = code
+            break
+
+def go_to(page):
+    st.session_state.page = page
     st.rerun()
 
-# --- YAN MENÜ ---
-with st.sidebar:
-    st.title("📂 Menü")
-    if st.button("🏠 Ana Sayfa"): git("Ana Sayfa")
-    st.write("---")
-    st.caption("NAKİT YÖNETİMİ")
-    if st.button("💰 Mevduat Getirisi"): git("Nakit", "Mevduat")
-    if st.button("💳 Kredi Hesapla"): git("Nakit", "Kredi")
-    st.caption("YATIRIM ARAÇLARI")
-    if st.button("📄 Bono (İskonto)"): git("Yatırım", "Bono")
-    if st.button("📜 Tahvil (Kuponlu)"): git("Yatırım", "Tahvil")
-    if st.button("🌍 Eurobond Vergi"): git("Yatırım", "Eurobond")
-    st.caption("TİCARİ")
-    if st.button("📊 POS / Komisyon"): git("Ticari", "Komisyon")
-    
-# ==========================================
-# 1. ANA SAYFA (9'LU VİTRİN)
-# ==========================================
-if st.session_state.page == "Ana Sayfa":
-    st.markdown("<h1 style='text-align: center;'>Finansal Kontrol Paneli</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: gray;'>Hızlı işlem menüsü</p>", unsafe_allow_html=True)
-    st.write("") 
+def t(key):
+    return TRANSLATIONS[st.session_state.lang][key]
 
-    # 1. SATIR
-    c1, c2, c3 = st.columns(3)
+# --- ÜST BAR (Dil Seçimi) ---
+col1, col2 = st.columns([3, 1])
+with col1:
+    st.caption(t("footer"))
+with col2:
+    options = [f"{TRANSLATIONS[c]['flag']} {c}" for c in TRANSLATIONS.keys()]
+    idx = list(TRANSLATIONS.keys()).index(st.session_state.lang)
+    st.selectbox("", options, index=idx, key="lang_selector", on_change=set_lang, label_visibility="collapsed")
+
+st.divider()
+
+# --- SAYFA 1: ANA MENÜ ---
+if st.session_state.page == "home":
+    st.title(t("welcome"))
+    st.markdown(f"*{t('subtitle')}*")
+    st.write("")
+    
+    c1, c2 = st.columns(2)
     with c1:
-        if st.button("💰\nMevduat Getirisi"): git("Nakit", "Mevduat")
+        if st.button(f"{t('menu_eurobond')}\n➡️", use_container_width=True):
+            go_to("eurobond")
+        st.button(f"📊 {t('menu_coming_soon')}", disabled=True, use_container_width=True)
     with c2:
-        if st.button("💳\nKredi Planı"): git("Nakit", "Kredi")
-    with c3:
-        if st.button("📊\nPOS Komisyon"): git("Ticari", "Komisyon")
+        st.button(f"💳 {t('menu_coming_soon')}", disabled=True, use_container_width=True)
+        st.button(f"💰 {t('menu_coming_soon')}", disabled=True, use_container_width=True)
 
-    # 2. SATIR
-    c4, c5, c6 = st.columns(3)
-    with c4:
-        if st.button("📄\nBono (Hazine)"): git("Yatırım", "Bono")
-    with c5:
-        if st.button("📜\nTahvil (Özel)"): git("Yatırım", "Tahvil")
-    with c6:
-        if st.button("🌍\nEurobond Vergi"): git("Yatırım", "Eurobond")
-
-    # 3. SATIR
-    c7, c8, c9 = st.columns(3)
-    with c7:
-        if st.button("📉\nİskonto Hesabı"): git("Yatırım", "Bono")
-    with c8:
-        if st.button("💱\nNetten Brüte"): git("Ticari", "Komisyon")
-    with c9:
-        st.button("⚙️\nAyarlar", disabled=True)
-
-    st.write("---")
-    st.info("💡 İpucu: Sol menüden veya yukarıdaki kartlardan istediğiniz modüle direkt geçiş yapabilirsiniz.")
-
-# ==========================================
-# 2. NAKİT SAYFASI
-# ==========================================
-elif st.session_state.page == "Nakit":
-    st.title("Nakit Akışı Yönetimi")
+# --- SAYFA 2: EUROBOND ---
+elif st.session_state.page == "eurobond":
+    if st.button("⬅️ " + t("menu_home")):
+        go_to("home")
     
-    tabs = st.tabs(["💰 Mevduat Getirisi", "💳 Kredi Ödeme Planı"])
+    st.subheader(t("eb_title"))
     
-    # Seçime göre sekmeyi aktif yapma mantığı eklenebilir ama 
-    # Streamlit'te tab'leri programla açmak için st.tabs yapısı sabittir.
-    # Kullanıcı doğru tab'e manuel tıklar.
-
-    with tabs[0]:
-        st.header("Mevduat Faizi Hesapla")
-        col1, col2 = st.columns(2)
-        with col1:
-            ana_para = st.number_input("Ana Para (TL)", value=100000.0, step=1000.0, key="mev_ana")
-            faiz = st.number_input("Faiz Oranı (%)", value=45.0, key="mev_faiz")
-        with col2:
-            gun = st.number_input("Gün Sayısı", value=32, key="mev_gun")
-            stopaj = st.number_input("Stopaj (%)", value=5.0, key="mev_stop")
+    with st.container():
+        gelir = st.number_input(t("eb_income"), value=6000.0, step=100.0)
+        kur = st.number_input(t("eb_rate"), value=34.5, step=0.1)
+    
+    st.write("")
+    if st.button(t("eb_btn"), type="primary", use_container_width=True):
+        tl = gelir * kur
+        sinir = 150000
+        limit_txt = f"{sinir:,.0f}"
         
-        if st.button("Hesapla (Mevduat)", type="primary"):
-            brut = (ana_para * faiz * gun) / 36500
-            net = brut * (1 - stopaj/100)
-            st.success(f"Net Getiri: {net:,.2f} TL")
-            st.info(f"Toplam Bakiye: {ana_para + net:,.2f} TL")
-
-    with tabs[1]:
-        st.header("Kredi Geri Ödeme Planı")
-        col1, col2 = st.columns(2)
-        with col1:
-            kredi_tutar = st.number_input("Kredi Tutarı", value=100000.0, key="krd_tut")
-            vade = st.number_input("Taksit Sayısı", value=12, key="krd_vad")
-        with col2:
-            aylik_faiz = st.number_input("Aylık Faiz (%)", value=3.5, key="krd_faiz")
-            
-        if st.button("Plan Oluştur", type="primary"):
-            i = aylik_faiz / 100
-            if i == 0: taksit = kredi_tutar / vade
-            else: taksit = kredi_tutar * (i * (1+i)**vade) / ((1+i)**vade - 1)
-            st.metric("Aylık Taksit Tutarınız", f"{taksit:,.2f} TL")
-            
-            plan = []
-            kalan = kredi_tutar
-            for d in range(1, int(vade)+1):
-                f_pay = kalan * i
-                a_pay = taksit - f_pay
-                kalan -= a_pay
-                plan.append({"Taksit": d, "Ödeme": taksit, "Anapara": a_pay, "Faiz": f_pay, "Kalan": max(0, kalan)})
-            st.dataframe(pd.DataFrame(plan).style.format("{:,.2f}"))
-
-# ==========================================
-# 3. YATIRIM SAYFASI
-# ==========================================
-elif st.session_state.page == "Yatırım":
-    st.title("Yatırım Araçları")
-    tabs = st.tabs(["📄 Bono & Tahvil", "🌍 Eurobond Vergi"])
-
-    with tabs[0]:
-        st.header("Bono ve Tahvil Fiyatlama")
-        tur = st.radio("Kağıt Türü Seçiniz:", ["İskontolu Bono (Hazine)", "Kuponlu Tahvil (Özel Sektör)"], horizontal=True)
-        c1, c2 = st.columns(2)
-        with c1:
-            nominal = st.number_input("Nominal Değer", value=100.0, key="bon_nom")
-            basit_faiz = st.number_input("Basit Faiz / Piyasa (%)", value=40.0, key="bon_faiz")
-        with c2:
-            gun = st.number_input("Vadeye Kalan Gün", value=90, key="bon_gun")
-        if tur == "Kuponlu Tahvil (Özel Sektör)":
-            kupon_faiz = st.number_input("Kupon Faizi (%)", value=10.0)
-
-        if st.button("Fiyatı Hesapla", type="primary"):
-            if tur == "İskontolu Bono (Hazine)":
-                fiyat = nominal / (1 + (basit_faiz/100)*(gun/365))
-                st.metric("Bono Fiyatı", f"{fiyat:,.4f} TL")
-            else:
-                fiyat = (nominal * (1 + kupon_faiz/100)) / (1 + (basit_faiz/100) * (gun/365))
-                st.metric("Tahvil Fiyatı (Yaklaşık)", f"{fiyat:,.4f} TL")
-
-    with tabs[1]:
-        st.header("Eurobond Gelir Vergisi Analizi")
-        gelir = st.number_input("Yıllık Toplam Kupon Geliri ($)", value=6000.0, key="eu_gel")
-        kur = st.number_input("Ortalama Dolar Kuru", value=34.5, key="eu_kur")
-        sinir = 150000 
-        if st.button("Vergi Kontrolü Yap", type="primary"):
-            tl_karsilik = gelir * kur
-            st.write(f"💵 TL Karşılığı: **{tl_karsilik:,.2f} TL**")
-            if tl_karsilik > sinir:
-                st.error("⚠️ Sınır aşıldı! Beyanname vermeniz gerekir.")
-            else:
-                st.success("✅ Sınırın altındasınız. Beyanname gerekmez.")
-
-# ==========================================
-# 4. TİCARİ SAYFASI
-# ==========================================
-elif st.session_state.page == "Ticari":
-    st.title("Ticari Hesaplamalar")
-    st.header("POS Komisyonu ve Maliyet")
-    col1, col2 = st.columns(2)
-    with col1:
-        tutar = st.number_input("Çekim Tutarı (TL)", value=1000.0, key="pos_tut")
-    with col2:
-        komisyon = st.number_input("Komisyon Oranı (%)", value=2.99, key="pos_kom")
-    if st.button("Hesapla", type="primary"):
-        kesinti = tutar * (komisyon/100)
-        net = tutar - kesinti
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Müşteriden", f"{tutar:,.2f} TL")
-        c2.metric("Kesinti", f"{kesinti:,.2f} TL", delta_color="inverse")
-        c3.metric("Net Geçen", f"{net:,.2f} TL")
+        st.metric(t("eb_result"), f"{tl:,.2f} ₺")
+        
+        if tl > sinir:
+            st.error(t("eb_risk").format(limit=limit_txt))
+        else:
+            st.success(t("eb_safe").format(limit=limit_txt))
