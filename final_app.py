@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. DİL SÖZLÜKLERİ (EN BAŞTA) ---
+# --- 2. DİL SÖZLÜKLERİ ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
     "subheader": "Eczacıbaşı Sağlık Hazine Departmanı",
@@ -34,7 +34,7 @@ TR = {
     
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
-    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredide (+)",
+    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
     "cm_what": "Ne Hesaplanacak?", "cm_val1": "Anapara (PV)", "cm_val2": "Vade Sonu (FV)", "cm_n": "Dönem Sayısı", "cm_r": "Dönemsel Faiz (%)",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
@@ -159,7 +159,7 @@ with st.sidebar:
     st.divider()
     if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
 
-# --- 6. DİNAMİK CSS (TEMA VE GÖRÜNÜM) ---
+# --- 6. DİNAMİK CSS ---
 if is_dark:
     bg_color = "#0e1117"; card_bg = "#262730"; text_color = "#ffffff"
     metric_color = "#4dabf7"; input_bg = "#262730"; input_text = "#ffffff"; btn_border = "#495057"
@@ -170,7 +170,7 @@ else:
 st.markdown(f"""
 <style>
     .stApp {{background-color: {bg_color}; color: {text_color};}}
-    .block-container {{padding-top: 1.5rem; padding-bottom: 2rem;}} /* Boşluğu azalttık */
+    .block-container {{padding-top: 3rem; padding-bottom: 3rem;}} /* Üst boşluk artırıldı */
     thead tr th:first-child {{display:none}} tbody th {{display:none}}
     
     div.stButton > button:first-child {{
@@ -183,7 +183,6 @@ st.markdown(f"""
         background: {input_bg}; border-color: #0d6efd; color: #0d6efd; transform: translateY(-2px);
     }}
     
-    /* Girdi Kutuları - Daha Kompakt */
     .stNumberInput input {{
         color: {input_text} !important; font-weight: 800 !important;
         background-color: {input_bg} !important; border: 1px solid {btn_border} !important;
@@ -202,11 +201,12 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 7. SAYFALAR (KOMPAKT TASARIM - 2 SÜTUNLU GİRDİLER) ---
+# --- 7. SAYFALAR (BOŞLUK DÜZELTMELERİ EKLENDİ) ---
 
 if st.session_state.page == "home":
     st.title(T("subheader"))
     st.info(T("info_sel"))
+    
     c1, c2, c3 = st.columns(3)
     with c1:
         if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
@@ -225,6 +225,7 @@ if st.session_state.page == "home":
 elif st.session_state.page == "invest":
     st.subheader(T("m_invest"))
     st.divider()
+    st.write("") # BOŞLUK (Yapışmayı Önler)
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: buy = st.number_input(T("inv_buy"), value=0.0, format="%.2f", key="inv_buy")
@@ -245,6 +246,7 @@ elif st.session_state.page == "invest":
 elif st.session_state.page == "rates":
     st.subheader(T("m_rates"))
     st.divider()
+    st.write("") # BOŞLUK
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
@@ -262,6 +264,7 @@ elif st.session_state.page == "rates":
 elif st.session_state.page == "single":
     st.subheader(T("m_single"))
     st.divider()
+    st.write("") # BOŞLUK
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: p = st.number_input(T("s_p"), value=0.0, step=1000.0, format="%.2f", key="s_p")
@@ -283,6 +286,7 @@ elif st.session_state.page == "single":
 elif st.session_state.page == "comp":
     st.subheader(T("m_comp"))
     st.divider()
+    st.write("") # BOŞLUK - KRİTİK DÜZELTME
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: target = st.selectbox(T("cm_what"), [T("opt_pv"), T("opt_fv")], key="cm_target")
@@ -310,6 +314,7 @@ elif st.session_state.page == "comp":
 elif st.session_state.page in ["install", "table"]:
     st.subheader(T("m_install") if st.session_state.page=="install" else T("m_table"))
     st.divider()
+    st.write("") # BOŞLUK
     with st.container(border=True):
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
         st.write("")
@@ -359,6 +364,7 @@ elif st.session_state.page in ["install", "table"]:
 elif st.session_state.page == "disc":
     st.subheader(T("m_disc"))
     st.divider()
+    st.write("") # BOŞLUK
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: receiv = st.number_input(T("dc_rec"), value=0.0, step=1000.0, format="%.2f", key="dc_rec")
