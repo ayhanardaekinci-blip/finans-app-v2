@@ -420,4 +420,41 @@ elif st.session_state.page in ["install", "table"]:
                     
                     for i in range(1, int(n)+1):
                         inte = bal * (rate/100)
-                        t_kkdf = inte * (kk
+                        t_kkdf = inte * (kkdf/100)
+                        t_bsmv = inte * (bsmv/100)
+                        curr_pmt = fixed_princ + inte + t_kkdf + t_bsmv
+                        
+                        if i == 1: first_pmt = curr_pmt
+                        
+                        bal -= fixed_princ
+                        total_pay += curr_pmt
+                        sch.append([i, curr_pmt, fixed_princ, inte, t_kkdf, t_bsmv, max(0, bal)])
+
+                # SONUÇLARI GÖSTER
+                m1, m2 = st.columns(2)
+                m1.metric(T("pmt_res"), f"{first_pmt:,.2f}")
+                m2.metric(T("pmt_res_total"), f"{total_pay:,.2f}")
+                
+                # TABLOYU DÖK
+                if st.session_state.page == "table":
+                    st.write("---")
+                    df = pd.DataFrame(sch, columns=T("tbl_cols"))
+                    st.dataframe(df.style.format("{:,.2f}"), use_container_width=True, hide_index=True)
+
+# 6. İSKONTOLU ALACAK
+elif st.session_state.page == "disc":
+    st.subheader(T("m_disc"))
+    st.divider()
+    with st.container(border=True):
+        receiv = st.number_input(T("dc_rec"), value=0.0)
+        days = st.number_input(T("dc_day"), value=0)
+        r_alt = st.number_input(T("dc_rate"), value=0.0)
+        
+        if st.button(T("calc"), type="primary"):
+            r = r_alt / 100
+            if days > 0:
+                pv = receiv / ((1 + r)**(days/365))
+                disc_amt = receiv - pv
+                c1, c2 = st.columns(2)
+                c1.metric(T("dc_r1"), f"{pv:,.2f}")
+                c2.metric(T("dc_r2"), f"{disc_amt:,.2f}", delta=f"-{disc_amt:,.2f}")
