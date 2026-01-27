@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. DİL SÖZLÜKLERİ ---
+# --- 2. DİL SÖZLÜKLERİ (TÜM DİLLER GÜNCELLENDİ) ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
     "subheader": "Eczacıbaşı Sağlık Hazine Departmanı",
@@ -18,20 +18,29 @@ TR = {
     "info_sel": "Hesaplama modülünü seçiniz:",
     "mode_toggle": "🌙 Gece Modu",
     
+    # Butonlar
     "m_invest": "Yatırım Getiri Oranı",
     "m_rates": "Basit - Bileşik Faiz",
     "m_single": "Tek Dönemlik Faiz",
     "m_comp": "Bileşik Faizle Para",
     "m_install": "Kredi / Taksit Hesapla",
     "m_table": "Ödeme Tablosu Oluştur",
+    "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)", # YENİ
     "m_disc": "⚡ İskontolu Alacak Hesapla",
     
     "calc": "HESAPLA", "days_365": "Baz Gün (365/360)", "tax": "Vergi Oranı (%)",
     
-    "cr_type": "Ödeme Planı Türü",
-    "cr_opt1": "Eşit Taksitli (Standart)",
-    "cr_opt2": "Eşit Anaparalı (Azalan)",
+    # Mevduat Modülü (YENİ)
+    "dep_amt": "Yatırılan Tutar (Mevduat)",
+    "dep_days": "Vade (Gün)",
+    "dep_rate": "Yıllık Faiz Oranı (%)",
+    "dep_res_net": "Net Getiri (Ele Geçen)",
+    "dep_res_total": "Vade Sonu Toplam Bakiye",
+    "dep_info_stopaj": "Uygulanan Stopaj Oranı",
+    "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
     
+    # Diğer Modüller
+    "cr_type": "Ödeme Planı Türü", "cr_opt1": "Eşit Taksitli (Standart)", "cr_opt2": "Eşit Anaparalı (Azalan)",
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
     "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
@@ -57,8 +66,16 @@ EN = {
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations",
     "m_install": "Loan / Installment Calc", "m_table": "Amortization Schedule",
+    "m_deposit": "🏦 Deposit Return (Withholding)", # YENİ
     "m_disc": "⚡ Discounted Receivables",
+    
     "calc": "CALCULATE", "days_365": "Day Count Basis (365/360)", "tax": "Tax / Withholding (%)",
+    
+    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Interest Rate (%)",
+    "dep_res_net": "Net Return", "dep_res_total": "Total Ending Balance",
+    "dep_info_stopaj": "Applied Withholding Tax",
+    "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
+
     "cr_type": "Repayment Plan Type", "cr_opt1": "Equal Installments (Annuity)", "cr_opt2": "Equal Principal (Decreasing)",
     "inv_buy": "Purchase Price", "inv_sell": "Selling Price", "inv_day": "Tenor (Days)",
     "rt_what": "Calculate What?", "rt_days": "Days", "rt_base": "Base Rate (%)",
@@ -82,8 +99,16 @@ FR = {
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
     "m_install": "Calcul de Prêt", "m_table": "Tableau d'Amortissement",
+    "m_deposit": "🏦 Rendement Dépôt (Net)", # YENİ
     "m_disc": "⚡ Créances Escomptées",
+    
     "calc": "CALCULER", "days_365": "Base Jours (365/360)", "tax": "Taxe / Retenue (%)",
+    
+    "dep_amt": "Montant du Dépôt", "dep_days": "Maturité (Jours)", "dep_rate": "Taux Annuel (%)",
+    "dep_res_net": "Rendement Net", "dep_res_total": "Solde Final Total",
+    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
+    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
+
     "cr_type": "Type d'Amortissement", "cr_opt1": "Mensualités Constantes", "cr_opt2": "Amortissement Constant",
     "inv_buy": "Prix d'Achat", "inv_sell": "Prix de Vente", "inv_day": "Durée (Jours)",
     "rt_what": "Que Calculer?", "rt_days": "Jours", "rt_base": "Taux de Base (%)",
@@ -107,8 +132,16 @@ DE = {
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes",
     "m_install": "Kreditrechner", "m_table": "Tilgungsplan Erstellen",
+    "m_deposit": "🏦 Einlagerendite (Netto)", # YENİ
     "m_disc": "⚡ Forderungsdiskontierung",
+    
     "calc": "BERECHNEN", "days_365": "Zinstage (365/360)", "tax": "Steuersatz (%)",
+    
+    "dep_amt": "Einlagebetrag", "dep_days": "Laufzeit (Tage)", "dep_rate": "Jahreszins (%)",
+    "dep_res_net": "Nettoertrag", "dep_res_total": "Gesamtendbestand",
+    "dep_info_stopaj": "Angewandte Steuer",
+    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
+
     "cr_type": "Tilgungsart", "cr_opt1": "Gleiche Raten (Annuität)", "cr_opt2": "Gleiche Tilgung (Ratentilgung)",
     "inv_buy": "Kaufpreis", "inv_sell": "Verkaufspreis", "inv_day": "Laufzeit (Tage)",
     "rt_what": "Was berechnen?", "rt_days": "Tage", "rt_base": "Basiszinssatz (%)",
@@ -170,7 +203,7 @@ else:
 st.markdown(f"""
 <style>
     .stApp {{background-color: {bg_color}; color: {text_color};}}
-    .block-container {{padding-top: 3rem; padding-bottom: 3rem;}} /* Üst boşluk artırıldı */
+    .block-container {{padding-top: 3rem; padding-bottom: 3rem;}}
     thead tr th:first-child {{display:none}} tbody th {{display:none}}
     
     div.stButton > button:first-child {{
@@ -201,7 +234,7 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 7. SAYFALAR (BOŞLUK DÜZELTMELERİ EKLENDİ) ---
+# --- 7. SAYFALAR ---
 
 if st.session_state.page == "home":
     st.title(T("subheader"))
@@ -218,14 +251,18 @@ if st.session_state.page == "home":
         if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
         if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
     st.write("") 
-    ec1, ec2, ec3 = st.columns([1, 2, 1])
+    
+    # YENİ BUTON DÜZENİ: Mevduat ve İskonto Yan Yana
+    ec1, ec2 = st.columns(2)
+    with ec1:
+        if st.button(f"{T('m_deposit')}", use_container_width=True): go("deposit")
     with ec2:
         if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
 
 elif st.session_state.page == "invest":
     st.subheader(T("m_invest"))
     st.divider()
-    st.write("") # BOŞLUK (Yapışmayı Önler)
+    st.write("")
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: buy = st.number_input(T("inv_buy"), value=0.0, format="%.2f", key="inv_buy")
@@ -246,14 +283,12 @@ elif st.session_state.page == "invest":
 elif st.session_state.page == "rates":
     st.subheader(T("m_rates"))
     st.divider()
-    st.write("") # BOŞLUK
+    st.write("")
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
         with c2: days = st.number_input(T("rt_days"), value=365, key="rt_days")
-        
         base = st.number_input(T("rt_base"), value=0.0, format="%.2f", key="rt_base")
-        
         if st.button(T("calc"), type="primary"):
             r = base / 100
             if days > 0:
@@ -264,7 +299,7 @@ elif st.session_state.page == "rates":
 elif st.session_state.page == "single":
     st.subheader(T("m_single"))
     st.divider()
-    st.write("") # BOŞLUK
+    st.write("")
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: p = st.number_input(T("s_p"), value=0.0, step=1000.0, format="%.2f", key="s_p")
@@ -286,7 +321,7 @@ elif st.session_state.page == "single":
 elif st.session_state.page == "comp":
     st.subheader(T("m_comp"))
     st.divider()
-    st.write("") # BOŞLUK - KRİTİK DÜZELTME
+    st.write("")
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: target = st.selectbox(T("cm_what"), [T("opt_pv"), T("opt_fv")], key="cm_target")
@@ -306,19 +341,52 @@ elif st.session_state.page == "comp":
                 res = val / ((1 + net_r)**n); res_lbl = T("opt_pv")
             else: 
                 res = val * ((1 + net_r)**n); res_lbl = T("opt_fv")
-            
             m1, m2 = st.columns(2)
             m1.metric(res_lbl, f"{fmt(res)} ₺")
             m2.metric(T("cm_res_diff"), f"{fmt(abs(val-res))} ₺")
 
+# --- YENİ MODÜL: MEVDUAT GETİRİSİ (STOPAJLI) ---
+elif st.session_state.page == "deposit":
+    st.subheader(T("m_deposit"))
+    st.divider()
+    st.write("")
+    
+    st.info(T("dep_info_desc")) # Bilgilendirme
+    
+    with st.container(border=True):
+        c1, c2 = st.columns(2)
+        with c1: amount = st.number_input(T("dep_amt"), value=100000.0, step=1000.0, format="%.2f", key="dep_amt")
+        with c2: rate = st.number_input(T("dep_rate"), value=45.0, format="%.2f", key="dep_rate")
+        
+        days = st.number_input(T("dep_days"), value=32, step=1, key="dep_days")
+        
+        if st.button(T("calc"), type="primary"):
+            # 1. STOPAJ ORANI BELİRLEME (Karar 2006/10731 - Temmuz 2025 Güncellemesi)
+            if days <= 182: # 6 Aya kadar (dahil)
+                stopaj_rate = 17.5
+            elif days <= 365: # 1 Yıla kadar (dahil)
+                stopaj_rate = 15.0
+            else: # 1 Yıldan uzun
+                stopaj_rate = 10.0
+            
+            # 2. HESAPLAMA
+            gross_int = (amount * rate * days) / 36500
+            net_int = gross_int * (1 - stopaj_rate/100)
+            total_bal = amount + net_int
+            
+            # 3. GÖSTERİM
+            c1, c2, c3 = st.columns(3)
+            c1.metric(T("dep_info_stopaj"), f"%{stopaj_rate}")
+            c2.metric(T("dep_res_net"), f"{fmt(net_int)} ₺")
+            c3.metric(T("dep_res_total"), f"{fmt(total_bal)} ₺")
+
 elif st.session_state.page in ["install", "table"]:
     st.subheader(T("m_install") if st.session_state.page=="install" else T("m_table"))
     st.divider()
-    st.write("") # BOŞLUK
+    st.write("")
     with st.container(border=True):
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
         st.write("")
-        
         c1, c2 = st.columns(2)
         with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f", key="pmt_loan")
         with c2: rate = st.number_input(T("pmt_r"), value=1.20, format="%.2f", key="pmt_rate")
@@ -356,7 +424,6 @@ elif st.session_state.page in ["install", "table"]:
                 m1, m2 = st.columns(2)
                 m1.metric(T("pmt_res"), f"{fmt(first_pmt_display)} ₺")
                 m2.metric(T("pmt_res_total"), f"{fmt(total_pay)} ₺")
-                
                 if st.session_state.page == "table":
                     st.write("---")
                     st.dataframe(pd.DataFrame(sch, columns=T("tbl_cols")), use_container_width=True, hide_index=True)
@@ -364,7 +431,7 @@ elif st.session_state.page in ["install", "table"]:
 elif st.session_state.page == "disc":
     st.subheader(T("m_disc"))
     st.divider()
-    st.write("") # BOŞLUK
+    st.write("")
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: receiv = st.number_input(T("dc_rec"), value=0.0, step=1000.0, format="%.2f", key="dc_rec")
