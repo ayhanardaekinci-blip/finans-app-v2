@@ -10,126 +10,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. FONKSİYONLAR ---
-def fmt(value):
-    if value is None: return "0,00"
-    try:
-        s = "{:,.2f}".format(float(value))
-        return s.replace(",", "X").replace(".", ",").replace("X", ".")
-    except:
-        return "0,00"
-
-def update_lang():
-    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
-
-# --- 3. SİSTEM BAŞLANGICI ---
-if 'lang' not in st.session_state: st.session_state.lang = "TR"
-if 'page' not in st.session_state: st.session_state.page = "home"
-
-def T(k):
-    # Dil Sözlükleri (Aşağıda tanımlı)
-    langs = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
-    return langs[st.session_state.lang].get(k, k)
-
-def go(p): st.session_state.page = p; st.rerun()
-
-# --- 4. YAN MENÜ & TEMA SEÇİMİ ---
-with st.sidebar:
-    st.title(T("app_name")) # Hata almamak için T fonksiyonu tanımlandıktan sonra çağırıyoruz
-    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
-    
-    # 1. Dil Seçimi
-    st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
-    
-    st.write("") # Boşluk
-    
-    # 2. GECE MODU ANAHTARI (YENİ)
-    # Varsayılan değer False (Gündüz Modu)
-    is_dark = st.toggle("🌙 Gece Modu / Dark Mode", value=False)
-    
-    st.divider()
-    if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
-
-# --- 5. DİNAMİK CSS (TEMA MOTORU) ---
-# Seçilen moda göre renkleri ayarlıyoruz
-if is_dark:
-    # --- GECE MODU RENKLERİ ---
-    bg_color = "#0e1117"      # Koyu Arka Plan
-    card_bg = "#262730"       # Koyu Kartlar
-    text_color = "#ffffff"    # Beyaz Yazı
-    metric_color = "#4dabf7"  # Parlak Açık Mavi (Okunurluk için)
-    input_bg = "#262730"      # Koyu Input
-    input_text = "#ffffff"    # Beyaz Input Yazısı
-    btn_border = "#495057"
-else:
-    # --- GÜNDÜZ MODU RENKLERİ ---
-    bg_color = "#f8f9fa"      # Açık Gri Arka Plan
-    card_bg = "#ffffff"       # Beyaz Kartlar
-    text_color = "#000000"    # Siyah Yazı
-    metric_color = "#0d25cf"  # Koyu Lacivert (Kurumsal)
-    input_bg = "#ffffff"      # Beyaz Input
-    input_text = "#000000"    # Siyah Input Yazısı
-    btn_border = "#ced4da"
-
-st.markdown(f"""
-<style>
-    /* Ana Arka Plan */
-    .stApp {{
-        background-color: {bg_color};
-        color: {text_color};
-    }}
-    .block-container {{padding-top: 2rem; padding-bottom: 3rem;}}
-    
-    /* Tablo Başlıkları Gizle */
-    thead tr th:first-child {{display:none}}
-    tbody th {{display:none}}
-    
-    /* --- BUTON TASARIMI --- */
-    div.stButton > button:first-child {{
-        width: 100%; height: 4.5em; border-radius: 10px; 
-        border: 1px solid {btn_border};
-        font-weight: 700; 
-        background: {card_bg}; 
-        color: {text_color}; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
-    }}
-    div.stButton > button:hover {{
-        background: {input_bg}; border-color: #0d6efd; color: #0d6efd; 
-        transform: translateY(-2px);
-    }}
-    
-    /* --- GİRİŞ KUTULARI (INPUTS) --- */
-    .stNumberInput input {{
-        color: {input_text} !important;
-        font-weight: 800 !important;
-        background-color: {input_bg} !important;
-        border: 1px solid {btn_border} !important;
-        font-size: 1.1rem !important;
-    }}
-    
-    /* Okları gizle */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button {{ 
-        -webkit-appearance: none; margin: 0; 
-    }}
-    
-    /* --- SONUÇ RAKAMLARI (METRICS) --- */
-    div[data-testid="stMetricValue"] {{
-        font-size: 1.7rem !important; 
-        color: {metric_color} !important; 
-        font-weight: 800 !important;
-    }}
-    div[data-testid="stMetricLabel"] {{
-        font-size: 1rem !important;
-        font-weight: 600;
-        color: {text_color} !important;
-        opacity: 0.8;
-    }}
-</style>
-""", unsafe_allow_html=True)
-
-# --- 6. DİL SÖZLÜKLERİ ---
+# --- 2. DİL SÖZLÜKLERİ (EN BAŞA ALINDI - HATA DÜZELTİLDİ) ---
 TR = {
+    "header": "Eczacıbaşı Sağlık Hazine Departmanı",
     "app_name": "Finansal Hesap Makinesi",
     "home": "🏠 Ana Menü",
     "info_sel": "Hesaplama modülünü seçiniz:", 
@@ -154,14 +37,127 @@ TR = {
     "dc_r1": "İskontolu Tutar (Ele Geçen)", "dc_r2": "Yapılan İskonto Tutarı"
 }
 EN = TR.copy(); FR = TR.copy(); DE = TR.copy()
-# (Diğer dillerin başlıklarını buraya ekleyebilirsin, şu an TR yedeği çalışır)
-EN["app_name"] = "Financial Calculator"; EN["home"] = "🏠 Home Menu"; EN["info_sel"] = "Select module:"
-EN["m_disc"] = "⚡ Discounted Receivables"
+# Dil ayarları (Gerekirse burayı detaylandırabilirsin)
+EN["app_name"] = "Financial Calculator"; EN["home"] = "🏠 Home Menu"
+FR["app_name"] = "Calculatrice Financière"; DE["app_name"] = "Finanzrechner"
+
+LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
+
+# --- 3. FONKSİYONLAR ---
+def fmt(value):
+    if value is None: return "0,00"
+    try:
+        s = "{:,.2f}".format(float(value))
+        return s.replace(",", "X").replace(".", ",").replace("X", ".")
+    except:
+        return "0,00"
+
+def update_lang():
+    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
+
+# --- 4. SİSTEM BAŞLANGICI ---
+if 'lang' not in st.session_state: st.session_state.lang = "TR"
+if 'page' not in st.session_state: st.session_state.page = "home"
+
+def T(k):
+    return LANGS[st.session_state.lang].get(k, k)
+
+def go(p): st.session_state.page = p; st.rerun()
+
+# --- 5. YAN MENÜ & TEMA SEÇİMİ ---
+with st.sidebar:
+    st.title(T("app_name"))
+    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
+    
+    # Dil Seçimi
+    st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
+    
+    st.write("") 
+    
+    # GECE MODU ANAHTARI
+    is_dark = st.toggle("🌙 Gece Modu / Dark Mode", value=False)
+    
+    st.divider()
+    if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
+
+# --- 6. DİNAMİK CSS (RENK VE KONTRAST) ---
+if is_dark:
+    # --- GECE MODU ---
+    bg_color = "#0e1117"
+    card_bg = "#262730"
+    text_color = "#ffffff"
+    metric_color = "#4dabf7"  # Parlak Açık Mavi
+    input_bg = "#262730"
+    input_text = "#ffffff"
+    btn_border = "#495057"
+else:
+    # --- GÜNDÜZ MODU (DEFAULT) ---
+    bg_color = "#f8f9fa"
+    card_bg = "#ffffff"
+    text_color = "#000000"
+    metric_color = "#0d25cf"  # Koyu Lacivert
+    input_bg = "#ffffff"
+    input_text = "#000000"
+    btn_border = "#ced4da"
+
+st.markdown(f"""
+<style>
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
+    .block-container {{padding-top: 2rem; padding-bottom: 3rem;}}
+    
+    /* Tablo Gizlemeleri */
+    thead tr th:first-child {{display:none}}
+    tbody th {{display:none}}
+    
+    /* Butonlar */
+    div.stButton > button:first-child {{
+        width: 100%; height: 4.5em; border-radius: 10px; 
+        border: 1px solid {btn_border};
+        font-weight: 700; 
+        background: {card_bg}; 
+        color: {text_color}; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
+    }}
+    div.stButton > button:hover {{
+        background: {input_bg}; border-color: #0d6efd; color: #0d6efd; 
+        transform: translateY(-2px);
+    }}
+    
+    /* Girdi Kutuları */
+    .stNumberInput input {{
+        color: {input_text} !important;
+        font-weight: 800 !important;
+        background-color: {input_bg} !important;
+        border: 1px solid {btn_border} !important;
+        font-size: 1.1rem !important;
+    }}
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button {{ 
+        -webkit-appearance: none; margin: 0; 
+    }}
+    
+    /* Sonuç Rakamları */
+    div[data-testid="stMetricValue"] {{
+        font-size: 1.7rem !important; 
+        color: {metric_color} !important; 
+        font-weight: 800 !important;
+    }}
+    div[data-testid="stMetricLabel"] {{
+        font-size: 1rem !important;
+        font-weight: 600;
+        color: {text_color} !important;
+        opacity: 0.9;
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 # --- 7. SAYFALAR ---
 
 if st.session_state.page == "home":
-    st.title(T("app_name"))
+    st.title(T("header"))
     st.info(T("info_sel"))
     
     c1, c2, c3 = st.columns(3)
@@ -176,7 +172,6 @@ if st.session_state.page == "home":
         if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
     
     st.write("") 
-    # ORTALANMIŞ İSKONTO BUTONU
     ec1, ec2, ec3 = st.columns([1, 2, 1])
     with ec2:
         if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
