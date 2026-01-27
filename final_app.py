@@ -10,10 +10,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. DİL SÖZLÜKLERİ (Eczacıbaşı Çevirileri Eklendi) ---
+# --- 2. DİL SÖZLÜKLERİ ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
-    "subheader": "Eczacıbaşı Sağlık Hazine Departmanı", # TR
+    "subheader": "Eczacıbaşı Sağlık Hazine Departmanı",
     "home": "🏠 Ana Menü",
     "info_sel": "Hesaplama modülünü seçiniz:",
     "mode_toggle": "🌙 Gece Modu",
@@ -35,7 +35,7 @@ TR = {
     
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
-    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
+    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredide (+)",
     "cm_what": "Ne Hesaplanacak?", "cm_val1": "Anapara (PV)", "cm_val2": "Vade Sonu (FV)", "cm_n": "Dönem Sayısı", "cm_r": "Dönemsel Faiz (%)",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
@@ -58,7 +58,7 @@ TR = {
 
 EN = {
     "app_name": "Financial Calculator", 
-    "subheader": "Eczacıbaşı Healthcare Treasury Dept.", # EN
+    "subheader": "Eczacıbaşı Healthcare Treasury Dept.",
     "home": "🏠 Home Menu", "info_sel": "Select a calculation module:", "mode_toggle": "🌙 Dark Mode",
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations",
@@ -88,7 +88,7 @@ EN = {
 
 FR = {
     "app_name": "Calculatrice Financière", 
-    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı", # FR
+    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
     "home": "🏠 Menu Principal", "info_sel": "Sélectionnez un module :", "mode_toggle": "🌙 Mode Sombre",
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
@@ -118,7 +118,7 @@ FR = {
 
 DE = {
     "app_name": "Finanzrechner", 
-    "subheader": "Eczacıbaşı Gesundheits-Schatzamt", # DE
+    "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
     "home": "🏠 Hauptmenü", "info_sel": "Wählen Sie ein Modul:", "mode_toggle": "🌙 Dunkelmodus",
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes",
@@ -172,20 +172,18 @@ def go(p): st.session_state.page = p; st.rerun()
 # --- 5. YAN MENÜ & TEMA SEÇİMİ ---
 with st.sidebar:
     st.title(T("app_name"))
-    # BURASI DÜZELTİLDİ: Artık Eczacıbaşı yazısı da dile göre değişiyor
-    st.caption(T("subheader")) 
-    
+    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
     st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
     st.write("") 
     is_dark = st.toggle(T("mode_toggle"), value=False, key="dark_mode_toggle")
     st.divider()
     if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
 
-# --- 6. DİNAMİK CSS (TÜM ARAYÜZ İÇİN) ---
+# --- 6. DİNAMİK CSS (TEMA VE KONTRAST AYARI) ---
 if is_dark:
     # --- GECE MODU ---
     bg_color = "#0e1117"
-    sidebar_bg = "#262730" # Yan menü koyu
+    sidebar_bg = "#262730"
     card_bg = "#262730"
     text_color = "#ffffff"
     metric_color = "#4dabf7"
@@ -195,7 +193,7 @@ if is_dark:
 else:
     # --- GÜNDÜZ MODU ---
     bg_color = "#ffffff"
-    sidebar_bg = "#f8f9fa" # Yan menü hafif gri (ayrışsın diye)
+    sidebar_bg = "#f8f9fa"
     card_bg = "#f8f9fa"
     text_color = "#000000"
     metric_color = "#0d25cf"
@@ -213,17 +211,21 @@ st.markdown(f"""
     .block-container {{padding-top: 3rem; padding-bottom: 3rem;}}
     thead tr th:first-child {{display:none}} tbody th {{display:none}}
     
-    /* YAN MENÜ (SIDEBAR) ÖZEL AYARI */
+    /* YAN MENÜ (SIDEBAR) - ÖZEL DÜZELTME */
     [data-testid="stSidebar"] {{
         background-color: {sidebar_bg};
-        color: {text_color};
     }}
-    /* Yan menüdeki yazıların rengini zorla */
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
+    
+    /* YAN MENÜ İÇİNDEKİ TÜM YAZILARI ZORLA RENKLENDİRME */
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] span, 
+    [data-testid="stSidebar"] div {{
         color: {text_color} !important;
     }}
     
-    /* TÜM YAZILARI ZORLA RENKLENDİRME */
+    /* TÜM YAZILARI ZORLA RENKLENDİRME (Ana Ekran) */
     h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
         color: {text_color} !important;
     }}
@@ -415,6 +417,7 @@ elif st.session_state.page in ["install", "table"]:
     with st.container(border=True):
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
         st.write("")
+        
         c1, c2 = st.columns(2)
         with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f", key="pmt_loan")
         with c2: rate = st.number_input(T("pmt_r"), value=1.20, format="%.2f", key="pmt_rate")
