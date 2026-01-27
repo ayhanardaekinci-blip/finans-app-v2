@@ -35,7 +35,7 @@ TR = {
     
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
-    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredide (+)",
+    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
     "cm_what": "Ne Hesaplanacak?", "cm_val1": "Anapara (PV)", "cm_val2": "Vade Sonu (FV)", "cm_n": "Dönem Sayısı", "cm_r": "Dönemsel Faiz (%)",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
@@ -172,7 +172,7 @@ def go(p): st.session_state.page = p; st.rerun()
 # --- 5. YAN MENÜ & TEMA SEÇİMİ ---
 with st.sidebar:
     st.title(T("app_name"))
-    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
+    st.caption(T("subheader"))
     st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
     st.write("") 
     is_dark = st.toggle(T("mode_toggle"), value=False, key="dark_mode_toggle")
@@ -219,14 +219,18 @@ st.markdown(f"""
     /* YAN MENÜ İÇİNDEKİ TÜM YAZILARI ZORLA RENKLENDİRME */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] p, 
-    [data-testid="stSidebar"] label, 
     [data-testid="stSidebar"] span, 
     [data-testid="stSidebar"] div {{
         color: {text_color} !important;
     }}
     
-    /* TÜM YAZILARI ZORLA RENKLENDİRME (Ana Ekran) */
-    h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
+    /* SIDEBAR TOGGLE LABEL (Gece Modu Yazısı) İÇİN ÖZEL FİX */
+    label[data-testid="stWidgetLabel"] p {{
+        color: {text_color} !important;
+    }}
+    
+    /* ANA EKRAN YAZILARI */
+    h1, h2, h3, h4, h5, h6, p, .stMarkdown {{
         color: {text_color} !important;
     }}
     
@@ -248,8 +252,19 @@ st.markdown(f"""
         background: {input_bg}; border-color: #0d6efd; color: #0d6efd; transform: translateY(-2px);
     }}
     
-    /* GİRDİ KUTULARI & SELECTBOX */
-    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
+    /* SELECTBOX & INPUT DÜZELTMESİ (Siyah Kutu Sorunu Çözümü) */
+    /* Selectbox'ın görünür kutusu */
+    div[data-baseweb="select"] > div {{
+        background-color: {input_bg} !important;
+        color: {input_text} !important;
+        border-color: {border_color} !important;
+    }}
+    /* Selectbox içindeki yazı */
+    div[data-baseweb="select"] span {{
+        color: {input_text} !important;
+    }}
+    /* Normal Input Kutuları */
+    .stNumberInput input {{
         color: {input_text} !important; 
         font-weight: 700 !important;
         background-color: {input_bg} !important; 
