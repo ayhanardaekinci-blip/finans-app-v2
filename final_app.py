@@ -10,10 +10,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. DİL SÖZLÜKLERİ ---
+# --- 2. DİL SÖZLÜKLERİ (Eczacıbaşı Çevirileri Eklendi) ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
-    "subheader": "Eczacıbaşı Sağlık Hazine Departmanı",
+    "subheader": "Eczacıbaşı Sağlık Hazine Departmanı", # TR
     "home": "🏠 Ana Menü",
     "info_sel": "Hesaplama modülünü seçiniz:",
     "mode_toggle": "🌙 Gece Modu",
@@ -57,7 +57,8 @@ TR = {
 }
 
 EN = {
-    "app_name": "Financial Calculator", "subheader": "Eczacıbaşı Healthcare Treasury Dept.",
+    "app_name": "Financial Calculator", 
+    "subheader": "Eczacıbaşı Healthcare Treasury Dept.", # EN
     "home": "🏠 Home Menu", "info_sel": "Select a calculation module:", "mode_toggle": "🌙 Dark Mode",
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations",
@@ -86,7 +87,8 @@ EN = {
 }
 
 FR = {
-    "app_name": "Calculatrice Financière", "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
+    "app_name": "Calculatrice Financière", 
+    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı", # FR
     "home": "🏠 Menu Principal", "info_sel": "Sélectionnez un module :", "mode_toggle": "🌙 Mode Sombre",
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
@@ -115,7 +117,8 @@ FR = {
 }
 
 DE = {
-    "app_name": "Finanzrechner", "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
+    "app_name": "Finanzrechner", 
+    "subheader": "Eczacıbaşı Gesundheits-Schatzamt", # DE
     "home": "🏠 Hauptmenü", "info_sel": "Wählen Sie ein Modul:", "mode_toggle": "🌙 Dunkelmodus",
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes",
@@ -169,36 +172,40 @@ def go(p): st.session_state.page = p; st.rerun()
 # --- 5. YAN MENÜ & TEMA SEÇİMİ ---
 with st.sidebar:
     st.title(T("app_name"))
-    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
+    # BURASI DÜZELTİLDİ: Artık Eczacıbaşı yazısı da dile göre değişiyor
+    st.caption(T("subheader")) 
+    
     st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
     st.write("") 
     is_dark = st.toggle(T("mode_toggle"), value=False, key="dark_mode_toggle")
     st.divider()
     if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
 
-# --- 6. DİNAMİK CSS (TEMA VE KONTRAST AYARI) ---
+# --- 6. DİNAMİK CSS (TÜM ARAYÜZ İÇİN) ---
 if is_dark:
     # --- GECE MODU ---
     bg_color = "#0e1117"
+    sidebar_bg = "#262730" # Yan menü koyu
     card_bg = "#262730"
-    text_color = "#ffffff" # Yazılar Beyaz
+    text_color = "#ffffff"
     metric_color = "#4dabf7"
     input_bg = "#262730"
     input_text = "#ffffff"
     border_color = "#495057"
 else:
-    # --- GÜNDÜZ MODU (BEYAZ) ---
+    # --- GÜNDÜZ MODU ---
     bg_color = "#ffffff"
-    card_bg = "#f8f9fa" # Hafif gri kart
-    text_color = "#000000" # Yazılar KAPKARA
-    metric_color = "#0d25cf" # Eczacıbaşı Mavisi
+    sidebar_bg = "#f8f9fa" # Yan menü hafif gri (ayrışsın diye)
+    card_bg = "#f8f9fa"
+    text_color = "#000000"
+    metric_color = "#0d25cf"
     input_bg = "#ffffff"
-    input_text = "#000000" # Girdi yazısı SİYAH
+    input_text = "#000000"
     border_color = "#dee2e6"
 
 st.markdown(f"""
 <style>
-    /* GENEL SAYFA AYARLARI */
+    /* ANA SAYFA */
     .stApp {{
         background-color: {bg_color};
         color: {text_color};
@@ -206,12 +213,22 @@ st.markdown(f"""
     .block-container {{padding-top: 3rem; padding-bottom: 3rem;}}
     thead tr th:first-child {{display:none}} tbody th {{display:none}}
     
-    /* TÜM YAZILARI ZORLA RENKLENDİRME (Kritik Düzeltme) */
+    /* YAN MENÜ (SIDEBAR) ÖZEL AYARI */
+    [data-testid="stSidebar"] {{
+        background-color: {sidebar_bg};
+        color: {text_color};
+    }}
+    /* Yan menüdeki yazıların rengini zorla */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] span, [data-testid="stSidebar"] p, [data-testid="stSidebar"] label {{
+        color: {text_color} !important;
+    }}
+    
+    /* TÜM YAZILARI ZORLA RENKLENDİRME */
     h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
         color: {text_color} !important;
     }}
     
-    /* GİRDİ ETİKETLERİ (Labels) */
+    /* GİRDİ ETİKETLERİ */
     .stNumberInput label, .stSelectbox label, .stRadio label {{
         color: {text_color} !important;
         font-weight: 600 !important;
@@ -229,7 +246,7 @@ st.markdown(f"""
         background: {input_bg}; border-color: #0d6efd; color: #0d6efd; transform: translateY(-2px);
     }}
     
-    /* GİRDİ KUTULARI (Inputs) */
+    /* GİRDİ KUTULARI & SELECTBOX */
     .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
         color: {input_text} !important; 
         font-weight: 700 !important;
@@ -245,7 +262,7 @@ st.markdown(f"""
         font-size: 1rem !important; font-weight: 600; color: {text_color} !important; opacity: 0.9;
     }}
     
-    /* BİLGİ KUTUCUKLARI (Info Box) */
+    /* BİLGİ KUTUCUKLARI */
     .stAlert {{
         background-color: {card_bg} !important;
         color: {text_color} !important;
@@ -272,7 +289,6 @@ if st.session_state.page == "home":
         if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
     st.write("") 
     
-    # YENİ BUTON DÜZENİ
     ec1, ec2 = st.columns(2)
     with ec1:
         if st.button(f"{T('m_deposit')}", use_container_width=True): go("deposit")
