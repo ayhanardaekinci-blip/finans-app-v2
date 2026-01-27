@@ -14,9 +14,12 @@ st.set_page_config(
 st.markdown("""
 <style>
     .block-container {padding-top: 2rem; padding-bottom: 3rem;}
+    
+    /* Tablo Başlıkları Gizle */
     thead tr th:first-child {display:none}
     tbody th {display:none}
     
+    /* Butonlar */
     div.stButton > button:first-child {
         width: 100%; height: 4.5em; border-radius: 12px; border: 1px solid #ced4da;
         font-weight: 700; background: #ffffff; color: #495057; 
@@ -27,65 +30,58 @@ st.markdown("""
         transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
     
-    /* İskonto Butonu */
-    .big-btn { border: 2px solid #0d6efd !important; color: #0d6efd !important; }
+    /* GİRİŞ KUTULARI İÇİN STİL */
+    input[type="number"] {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+    }
 
-    /* Rakamlar */
+    /* SONUÇ RAKAMLARI */
     div[data-testid="stMetricValue"] {
         font-size: 1.6rem !important; color: #0d6efd !important; font-weight: bold;
     }
     div[data-testid="stMetricLabel"] {
         font-size: 1rem !important; font-weight: 600; color: #495057 !important;
     }
+    
+    /* Bilgilendirme Kutucukları */
+    .element-container .stAlert {
+        padding: 0.5rem;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. ÖZEL FORMATLAYICI VE GİRİŞ FONKSİYONU ---
-
+# --- 3. FORMATLAMA FONKSİYONU ---
 def fmt(value):
-    """Sayıyı 1.234,56 formatına çevirir (Görsel İçin)"""
-    if value is None: return ""
-    s = "{:,.2f}".format(float(value))
-    return s.replace(",", "X").replace(".", ",").replace("X", ".")
-
-def parse_money(text):
-    """Kullanıcının girdiği '1.234,56' veya '2000' yazısını sayıya çevirir"""
+    """
+    Sayıyı '1.234,56' formatına çevirir (Görsel İçin).
+    """
+    if value is None: return "0,00"
     try:
-        # Önce boşlukları temizle
-        text = str(text).strip()
-        # Eğer kullanıcı nokta ile binlik ayırdıysa (1.000), noktaları sil
-        text = text.replace(".", "")
-        # Virgül kullandıysa (20,5), onu noktaya çevir (20.5) ki Python anlasın
-        text = text.replace(",", ".")
-        return float(text)
+        s = "{:,.2f}".format(float(value))
+        return s.replace(",", "X").replace(".", ",").replace("X", ".")
     except:
-        return 0.0
+        return "0,00"
 
-def money_input(label, key, default_val=0.0):
+# --- AKILLI GİRİŞ SİSTEMİ (PREVIEW MODLU) ---
+def smart_input(label, key, default_val=0.0):
     """
-    Excel Tarzı Akıllı Giriş Kutusu.
-    Kullanıcı '2000' yazar -> Enter -> Kutu '2.000,00' olur -> Fonksiyon 2000.0 döndürür.
+    Sayı girilir, altına anında okunuşu yazılır.
+    Hata yapmayı engeller.
     """
-    # 1. Session State'de bu kutunun değeri yoksa, varsayılanı formatla ata
-    if key not in st.session_state:
-        st.session_state[key] = fmt(default_val)
+    # 1. Standart Sayı Girişi (En güvenlisi)
+    val = st.number_input(label, value=float(default_val), step=1000.0, format="%.2f", key=key)
     
-    # 2. Text Input olarak göster (Kullanıcı buraya yazar)
-    val_str = st.text_input(label, key=key)
-    
-    # 3. Yazılanı Sayıya Çevir (Hesaplama için)
-    amount = parse_money(val_str)
-    
-    # 4. Sayıyı Tekrar Formatla (Görsel düzeltme için)
-    formatted_str = fmt(amount)
-    
-    # 5. Eğer kullanıcının yazdığı (2000) ile formatlı hali (2.000,00) farklıysa
-    #    bir sonraki turda kutuyu düzeltmek için state'i güncelle.
-    #    (Streamlit doğası gereği bu düzeltme enter'dan sonraki yenilemede görünür)
-    #    Burada 'key' zaten text_input'a bağlı olduğu için otomatik güncellenir ancak
-    #    biz arkada tuttuğumuz değeri clean bir şekilde yönetiyoruz.
-    
-    return amount
+    # 2. Altına Okunuşunu Yaz (Canlı Doğrulama)
+    if val > 0:
+        st.caption(f"✅ Okunuş: **{fmt(val)} ₺**")
+    else:
+        st.caption("➖")
+        
+    return val
 
 # --- 4. DİL SÖZLÜKLERİ ---
 TR = {
@@ -153,9 +149,8 @@ elif st.session_state.page == "invest":
     st.subheader(T("m_invest"))
     st.divider()
     with st.container(border=True):
-        # AKILLI GİRİŞ KUTULARI
-        buy = money_input(T("inv_buy"), "k_inv_buy", 0.0)
-        sell = money_input(T("inv_sell"), "k_inv_sell", 0.0)
+        buy = smart_input(T("inv_buy"), "k_inv_buy", 0.0)
+        sell = smart_input(T("inv_sell"), "k_inv_sell", 0.0)
         days = st.number_input(T("inv_day"), value=30, step=1)
         
         if st.button(T("calc"), type="primary"):
@@ -187,8 +182,7 @@ elif st.session_state.page == "single":
     st.divider()
     with st.container(border=True):
         c1, c2 = st.columns(2)
-        # AKILLI GİRİŞ
-        p = money_input(T("s_p"), "k_s_p", 0.0)
+        with c1: p = smart_input(T("s_p"), "k_s_p", 0.0)
         
         r = c1.number_input(T("s_r"), value=0.0)
         d = c2.number_input(T("s_d"), value=32)
@@ -206,18 +200,17 @@ elif st.session_state.page == "comp":
     st.divider()
     with st.container(border=True):
         target = st.selectbox(T("cm_what"), [T("cm_opt1"), T("cm_opt2")])
-        # AKILLI GİRİŞ - Başlık duruma göre değişiyor
         label = T("cm_opt2") if target == T("cm_opt1") else T("cm_opt1")
-        val = money_input(label, "k_cm_val", 0.0)
+        val = smart_input(label, "k_cm_val", 0.0)
 
         r = st.number_input(T("cm_r"), value=0.0)
         n = st.number_input(T("cm_n"), value=1)
         tax = st.number_input(T("tax"), value=0.0)
         if st.button(T("calc"), type="primary"):
             net_r = (r/100) * (1 - tax/100)
-            if target == T("cm_opt1"): # PV bul
+            if target == T("cm_opt1"): 
                 res = val / ((1 + net_r)**n); lbl = T("cm_opt1")
-            else: # FV bul
+            else: 
                 res = val * ((1 + net_r)**n); lbl = T("cm_opt2")
             c1, c2 = st.columns(2)
             c1.metric(lbl, f"{fmt(res)} ₺")
@@ -230,8 +223,7 @@ elif st.session_state.page in ["install", "table"]:
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True)
         st.write("")
         c1, c2, c3 = st.columns(3)
-        # AKILLI GİRİŞ - Kredi Tutarı
-        with c1: loan = money_input(T("pmt_loan"), "k_loan", 100000.0)
+        with c1: loan = smart_input(T("pmt_loan"), "k_loan", 100000.0)
         
         rate = c2.number_input(T("pmt_r"), value=1.20)
         n = c3.number_input(T("pmt_n"), value=12)
@@ -275,8 +267,7 @@ elif st.session_state.page == "disc":
     st.subheader(T("m_disc"))
     st.divider()
     with st.container(border=True):
-        # AKILLI GİRİŞ - Alacak Tutarı
-        receiv = money_input(T("dc_rec"), "k_receiv", 0.0)
+        receiv = smart_input(T("dc_rec"), "k_receiv", 0.0)
         
         days = st.number_input(T("dc_day"), value=0)
         r_alt = st.number_input(T("dc_rate"), value=0.0)
