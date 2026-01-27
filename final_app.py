@@ -20,7 +20,7 @@ st.markdown("""
     thead tr th:first-child {display:none}
     tbody th {display:none}
     
-    /* Kart Butonlar (Ana Menü) */
+    /* Kart Butonlar */
     div.stButton > button:first-child {
         width: 100%; height: 5em; border-radius: 12px; border: 1px solid #ced4da;
         font-weight: 700; background: #ffffff; color: #495057; 
@@ -30,19 +30,19 @@ st.markdown("""
         background: #f8f9fa; border-color: #ff914d; color: #e85d04; 
         transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
-    
     /* Metrikler */
     div[data-testid="stMetricValue"] {font-size: 1.3rem !important; color: #212529;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. DİL SÖZLÜKLERİ (TAM ÇEVİRİ) ---
+# --- 3. DİL SÖZLÜKLERİ ---
 
 # --- TÜRKÇE (TR) ---
 TR = {
     "header": "Eczacıbaşı Sağlık Hazine Departmanı",
     "app_name": "Finansal Hesap Makinesi",
     "home": "🏠 Ana Menü",
+    "info_sel": "Hesaplama modülünü seçiniz:", # EKLENDİ (Artık çevriliyor)
     
     # MODÜLLER
     "m_invest": "Yatırım Getiri Oranı",
@@ -57,39 +57,33 @@ TR = {
     # ORTAK
     "calc": "HESAPLA", "days_365": "Yıldaki Gün (365/360)", "tax": "Vergi Oranı (%)",
     
-    # YATIRIM
+    # DETAYLAR
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (gün)",
     "inv_r1": "Dönemsel Getiri (%)", "inv_r2": "Yıllık Basit Getiri (%)", "inv_r3": "Yıllık Bileşik Getiri (%)",
 
-    # FAİZ ORANLARI
     "rt_what": "Ne Hesaplayalım?", 
     "rt_opt1": "Yıllık Bileşik Faiz Oranı (%)", "rt_opt2": "Yıllık Basit Faiz Oranı (%)",
     "rt_base": "Yıllık Basit Faiz Oranı (%)", "rt_days": "Gün Sayısı",
     "rt_res": "Hesaplanan Oran",
     
-    # TEK DÖNEM
     "s_p": "Anapara", "s_r": "Faiz Oranı (% Yıllık)", "s_d": "Vade (gün)",
     "s_note": "Mevduatta (-), Kredide (+) giriniz.",
     "s_r1": "Faiz Tutarı", "s_r2": "Vade Sonu Değer",
     
-    # BİLEŞİK PARA
     "cm_what": "Ne Hesaplanacak?",
     "cm_opt1": "Anapara (PV)", "cm_opt2": "Vade Sonu Değer (FV)",
     "cm_r": "Dönemsel Faiz Oranı (%)", "cm_n": "Dönem Sayısı", "cm_res": "Faiz Tutarı",
     
-    # TAKSİT
     "pmt_what": "Ne Hesaplanacak?",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Dönemsel Faiz Oranı (%)", "pmt_n": "Taksit Sayısı",
     "pmt_kkdf": "KKDF (%)", "pmt_bsmv": "BSMV (%)",
     "pmt_res": "Taksit Tutarı",
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan"],
     
-    # KOMİSYONLU MALİYET
     "c_n": "Taksit Sayısı", "c_r": "Dönemsel Kredi Oranı (%)", 
     "c_tax": "Vergi Oranı (KKDF+BSMV)", "c_comm": "Komisyon/Masraf Oranı (%)",
     "c_res1": "Gerçek Aylık Maliyet", "c_res2": "Yıllık Basit Maliyet", "c_res3": "Yıllık Bileşik Maliyet",
 
-    # İSKONTO
     "dc_rec": "Alacak Tutarı", "dc_day": "Erken Tahsilat Günü", "dc_rate": "Alternatif Mevduat Faizi (%)",
     "dc_r1": "İskontolu Tutar (Ele Geçen)", "dc_r2": "Yapılan İskonto Tutarı"
 }
@@ -99,6 +93,7 @@ EN = {
     "header": "Eczacıbaşı Healthcare Treasury Dept.",
     "app_name": "Financial Calculator",
     "home": "🏠 Home Menu",
+    "info_sel": "Select calculation module:", # EKLENDİ
     
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations (PV/FV)",
@@ -136,11 +131,12 @@ EN = {
     "dc_r1": "Net Payable Amount", "dc_r2": "Discount Amount"
 }
 
-# --- FRANSIZCA (FR) - SANOFI İÇİN ---
+# --- FRANSIZCA (FR) ---
 FR = {
     "header": "Dépt. Trésorerie Santé Eczacıbaşı",
     "app_name": "Calculatrice Financière",
     "home": "🏠 Menu Principal",
+    "info_sel": "Sélectionnez le module de calcul :", # EKLENDİ
     
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
@@ -183,6 +179,7 @@ DE = {
     "header": "Eczacıbaşı Gesundheits-Schatzamt",
     "app_name": "Finanzrechner",
     "home": "🏠 Hauptmenü",
+    "info_sel": "Bitte Berechnungsmodul wählen:", # EKLENDİ
     
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes (Barwert)",
@@ -206,228 +203,4 @@ DE = {
     "cm_opt1": "Barwert (PV)", "cm_opt2": "Endwert (FV)",
     "cm_r": "Periodischer Zins (%)", "cm_n": "Perioden", "cm_res": "Zinsbetrag",
     
-    "pmt_what": "Was berechnen?",
-    "pmt_loan": "Kreditbetrag", "pmt_r": "Periodischer Zins (%)", "pmt_n": "Raten",
-    "pmt_kkdf": "KKDF (%)", "pmt_bsmv": "BSMV (%)",
-    "pmt_res": "Ratenhöhe",
-    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "KKDF", "BSMV", "Restschuld"],
-    
-    "c_n": "Raten", "c_r": "Kreditzins (%)", 
-    "c_tax": "Steuer (KKDF+BSMV)", "c_comm": "Provision (%)",
-    "c_res1": "Monatl. Effektivkosten", "c_res2": "Jährl. Einfache Kosten", "c_res3": "Jährl. Effektive Kosten",
-
-    "dc_rec": "Forderungsbetrag", "dc_day": "Tage früher", "dc_rate": "Alternativzins (%)",
-    "dc_r1": "Auszahlungsbetrag", "dc_r2": "Skontobetrag"
-}
-
-LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
-
-# --- 4. SİSTEM ---
-if 'lang' not in st.session_state: st.session_state.lang = "TR"
-if 'page' not in st.session_state: st.session_state.page = "home"
-
-def T(k): return LANGS[st.session_state.lang].get(k, k)
-def go(p): st.session_state.page = p; st.rerun()
-
-# --- YAN MENÜ ---
-with st.sidebar:
-    st.title(T("app_name"))
-    st.caption(T("header"))
-    
-    # Kırık resim kaldırıldı, temiz menü
-    
-    sel = st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel")
-    st.session_state.lang = sel.split(" ")[1]
-    
-    st.divider()
-    if st.button(T("home")): go("home")
-
-# --- SAYFALAR ---
-
-# 0. ANA SAYFA (8 Butonlu Grid)
-if st.session_state.page == "home":
-    st.title(T("header"))
-    st.info("Hesaplama modülünü seçiniz:")
-    
-    c1, c2, c3 = st.columns(3)
-    
-    with c1:
-        if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
-        if st.button(f"💰 {T('m_comp')}", use_container_width=True): go("comp")
-        if st.button(f"⚡ {T('m_disc')}", use_container_width=True): go("disc") # İskonto
-    
-    with c2:
-        if st.button(f"🔄 {T('m_rates')}", use_container_width=True): go("rates")
-        if st.button(f"💳 {T('m_install')}", use_container_width=True): go("install")
-        if st.button(f"💸 {T('m_cost')}", use_container_width=True): go("cost")
-
-    with c3:
-        if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
-        if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
-
-# 1. YATIRIM GETİRİSİ
-elif st.session_state.page == "invest":
-    st.subheader(T("m_invest"))
-    st.divider()
-    with st.container(border=True):
-        buy = st.number_input(T("inv_buy"), value=0.0, format="%.4f")
-        sell = st.number_input(T("inv_sell"), value=0.0, format="%.4f")
-        days = st.number_input(T("inv_day"), value=30, step=1)
-        
-        if st.button(T("calc"), type="primary"):
-            if buy > 0 and days > 0:
-                per = (sell - buy) / buy
-                ann_s = per * (365/days)
-                ann_c = ((1 + per)**(365/days)) - 1
-                c1, c2, c3 = st.columns(3)
-                c1.metric(T("inv_r1"), f"%{per*100:,.2f}")
-                c2.metric(T("inv_r2"), f"%{ann_s*100:,.2f}")
-                c3.metric(T("inv_r3"), f"%{ann_c*100:,.2f}")
-
-# 2. FAİZ ORANI DÖNÜŞÜM
-elif st.session_state.page == "rates":
-    st.subheader(T("m_rates"))
-    st.divider()
-    with st.container(border=True):
-        mode = st.selectbox(T("rt_what"), [T("rt_opt1"), T("rt_opt2")])
-        days = st.number_input(T("rt_days"), value=365)
-        base = st.number_input(T("rt_base"), value=0.0)
-        
-        if st.button(T("calc"), type="primary"):
-            r = base / 100
-            if days > 0:
-                if mode == T("rt_opt1"): res = ((1 + r * (days/365))**(365/days)) - 1
-                else: res = (((1 + r)**(days/365)) - 1) * (365/days)
-                st.metric(T("rt_res"), f"%{res*100:,.2f}")
-
-# 3. TEK DÖNEMLİK FAİZ
-elif st.session_state.page == "single":
-    st.subheader(T("m_single"))
-    st.divider()
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        p = c1.number_input(T("s_p"), value=0.0, step=1000.0)
-        r = c1.number_input(T("s_r"), value=0.0)
-        d = c2.number_input(T("s_d"), value=32)
-        tax = c2.number_input(T("tax"), value=0.0, help=T("s_note"))
-        day_base = st.selectbox(T("days_365"), [365, 360])
-        
-        if st.button(T("calc"), type="primary"):
-            gross = (p * r * d) / (day_base * 100)
-            net = gross * (1 - tax/100)
-            m1, m2 = st.columns(2)
-            m1.metric(T("s_r1"), f"{net:,.2f}")
-            m2.metric(T("s_r2"), f"{p+net:,.2f}")
-
-# 4. BİLEŞİK FAİZLE PARA
-elif st.session_state.page == "comp":
-    st.subheader(T("m_comp"))
-    st.divider()
-    with st.container(border=True):
-        target = st.selectbox(T("cm_what"), [T("cm_opt1"), T("cm_opt2")])
-        
-        if target == T("cm_opt1"): 
-            val = st.number_input(T("cm_opt2"), value=0.0) # FV gir
-        else: 
-            val = st.number_input(T("cm_opt1"), value=0.0) # PV gir
-
-        r = st.number_input(T("cm_r"), value=0.0)
-        n = st.number_input(T("cm_n"), value=1)
-        tax = st.number_input(T("tax"), value=0.0)
-        
-        if st.button(T("calc"), type="primary"):
-            net_r = (r/100) * (1 - tax/100)
-            if target == T("cm_opt1"): # PV bul
-                res = val / ((1 + net_r)**n)
-                lbl = T("cm_opt1")
-            else: # FV bul
-                res = val * ((1 + net_r)**n)
-                lbl = T("cm_opt2")
-            
-            c1, c2 = st.columns(2)
-            c1.metric(lbl, f"{res:,.2f}")
-            c2.metric(T("cm_res"), f"{abs(val-res):,.2f}")
-
-# 5. TAKSİT VE TABLO
-elif st.session_state.page in ["install", "table"]:
-    st.subheader(T("m_install") if st.session_state.page=="install" else T("m_table"))
-    st.divider()
-    with st.container(border=True):
-        c1, c2, c3 = st.columns(3)
-        loan = c1.number_input(T("pmt_loan"), value=100000.0)
-        rate = c2.number_input(T("pmt_r"), value=1.20)
-        n = c3.number_input(T("pmt_n"), value=12)
-        
-        c4, c5 = st.columns(2)
-        kkdf = c4.number_input("KKDF (%)", value=15.0)
-        bsmv = c5.number_input("BSMV (%)", value=5.0)
-        
-        gross = (rate/100) * (1 + (kkdf+bsmv)/100)
-        
-        if st.button(T("calc"), type="primary"):
-            if n > 0:
-                if gross > 0: pmt = loan * (gross * (1+gross)**n) / ((1+gross)**n - 1)
-                else: pmt = loan / n
-                
-                st.metric(T("pmt_res"), f"{pmt:,.2f}")
-                
-                if st.session_state.page == "table":
-                    st.write("---")
-                    sch = []
-                    bal = loan
-                    for i in range(1, int(n)+1):
-                        inte = bal * (rate/100)
-                        t_kkdf = inte * (kkdf/100)
-                        t_bsmv = inte * (bsmv/100)
-                        princ = pmt - (inte + t_kkdf + t_bsmv)
-                        bal -= princ
-                        sch.append([i, pmt, princ, inte, t_kkdf, t_bsmv, max(0, bal)])
-                    
-                    df = pd.DataFrame(sch, columns=T("tbl_cols"))
-                    st.dataframe(df.style.format("{:,.2f}"), use_container_width=True, hide_index=True)
-
-# 6. KOMİSYON DAHİL MALİYET
-elif st.session_state.page == "cost":
-    st.subheader(T("m_cost"))
-    st.divider()
-    st.info("IRR / Efektif Maliyet")
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        n = c1.number_input(T("c_n"), value=12)
-        r = c1.number_input(T("c_r"), value=1.40)
-        tax = c2.number_input(T("c_tax"), value=20.0)
-        comm = c2.number_input(T("c_comm"), value=1.0)
-        
-        if st.button(T("calc"), type="primary"):
-            inflow = 100 * (1 - comm/100)
-            gross = (r/100) * (1 + tax/100)
-            pmt = 100 * (gross * (1+gross)**n) / ((1+gross)**n - 1)
-            
-            flows = [inflow] + [-pmt]*int(n)
-            irr_month = npf.irr(flows)
-            
-            ann_s = irr_month * 12
-            ann_c = ((1 + irr_month)**12) - 1
-            
-            m1, m2, m3 = st.columns(3)
-            m1.metric(T("c_res1"), f"%{irr_month*100:,.2f}")
-            m2.metric(T("c_res2"), f"%{ann_s*100:,.2f}")
-            m3.metric(T("c_res3"), f"%{ann_c*100:,.2f}")
-
-# 7. İSKONTOLU ALACAK
-elif st.session_state.page == "disc":
-    st.subheader(T("m_disc"))
-    st.divider()
-    with st.container(border=True):
-        receiv = st.number_input(T("dc_rec"), value=0.0)
-        days = st.number_input(T("dc_day"), value=0)
-        r_alt = st.number_input(T("dc_rate"), value=0.0)
-        
-        if st.button(T("calc"), type="primary"):
-            r = r_alt / 100
-            if days > 0:
-                pv = receiv / ((1 + r)**(days/365))
-                disc_amt = receiv - pv
-                c1, c2 = st.columns(2)
-                c1.metric(T("dc_r1"), f"{pv:,.2f}")
-                c2.metric(T("dc_r2"), f"{disc_amt:,.2f}", delta=f"-{disc_amt:,.2f}")
+    "pmt_what
