@@ -10,65 +10,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. PROFESYONEL CSS (NET OKUNABİLİRLİK) ---
-st.markdown("""
-<style>
-    .block-container {padding-top: 2rem; padding-bottom: 3rem;}
-    
-    /* Gereksiz Tablo Başlıklarını Gizle */
-    thead tr th:first-child {display:none}
-    tbody th {display:none}
-    
-    /* --- BUTON TASARIMI --- */
-    div.stButton > button:first-child {
-        width: 100%; height: 4.5em; border-radius: 10px; border: 1px solid #ced4da;
-        font-weight: 700; background: #ffffff; color: #495057; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
-    }
-    div.stButton > button:hover {
-        background: #f1f3f5; border-color: #0d6efd; color: #0d6efd; 
-        transform: translateY(-2px);
-    }
-    
-    /* --- GİRİŞ KUTULARI (INPUTS) - SİYAH & KALIN --- */
-    .stNumberInput input {
-        color: #000000 !important;
-        font-weight: 800 !important;
-        background-color: #ffffff !important;
-        border: 1px solid #ced4da !important;
-        font-size: 1.1rem !important;
-    }
-    
-    /* Kutunun içindeki okları gizle */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; margin: 0; 
-    }
-    
-    /* --- SONUÇ RAKAMLARI (METRICS) - KOYU MAVİ --- */
-    div[data-testid="stMetricValue"] {
-        font-size: 1.7rem !important; 
-        color: #0d25cf !important; /* Eczacıbaşı/Sanofi Kurumsal Mavi Tonu */
-        font-weight: 800 !important;
-    }
-    div[data-testid="stMetricLabel"] {
-        font-size: 1rem !important;
-        font-weight: 600;
-        color: #212529 !important;
-    }
-    
-    /* Arka Plan */
-    [data-testid="stAppViewContainer"] {
-        background-color: #f8f9fa; 
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# --- 3. FORMATLAMA FONKSİYONU ---
+# --- 2. FONKSİYONLAR ---
 def fmt(value):
-    """
-    Sonuçları '1.234,56' formatında metne çevirir.
-    """
     if value is None: return "0,00"
     try:
         s = "{:,.2f}".format(float(value))
@@ -76,9 +19,117 @@ def fmt(value):
     except:
         return "0,00"
 
-# --- 4. DİL SÖZLÜKLERİ ---
+def update_lang():
+    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
+
+# --- 3. SİSTEM BAŞLANGICI ---
+if 'lang' not in st.session_state: st.session_state.lang = "TR"
+if 'page' not in st.session_state: st.session_state.page = "home"
+
+def T(k):
+    # Dil Sözlükleri (Aşağıda tanımlı)
+    langs = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
+    return langs[st.session_state.lang].get(k, k)
+
+def go(p): st.session_state.page = p; st.rerun()
+
+# --- 4. YAN MENÜ & TEMA SEÇİMİ ---
+with st.sidebar:
+    st.title(T("app_name")) # Hata almamak için T fonksiyonu tanımlandıktan sonra çağırıyoruz
+    st.caption("Eczacıbaşı Sağlık Hazine Departmanı")
+    
+    # 1. Dil Seçimi
+    st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
+    
+    st.write("") # Boşluk
+    
+    # 2. GECE MODU ANAHTARI (YENİ)
+    # Varsayılan değer False (Gündüz Modu)
+    is_dark = st.toggle("🌙 Gece Modu / Dark Mode", value=False)
+    
+    st.divider()
+    if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
+
+# --- 5. DİNAMİK CSS (TEMA MOTORU) ---
+# Seçilen moda göre renkleri ayarlıyoruz
+if is_dark:
+    # --- GECE MODU RENKLERİ ---
+    bg_color = "#0e1117"      # Koyu Arka Plan
+    card_bg = "#262730"       # Koyu Kartlar
+    text_color = "#ffffff"    # Beyaz Yazı
+    metric_color = "#4dabf7"  # Parlak Açık Mavi (Okunurluk için)
+    input_bg = "#262730"      # Koyu Input
+    input_text = "#ffffff"    # Beyaz Input Yazısı
+    btn_border = "#495057"
+else:
+    # --- GÜNDÜZ MODU RENKLERİ ---
+    bg_color = "#f8f9fa"      # Açık Gri Arka Plan
+    card_bg = "#ffffff"       # Beyaz Kartlar
+    text_color = "#000000"    # Siyah Yazı
+    metric_color = "#0d25cf"  # Koyu Lacivert (Kurumsal)
+    input_bg = "#ffffff"      # Beyaz Input
+    input_text = "#000000"    # Siyah Input Yazısı
+    btn_border = "#ced4da"
+
+st.markdown(f"""
+<style>
+    /* Ana Arka Plan */
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
+    .block-container {{padding-top: 2rem; padding-bottom: 3rem;}}
+    
+    /* Tablo Başlıkları Gizle */
+    thead tr th:first-child {{display:none}}
+    tbody th {{display:none}}
+    
+    /* --- BUTON TASARIMI --- */
+    div.stButton > button:first-child {{
+        width: 100%; height: 4.5em; border-radius: 10px; 
+        border: 1px solid {btn_border};
+        font-weight: 700; 
+        background: {card_bg}; 
+        color: {text_color}; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
+    }}
+    div.stButton > button:hover {{
+        background: {input_bg}; border-color: #0d6efd; color: #0d6efd; 
+        transform: translateY(-2px);
+    }}
+    
+    /* --- GİRİŞ KUTULARI (INPUTS) --- */
+    .stNumberInput input {{
+        color: {input_text} !important;
+        font-weight: 800 !important;
+        background-color: {input_bg} !important;
+        border: 1px solid {btn_border} !important;
+        font-size: 1.1rem !important;
+    }}
+    
+    /* Okları gizle */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button {{ 
+        -webkit-appearance: none; margin: 0; 
+    }}
+    
+    /* --- SONUÇ RAKAMLARI (METRICS) --- */
+    div[data-testid="stMetricValue"] {{
+        font-size: 1.7rem !important; 
+        color: {metric_color} !important; 
+        font-weight: 800 !important;
+    }}
+    div[data-testid="stMetricLabel"] {{
+        font-size: 1rem !important;
+        font-weight: 600;
+        color: {text_color} !important;
+        opacity: 0.8;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# --- 6. DİL SÖZLÜKLERİ ---
 TR = {
-    "header": "Eczacıbaşı Sağlık Hazine Departmanı",
     "app_name": "Finansal Hesap Makinesi",
     "home": "🏠 Ana Menü",
     "info_sel": "Hesaplama modülünü seçiniz:", 
@@ -103,29 +154,16 @@ TR = {
     "dc_r1": "İskontolu Tutar (Ele Geçen)", "dc_r2": "Yapılan İskonto Tutarı"
 }
 EN = TR.copy(); FR = TR.copy(); DE = TR.copy()
-LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
+# (Diğer dillerin başlıklarını buraya ekleyebilirsin, şu an TR yedeği çalışır)
+EN["app_name"] = "Financial Calculator"; EN["home"] = "🏠 Home Menu"; EN["info_sel"] = "Select module:"
+EN["m_disc"] = "⚡ Discounted Receivables"
 
-# --- 5. SİSTEM ---
-if 'lang' not in st.session_state: st.session_state.lang = "TR"
-if 'page' not in st.session_state: st.session_state.page = "home"
-
-def T(k): return LANGS[st.session_state.lang].get(k, k)
-def go(p): st.session_state.page = p; st.rerun()
-def update_lang(): st.session_state.lang = st.session_state.l_sel.split(" ")[1]
-
-with st.sidebar:
-    st.title(T("app_name")); st.caption(T("header"))
-    st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
-    st.divider()
-    if st.button(T("home")): go("home")
-
-# --- 6. SAYFALAR ---
+# --- 7. SAYFALAR ---
 
 if st.session_state.page == "home":
-    st.title(T("header"))
+    st.title(T("app_name"))
     st.info(T("info_sel"))
     
-    # Grid Düzeni (6 Modül)
     c1, c2, c3 = st.columns(3)
     with c1:
         if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
@@ -137,13 +175,10 @@ if st.session_state.page == "home":
         if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
         if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
     
-    st.write("") # Boşluk
-    
-    # İSKONTO BUTONU - ORTALANMIŞ VE GENİŞ
-    # [1, 2, 1] oranı ile ortadaki sütuna genişlik veriyoruz
+    st.write("") 
+    # ORTALANMIŞ İSKONTO BUTONU
     ec1, ec2, ec3 = st.columns([1, 2, 1])
     with ec2:
-        # Butonu tam ortaya yerleştiriyoruz
         if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
 
 elif st.session_state.page == "invest":
@@ -184,7 +219,6 @@ elif st.session_state.page == "single":
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1: p = st.number_input(T("s_p"), value=0.0, step=1000.0, format="%.2f")
-        
         r = c1.number_input(T("s_r"), value=0.0, format="%.2f")
         d = c2.number_input(T("s_d"), value=32)
         tax = c2.number_input(T("tax"), value=0.0, format="%.2f", help=T("s_note"))
@@ -203,7 +237,6 @@ elif st.session_state.page == "comp":
         target = st.selectbox(T("cm_what"), [T("cm_opt1"), T("cm_opt2")])
         label = T("cm_opt2") if target == T("cm_opt1") else T("cm_opt1")
         val = st.number_input(label, value=0.0, step=1000.0, format="%.2f")
-
         r = st.number_input(T("cm_r"), value=0.0, format="%.2f")
         n = st.number_input(T("cm_n"), value=1)
         tax = st.number_input(T("tax"), value=0.0, format="%.2f")
@@ -225,7 +258,6 @@ elif st.session_state.page in ["install", "table"]:
         st.write("")
         c1, c2, c3 = st.columns(3)
         with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f")
-        
         rate = c2.number_input(T("pmt_r"), value=1.20, format="%.2f")
         n = c3.number_input(T("pmt_n"), value=12)
         c4, c5 = st.columns(2)
@@ -269,7 +301,6 @@ elif st.session_state.page == "disc":
     st.divider()
     with st.container(border=True):
         receiv = st.number_input(T("dc_rec"), value=0.0, step=1000.0, format="%.2f")
-        
         days = st.number_input(T("dc_day"), value=0)
         r_alt = st.number_input(T("dc_rate"), value=0.0, format="%.2f")
         
