@@ -10,46 +10,55 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. TASARIM & CSS ---
+# --- 2. PROFESYONEL CSS (RENK VE KONTRAST AYARLARI) ---
 st.markdown("""
 <style>
     .block-container {padding-top: 2rem; padding-bottom: 3rem;}
     
-    /* Tablo Başlıkları Gizle */
+    /* Gereksiz Tablo Başlıklarını Gizle */
     thead tr th:first-child {display:none}
     tbody th {display:none}
     
-    /* Butonlar */
+    /* --- BUTON TASARIMI --- */
     div.stButton > button:first-child {
-        width: 100%; height: 4.5em; border-radius: 12px; border: 1px solid #ced4da;
+        width: 100%; height: 4.5em; border-radius: 10px; border: 1px solid #ced4da;
         font-weight: 700; background: #ffffff; color: #495057; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
     }
     div.stButton > button:hover {
-        background: #f8f9fa; border-color: #ff914d; color: #e85d04; 
-        transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        background: #f1f3f5; border-color: #0d6efd; color: #0d6efd; 
+        transform: translateY(-2px);
     }
     
-    /* GİRİŞ KUTULARI İÇİN STİL */
-    input[type="number"] {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #333;
+    /* --- GİRİŞ KUTULARI (INPUTS) - KRİTİK DÜZELTME --- */
+    /* Yazı Rengi: SİYAH ve KALIN */
+    .stNumberInput input {
+        color: #000000 !important;
+        font-weight: 700 !important;
+        background-color: #ffffff !important;
+        border: 1px solid #ced4da !important;
     }
-
-    /* SONUÇ RAKAMLARI */
+    /* Kutunun içindeki küçük okları gizle (daha temiz görünüm) */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; margin: 0; 
+    }
+    
+    /* --- SONUÇ RAKAMLARI (METRICS) --- */
     div[data-testid="stMetricValue"] {
-        font-size: 1.6rem !important; color: #0d6efd !important; font-weight: bold;
+        font-size: 1.6rem !important; 
+        color: #0d25cf !important; /* KOYU LACİVERT - NET OKUNUR */
+        font-weight: 800 !important;
     }
     div[data-testid="stMetricLabel"] {
-        font-size: 1rem !important; font-weight: 600; color: #495057 !important;
+        font-size: 1rem !important;
+        font-weight: 600;
+        color: #212529 !important; /* KOYU GRİ */
     }
     
-    /* Bilgilendirme Kutucukları */
-    .element-container .stAlert {
-        padding: 0.5rem;
-        margin-top: -10px;
-        margin-bottom: 10px;
+    /* Koyu Modda Bile Okunsun Diye Arka Plan Ayarı */
+    [data-testid="stAppViewContainer"] {
+        background-color: #f8f9fa; /* Hafif Gri Arka Plan - Göz yormaz */
     }
 </style>
 """, unsafe_allow_html=True)
@@ -57,7 +66,8 @@ st.markdown("""
 # --- 3. FORMATLAMA FONKSİYONU ---
 def fmt(value):
     """
-    Sayıyı '1.234,56' formatına çevirir (Görsel İçin).
+    Sonuçları '1.234,56' formatında metne çevirir.
+    Girdi kutusunu değil, SONUÇLARI ve TABLOYU düzeltir.
     """
     if value is None: return "0,00"
     try:
@@ -65,23 +75,6 @@ def fmt(value):
         return s.replace(",", "X").replace(".", ",").replace("X", ".")
     except:
         return "0,00"
-
-# --- AKILLI GİRİŞ SİSTEMİ (PREVIEW MODLU) ---
-def smart_input(label, key, default_val=0.0):
-    """
-    Sayı girilir, altına anında okunuşu yazılır.
-    Hata yapmayı engeller.
-    """
-    # 1. Standart Sayı Girişi (En güvenlisi)
-    val = st.number_input(label, value=float(default_val), step=1000.0, format="%.2f", key=key)
-    
-    # 2. Altına Okunuşunu Yaz (Canlı Doğrulama)
-    if val > 0:
-        st.caption(f"✅ Okunuş: **{fmt(val)} ₺**")
-    else:
-        st.caption("➖")
-        
-    return val
 
 # --- 4. DİL SÖZLÜKLERİ ---
 TR = {
@@ -149,8 +142,8 @@ elif st.session_state.page == "invest":
     st.subheader(T("m_invest"))
     st.divider()
     with st.container(border=True):
-        buy = smart_input(T("inv_buy"), "k_inv_buy", 0.0)
-        sell = smart_input(T("inv_sell"), "k_inv_sell", 0.0)
+        buy = st.number_input(T("inv_buy"), value=0.0, format="%.2f")
+        sell = st.number_input(T("inv_sell"), value=0.0, format="%.2f")
         days = st.number_input(T("inv_day"), value=30, step=1)
         
         if st.button(T("calc"), type="primary"):
@@ -169,7 +162,7 @@ elif st.session_state.page == "rates":
     with st.container(border=True):
         mode = st.selectbox(T("rt_what"), [T("rt_opt1"), T("rt_opt2")])
         days = st.number_input(T("rt_days"), value=365)
-        base = st.number_input(T("rt_base"), value=0.0)
+        base = st.number_input(T("rt_base"), value=0.0, format="%.2f")
         if st.button(T("calc"), type="primary"):
             r = base / 100
             if days > 0:
@@ -182,11 +175,11 @@ elif st.session_state.page == "single":
     st.divider()
     with st.container(border=True):
         c1, c2 = st.columns(2)
-        with c1: p = smart_input(T("s_p"), "k_s_p", 0.0)
+        with c1: p = st.number_input(T("s_p"), value=0.0, step=1000.0, format="%.2f")
         
-        r = c1.number_input(T("s_r"), value=0.0)
+        r = c1.number_input(T("s_r"), value=0.0, format="%.2f")
         d = c2.number_input(T("s_d"), value=32)
-        tax = c2.number_input(T("tax"), value=0.0, help=T("s_note"))
+        tax = c2.number_input(T("tax"), value=0.0, format="%.2f", help=T("s_note"))
         day_base = st.selectbox(T("days_365"), [365, 360])
         if st.button(T("calc"), type="primary"):
             gross = (p * r * d) / (day_base * 100)
@@ -201,11 +194,11 @@ elif st.session_state.page == "comp":
     with st.container(border=True):
         target = st.selectbox(T("cm_what"), [T("cm_opt1"), T("cm_opt2")])
         label = T("cm_opt2") if target == T("cm_opt1") else T("cm_opt1")
-        val = smart_input(label, "k_cm_val", 0.0)
+        val = st.number_input(label, value=0.0, step=1000.0, format="%.2f")
 
-        r = st.number_input(T("cm_r"), value=0.0)
+        r = st.number_input(T("cm_r"), value=0.0, format="%.2f")
         n = st.number_input(T("cm_n"), value=1)
-        tax = st.number_input(T("tax"), value=0.0)
+        tax = st.number_input(T("tax"), value=0.0, format="%.2f")
         if st.button(T("calc"), type="primary"):
             net_r = (r/100) * (1 - tax/100)
             if target == T("cm_opt1"): 
@@ -223,13 +216,13 @@ elif st.session_state.page in ["install", "table"]:
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True)
         st.write("")
         c1, c2, c3 = st.columns(3)
-        with c1: loan = smart_input(T("pmt_loan"), "k_loan", 100000.0)
+        with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f")
         
-        rate = c2.number_input(T("pmt_r"), value=1.20)
+        rate = c2.number_input(T("pmt_r"), value=1.20, format="%.2f")
         n = c3.number_input(T("pmt_n"), value=12)
         c4, c5 = st.columns(2)
-        kkdf = c4.number_input("KKDF (%)", value=15.0)
-        bsmv = c5.number_input("BSMV (%)", value=5.0)
+        kkdf = c4.number_input("KKDF (%)", value=15.0, format="%.2f")
+        bsmv = c5.number_input("BSMV (%)", value=5.0, format="%.2f")
         
         if st.button(T("calc"), type="primary"):
             if n > 0:
@@ -267,10 +260,10 @@ elif st.session_state.page == "disc":
     st.subheader(T("m_disc"))
     st.divider()
     with st.container(border=True):
-        receiv = smart_input(T("dc_rec"), "k_receiv", 0.0)
+        receiv = st.number_input(T("dc_rec"), value=0.0, step=1000.0, format="%.2f")
         
         days = st.number_input(T("dc_day"), value=0)
-        r_alt = st.number_input(T("dc_rate"), value=0.0)
+        r_alt = st.number_input(T("dc_rate"), value=0.0, format="%.2f")
         
         if st.button(T("calc"), type="primary"):
             r = r_alt / 100
