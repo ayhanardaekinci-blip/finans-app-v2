@@ -42,7 +42,7 @@ TR = {
     "header": "Eczacıbaşı Sağlık Hazine Departmanı",
     "app_name": "Finansal Hesap Makinesi",
     "home": "🏠 Ana Menü",
-    "info_sel": "Hesaplama modülünü seçiniz:", # EKLENDİ (Artık çevriliyor)
+    "info_sel": "Hesaplama modülünü seçiniz:", 
     
     # MODÜLLER
     "m_invest": "Yatırım Getiri Oranı",
@@ -93,7 +93,7 @@ EN = {
     "header": "Eczacıbaşı Healthcare Treasury Dept.",
     "app_name": "Financial Calculator",
     "home": "🏠 Home Menu",
-    "info_sel": "Select calculation module:", # EKLENDİ
+    "info_sel": "Select calculation module:", 
     
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations (PV/FV)",
@@ -136,7 +136,7 @@ FR = {
     "header": "Dépt. Trésorerie Santé Eczacıbaşı",
     "app_name": "Calculatrice Financière",
     "home": "🏠 Menu Principal",
-    "info_sel": "Sélectionnez le module de calcul :", # EKLENDİ
+    "info_sel": "Sélectionnez le module de calcul :",
     
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
@@ -179,7 +179,7 @@ DE = {
     "header": "Eczacıbaşı Gesundheits-Schatzamt",
     "app_name": "Finanzrechner",
     "home": "🏠 Hauptmenü",
-    "info_sel": "Bitte Berechnungsmodul wählen:", # EKLENDİ
+    "info_sel": "Bitte Berechnungsmodul wählen:",
     
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes (Barwert)",
@@ -203,4 +203,66 @@ DE = {
     "cm_opt1": "Barwert (PV)", "cm_opt2": "Endwert (FV)",
     "cm_r": "Periodischer Zins (%)", "cm_n": "Perioden", "cm_res": "Zinsbetrag",
     
-    "pmt_what
+    "pmt_what": "Was berechnen?",
+    "pmt_loan": "Kreditbetrag", "pmt_r": "Periodischer Zins (%)", "pmt_n": "Raten",
+    "pmt_kkdf": "KKDF (%)", "pmt_bsmv": "BSMV (%)",
+    "pmt_res": "Ratenhöhe",
+    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "KKDF", "BSMV", "Restschuld"],
+    
+    "c_n": "Raten", "c_r": "Kreditzins (%)", 
+    "c_tax": "Steuer (KKDF+BSMV)", "c_comm": "Provision (%)",
+    "c_res1": "Monatl. Effektivkosten", "c_res2": "Jährl. Einfache Kosten", "c_res3": "Jährl. Effektive Kosten",
+
+    "dc_rec": "Forderungsbetrag", "dc_day": "Tage früher", "dc_rate": "Alternativzins (%)",
+    "dc_r1": "Auszahlungsbetrag", "dc_r2": "Skontobetrag"
+}
+
+LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
+
+# --- 4. SİSTEM & FONKSİYONLAR ---
+if 'lang' not in st.session_state: st.session_state.lang = "TR"
+if 'page' not in st.session_state: st.session_state.page = "home"
+
+def T(k): return LANGS[st.session_state.lang].get(k, k)
+def go(p): st.session_state.page = p; st.rerun()
+
+# --- CALLBACK (GECİKMEYİ ÖNLER) ---
+def update_lang():
+    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
+
+# --- YAN MENÜ ---
+with st.sidebar:
+    st.title(T("app_name"))
+    st.caption(T("header"))
+    
+    st.selectbox(
+        "Dil / Language", 
+        ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], 
+        key="l_sel", 
+        on_change=update_lang
+    )
+    
+    st.divider()
+    if st.button(T("home")): go("home")
+
+# --- SAYFALAR ---
+
+# 0. ANA SAYFA
+if st.session_state.page == "home":
+    st.title(T("header"))
+    st.info(T("info_sel"))
+    
+    c1, c2, c3 = st.columns(3)
+    
+    with c1:
+        if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
+        if st.button(f"💰 {T('m_comp')}", use_container_width=True): go("comp")
+        if st.button(f"⚡ {T('m_disc')}", use_container_width=True): go("disc")
+    
+    with c2:
+        if st.button(f"🔄 {T('m_rates')}", use_container_width=True): go("rates")
+        if st.button(f"💳 {T('m_install')}", use_container_width=True): go("install")
+        if st.button(f"💸 {T('m_cost')}", use_container_width=True): go("cost")
+
+    with c3:
+        if st.button(f"📅 {
