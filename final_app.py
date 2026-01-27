@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. DİL SÖZLÜKLERİ (TÜM DİLLER GÜNCELLENDİ) ---
+# --- 2. DİL SÖZLÜKLERİ ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
     "subheader": "Eczacıbaşı Sağlık Hazine Departmanı",
@@ -18,35 +18,28 @@ TR = {
     "info_sel": "Hesaplama modülünü seçiniz:",
     "mode_toggle": "🌙 Gece Modu",
     
-    # Butonlar
     "m_invest": "Yatırım Getiri Oranı",
     "m_rates": "Basit - Bileşik Faiz",
     "m_single": "Tek Dönemlik Faiz",
     "m_comp": "Bileşik Faizle Para",
     "m_install": "Kredi / Taksit Hesapla",
     "m_table": "Ödeme Tablosu Oluştur",
-    "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)", # YENİ
     "m_disc": "⚡ İskontolu Alacak Hesapla",
+    "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)",
     
     "calc": "HESAPLA", "days_365": "Baz Gün (365/360)", "tax": "Vergi Oranı (%)",
     
-    # Mevduat Modülü (YENİ)
-    "dep_amt": "Yatırılan Tutar (Mevduat)",
-    "dep_days": "Vade (Gün)",
-    "dep_rate": "Yıllık Faiz Oranı (%)",
-    "dep_res_net": "Net Getiri (Ele Geçen)",
-    "dep_res_total": "Vade Sonu Toplam Bakiye",
-    "dep_info_stopaj": "Uygulanan Stopaj Oranı",
-    "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
+    "cr_type": "Ödeme Planı Türü",
+    "cr_opt1": "Eşit Taksitli (Standart)",
+    "cr_opt2": "Eşit Anaparalı (Azalan)",
     
-    # Diğer Modüller
-    "cr_type": "Ödeme Planı Türü", "cr_opt1": "Eşit Taksitli (Standart)", "cr_opt2": "Eşit Anaparalı (Azalan)",
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
     "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
     "cm_what": "Ne Hesaplanacak?", "cm_val1": "Anapara (PV)", "cm_val2": "Vade Sonu (FV)", "cm_n": "Dönem Sayısı", "cm_r": "Dönemsel Faiz (%)",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
+    "dep_amt": "Yatırılan Tutar (Mevduat)", "dep_days": "Vade (Gün)", "dep_rate": "Yıllık Faiz Oranı (%)",
     
     "inv_r1": "Dönemsel Getiri", "inv_r2": "Yıllık Basit Getiri", "inv_r3": "Yıllık Bileşik Getiri",
     "rt_res": "Hesaplanan Oran",
@@ -54,6 +47,9 @@ TR = {
     "cm_lbl_res": "Hesaplanan Tutar", "cm_res_diff": "Faiz Farkı",
     "pmt_res": "İlk Taksit Tutarı", "pmt_res_total": "Toplam Geri Ödeme",
     "dc_r1": "Ele Geçecek Tutar", "dc_r2": "Yapılan İskonto (İndirim)",
+    "dep_res_net": "Net Getiri (Ele Geçen)", "dep_res_total": "Vade Sonu Toplam Bakiye",
+    "dep_info_stopaj": "Uygulanan Stopaj Oranı",
+    "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
     
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
     "opt_comp_rate": "Yıllık Bileşik Faiz (%)", "opt_simp_rate": "Yıllık Basit Faiz (%)",
@@ -66,16 +62,8 @@ EN = {
     "m_invest": "Investment ROI", "m_rates": "Simple vs Compound Rates",
     "m_single": "Single Period Interest", "m_comp": "TVM Calculations",
     "m_install": "Loan / Installment Calc", "m_table": "Amortization Schedule",
-    "m_deposit": "🏦 Deposit Return (Withholding)", # YENİ
-    "m_disc": "⚡ Discounted Receivables",
-    
+    "m_disc": "⚡ Discounted Receivables", "m_deposit": "🏦 Deposit Return (Withholding)",
     "calc": "CALCULATE", "days_365": "Day Count Basis (365/360)", "tax": "Tax / Withholding (%)",
-    
-    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Interest Rate (%)",
-    "dep_res_net": "Net Return", "dep_res_total": "Total Ending Balance",
-    "dep_info_stopaj": "Applied Withholding Tax",
-    "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
-
     "cr_type": "Repayment Plan Type", "cr_opt1": "Equal Installments (Annuity)", "cr_opt2": "Equal Principal (Decreasing)",
     "inv_buy": "Purchase Price", "inv_sell": "Selling Price", "inv_day": "Tenor (Days)",
     "rt_what": "Calculate What?", "rt_days": "Days", "rt_base": "Base Rate (%)",
@@ -83,11 +71,15 @@ EN = {
     "cm_what": "Calculate What?", "cm_val1": "Present Value (PV)", "cm_val2": "Future Value (FV)", "cm_n": "Number of Periods", "cm_r": "Periodic Rate (%)",
     "pmt_loan": "Loan Amount", "pmt_r": "Monthly Rate (%)", "pmt_n": "Installments",
     "dc_rec": "Receivable Amount", "dc_day": "Days Paid Early", "dc_rate": "Opportunity Cost (%)",
+    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Interest Rate (%)",
     "inv_r1": "Periodic Return", "inv_r2": "Annual Simple Return", "inv_r3": "Annual Compound Return",
     "rt_res": "Resulting Rate", "s_r1": "Interest Amount", "s_r2": "Total Maturity Value",
     "cm_lbl_res": "Calculated Amount", "cm_res_diff": "Interest Component",
     "pmt_res": "First Installment", "pmt_res_total": "Total Repayment",
     "dc_r1": "Net Payable Amount", "dc_r2": "Discount Amount",
+    "dep_res_net": "Net Return", "dep_res_total": "Total Ending Balance",
+    "dep_info_stopaj": "Applied Withholding Tax",
+    "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
     "opt_comp_rate": "Annual Compound Rate (%)", "opt_simp_rate": "Annual Simple Rate (%)",
     "opt_pv": "Principal (PV)", "opt_fv": "Future Value (FV)"
@@ -99,16 +91,8 @@ FR = {
     "m_invest": "ROI Investissement", "m_rates": "Taux Simples vs Composés",
     "m_single": "Intérêt Période Unique", "m_comp": "Calculs TVM (VA/VC)",
     "m_install": "Calcul de Prêt", "m_table": "Tableau d'Amortissement",
-    "m_deposit": "🏦 Rendement Dépôt (Net)", # YENİ
-    "m_disc": "⚡ Créances Escomptées",
-    
+    "m_disc": "⚡ Créances Escomptées", "m_deposit": "🏦 Rendement Dépôt (Net)",
     "calc": "CALCULER", "days_365": "Base Jours (365/360)", "tax": "Taxe / Retenue (%)",
-    
-    "dep_amt": "Montant du Dépôt", "dep_days": "Maturité (Jours)", "dep_rate": "Taux Annuel (%)",
-    "dep_res_net": "Rendement Net", "dep_res_total": "Solde Final Total",
-    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
-    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
-
     "cr_type": "Type d'Amortissement", "cr_opt1": "Mensualités Constantes", "cr_opt2": "Amortissement Constant",
     "inv_buy": "Prix d'Achat", "inv_sell": "Prix de Vente", "inv_day": "Durée (Jours)",
     "rt_what": "Que Calculer?", "rt_days": "Jours", "rt_base": "Taux de Base (%)",
@@ -116,11 +100,15 @@ FR = {
     "cm_what": "Que Calculer?", "cm_val1": "Valeur Actuelle (VA)", "cm_val2": "Valeur Future (VC)", "cm_n": "Périodes", "cm_r": "Taux Périodique (%)",
     "pmt_loan": "Montant du Prêt", "pmt_r": "Taux Mensuel (%)", "pmt_n": "Échéances",
     "dc_rec": "Montant Créance", "dc_day": "Jours Anticipés", "dc_rate": "Taux d'Opportunité (%)",
+    "dep_amt": "Montant du Dépôt", "dep_days": "Maturité (Jours)", "dep_rate": "Taux Annuel (%)",
     "inv_r1": "Rendement Périodique", "inv_r2": "Rendement Annuel Simple", "inv_r3": "Rendement Annuel Composé",
     "rt_res": "Taux Résultant", "s_r1": "Montant des Intérêts", "s_r2": "Valeur Totale",
     "cm_lbl_res": "Montant Calculé", "cm_res_diff": "Part Intérêts",
     "pmt_res": "Première Échéance", "pmt_res_total": "Remboursement Total",
     "dc_r1": "Net à Payer", "dc_r2": "Montant de l'Escompte",
+    "dep_res_net": "Rendement Net", "dep_res_total": "Solde Final Total",
+    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
+    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
     "tbl_cols": ["Période", "Paiement", "Principal", "Intérêts", "Taxe 1", "Taxe 2", "Solde Restant"],
     "opt_comp_rate": "Taux Annuel Composé (%)", "opt_simp_rate": "Taux Annuel Simple (%)",
     "opt_pv": "Valeur Actuelle (VA)", "opt_fv": "Valeur Future (VC)"
@@ -132,16 +120,8 @@ DE = {
     "m_invest": "Investitions-ROI", "m_rates": "Einfache vs Zinseszinsen",
     "m_single": "Einmalige Zinszahlung", "m_comp": "Zeitwert des Geldes",
     "m_install": "Kreditrechner", "m_table": "Tilgungsplan Erstellen",
-    "m_deposit": "🏦 Einlagerendite (Netto)", # YENİ
-    "m_disc": "⚡ Forderungsdiskontierung",
-    
+    "m_disc": "⚡ Forderungsdiskontierung", "m_deposit": "🏦 Einlagerendite (Netto)",
     "calc": "BERECHNEN", "days_365": "Zinstage (365/360)", "tax": "Steuersatz (%)",
-    
-    "dep_amt": "Einlagebetrag", "dep_days": "Laufzeit (Tage)", "dep_rate": "Jahreszins (%)",
-    "dep_res_net": "Nettoertrag", "dep_res_total": "Gesamtendbestand",
-    "dep_info_stopaj": "Angewandte Steuer",
-    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
-
     "cr_type": "Tilgungsart", "cr_opt1": "Gleiche Raten (Annuität)", "cr_opt2": "Gleiche Tilgung (Ratentilgung)",
     "inv_buy": "Kaufpreis", "inv_sell": "Verkaufspreis", "inv_day": "Laufzeit (Tage)",
     "rt_what": "Was berechnen?", "rt_days": "Tage", "rt_base": "Basiszinssatz (%)",
@@ -149,11 +129,15 @@ DE = {
     "cm_what": "Was berechnen?", "cm_val1": "Barwert (PV)", "cm_val2": "Endwert (FV)", "cm_n": "Anzahl Perioden", "cm_r": "Periodischer Zins (%)",
     "pmt_loan": "Kreditbetrag", "pmt_r": "Monatszins (%)", "pmt_n": "Ratenanzahl",
     "dc_rec": "Forderungsbetrag", "dc_day": "Tage früher", "dc_rate": "Alternativzins (%)",
+    "dep_amt": "Einlagebetrag", "dep_days": "Laufzeit (Tage)", "dep_rate": "Jahreszins (%)",
     "inv_r1": "Periodenrendite", "inv_r2": "Jährliche Einfache Rendite", "inv_r3": "Jährliche Effektivrendite",
     "rt_res": "Ergebniszinssatz", "s_r1": "Zinsbetrag", "s_r2": "Gesamtendwert",
     "cm_lbl_res": "Berechneter Betrag", "cm_res_diff": "Zinsanteil",
     "pmt_res": "Erste Rate", "pmt_res_total": "Gesamtrückzahlung",
     "dc_r1": "Auszahlungsbetrag", "dc_r2": "Skontobetrag",
+    "dep_res_net": "Nettoertrag", "dep_res_total": "Gesamtendbestand",
+    "dep_info_stopaj": "Angewandte Steuer",
+    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
     "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "Steuer 1", "Steuer 2", "Restschuld"],
     "opt_comp_rate": "Effektivzinssatz (%)", "opt_simp_rate": "Nominalzinssatz (%)",
     "opt_pv": "Barwert (PV)", "opt_fv": "Endwert (FV)"
@@ -192,44 +176,80 @@ with st.sidebar:
     st.divider()
     if st.button("🏠 " + ("Ana Menü" if st.session_state.lang == "TR" else "Home")): go("home")
 
-# --- 6. DİNAMİK CSS ---
+# --- 6. DİNAMİK CSS (TEMA VE KONTRAST AYARI) ---
 if is_dark:
-    bg_color = "#0e1117"; card_bg = "#262730"; text_color = "#ffffff"
-    metric_color = "#4dabf7"; input_bg = "#262730"; input_text = "#ffffff"; btn_border = "#495057"
+    # --- GECE MODU ---
+    bg_color = "#0e1117"
+    card_bg = "#262730"
+    text_color = "#ffffff" # Yazılar Beyaz
+    metric_color = "#4dabf7"
+    input_bg = "#262730"
+    input_text = "#ffffff"
+    border_color = "#495057"
 else:
-    bg_color = "#f8f9fa"; card_bg = "#ffffff"; text_color = "#000000"
-    metric_color = "#0d25cf"; input_bg = "#ffffff"; input_text = "#000000"; btn_border = "#ced4da"
+    # --- GÜNDÜZ MODU (BEYAZ) ---
+    bg_color = "#ffffff"
+    card_bg = "#f8f9fa" # Hafif gri kart
+    text_color = "#000000" # Yazılar KAPKARA
+    metric_color = "#0d25cf" # Eczacıbaşı Mavisi
+    input_bg = "#ffffff"
+    input_text = "#000000" # Girdi yazısı SİYAH
+    border_color = "#dee2e6"
 
 st.markdown(f"""
 <style>
-    .stApp {{background-color: {bg_color}; color: {text_color};}}
+    /* GENEL SAYFA AYARLARI */
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
     .block-container {{padding-top: 3rem; padding-bottom: 3rem;}}
     thead tr th:first-child {{display:none}} tbody th {{display:none}}
     
+    /* TÜM YAZILARI ZORLA RENKLENDİRME (Kritik Düzeltme) */
+    h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
+        color: {text_color} !important;
+    }}
+    
+    /* GİRDİ ETİKETLERİ (Labels) */
+    .stNumberInput label, .stSelectbox label, .stRadio label {{
+        color: {text_color} !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }}
+
+    /* BUTONLAR */
     div.stButton > button:first-child {{
-        width: 100%; height: 4.5em; border-radius: 10px; 
-        border: 1px solid {btn_border}; font-weight: 700; 
+        width: 100%; height: 4.5em; border-radius: 8px; 
+        border: 1px solid {border_color}; font-weight: 700; 
         background: {card_bg}; color: {text_color}; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s;
     }}
     div.stButton > button:hover {{
         background: {input_bg}; border-color: #0d6efd; color: #0d6efd; transform: translateY(-2px);
     }}
     
-    .stNumberInput input {{
-        color: {input_text} !important; font-weight: 800 !important;
-        background-color: {input_bg} !important; border: 1px solid {btn_border} !important;
-        font-size: 1.1rem !important;
-    }}
-    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {{ 
-        -webkit-appearance: none; margin: 0; 
+    /* GİRDİ KUTULARI (Inputs) */
+    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
+        color: {input_text} !important; 
+        font-weight: 700 !important;
+        background-color: {input_bg} !important; 
+        border: 1px solid {border_color} !important;
     }}
     
+    /* SONUÇ RAKAMLARI */
     div[data-testid="stMetricValue"] {{
         font-size: 1.7rem !important; color: {metric_color} !important; font-weight: 800 !important;
     }}
     div[data-testid="stMetricLabel"] {{
         font-size: 1rem !important; font-weight: 600; color: {text_color} !important; opacity: 0.9;
+    }}
+    
+    /* BİLGİ KUTUCUKLARI (Info Box) */
+    .stAlert {{
+        background-color: {card_bg} !important;
+        color: {text_color} !important;
+        border: 1px solid {border_color};
     }}
 </style>
 """, unsafe_allow_html=True)
@@ -252,7 +272,7 @@ if st.session_state.page == "home":
         if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
     st.write("") 
     
-    # YENİ BUTON DÜZENİ: Mevduat ve İskonto Yan Yana
+    # YENİ BUTON DÜZENİ
     ec1, ec2 = st.columns(2)
     with ec1:
         if st.button(f"{T('m_deposit')}", use_container_width=True): go("deposit")
@@ -345,13 +365,11 @@ elif st.session_state.page == "comp":
             m1.metric(res_lbl, f"{fmt(res)} ₺")
             m2.metric(T("cm_res_diff"), f"{fmt(abs(val-res))} ₺")
 
-# --- YENİ MODÜL: MEVDUAT GETİRİSİ (STOPAJLI) ---
 elif st.session_state.page == "deposit":
     st.subheader(T("m_deposit"))
     st.divider()
     st.write("")
-    
-    st.info(T("dep_info_desc")) # Bilgilendirme
+    st.info(T("dep_info_desc"))
     
     with st.container(border=True):
         c1, c2 = st.columns(2)
@@ -361,20 +379,14 @@ elif st.session_state.page == "deposit":
         days = st.number_input(T("dep_days"), value=32, step=1, key="dep_days")
         
         if st.button(T("calc"), type="primary"):
-            # 1. STOPAJ ORANI BELİRLEME (Karar 2006/10731 - Temmuz 2025 Güncellemesi)
-            if days <= 182: # 6 Aya kadar (dahil)
-                stopaj_rate = 17.5
-            elif days <= 365: # 1 Yıla kadar (dahil)
-                stopaj_rate = 15.0
-            else: # 1 Yıldan uzun
-                stopaj_rate = 10.0
+            if days <= 182: stopaj_rate = 17.5
+            elif days <= 365: stopaj_rate = 15.0
+            else: stopaj_rate = 10.0
             
-            # 2. HESAPLAMA
             gross_int = (amount * rate * days) / 36500
             net_int = gross_int * (1 - stopaj_rate/100)
             total_bal = amount + net_int
             
-            # 3. GÖSTERİM
             c1, c2, c3 = st.columns(3)
             c1.metric(T("dep_info_stopaj"), f"%{stopaj_rate}")
             c2.metric(T("dep_res_net"), f"{fmt(net_int)} ₺")
@@ -424,6 +436,7 @@ elif st.session_state.page in ["install", "table"]:
                 m1, m2 = st.columns(2)
                 m1.metric(T("pmt_res"), f"{fmt(first_pmt_display)} ₺")
                 m2.metric(T("pmt_res_total"), f"{fmt(total_pay)} ₺")
+                
                 if st.session_state.page == "table":
                     st.write("---")
                     st.dataframe(pd.DataFrame(sch, columns=T("tbl_cols")), use_container_width=True, hide_index=True)
