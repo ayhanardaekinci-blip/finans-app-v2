@@ -312,12 +312,13 @@ TOPBAR_THIN_PADDING_X = "0.55rem"
 
 # =========================================================
 # 7) CSS
-#   - Switch çizimi TAMAMEN kaldırıldı => sadece tick kalır (tek kontrol)
-#   - Dropdown/portal renkleri light/dark'a göre ZORLANIR (cloud bug fix)
+#   - Switch çizimi yok: sadece tick (native checkbox)
+#   - Selectbox hem kapalı halde hem de açılan listbox/portal katmanında zorlanır
 # =========================================================
 st.markdown(
     f"""
 <style>
+/* App genel */
 .stApp {{
   background: {bg_color};
   color: {text_color};
@@ -328,7 +329,7 @@ st.markdown(
   max-width: 1240px;
 }}
 
-/* genel metinler */
+/* Metinler */
 h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
   color: {text_color} !important;
   opacity: 1 !important;
@@ -345,7 +346,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
   border-radius: 14px !important;
 }}
 
-/* Input label + radio/checkbox text */
+/* Label + radio/checkbox text */
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
 div[data-testid="stRadio"] label,
@@ -359,7 +360,7 @@ div[data-testid="stRadio"] * {{
   opacity: 1 !important;
 }}
 
-/* Inputs */
+/* Number input */
 .stNumberInput input {{
   color: {input_text} !important;
   background: {input_bg} !important;
@@ -368,30 +369,44 @@ div[data-testid="stRadio"] * {{
   font-weight: 900 !important;
 }}
 
-/* ===== BaseWeb SELECTBOX (kapalı hal) ===== */
+/* =====================================================
+   SELECTBOX FIX (KAPALI HAL + FOCUS HAL + ICON + INPUT)
+   ===================================================== */
 div[data-testid="stSelectbox"] div[data-baseweb="select"] {{
   background: {input_bg} !important;
   border: 1px solid {border_color} !important;
   border-radius: 12px !important;
 }}
-div[data-testid="stSelectbox"] div[data-baseweb="select"] * {{
+
+/* Kapalı selectbox'ın asıl boyalı katmanı (cloud'da bazen burası beyaz kalıyor) */
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
+  background: {input_bg} !important;
+}}
+
+/* Combobox role'u da zorla */
+div[data-testid="stSelectbox"] div[role="combobox"] {{
+  background: {input_bg} !important;
+  color: {input_text} !important;
+}}
+
+/* İç yazı/placeholder/ikon */
+div[data-testid="stSelectbox"] div[data-baseweb="select"] *,
+div[data-testid="stSelectbox"] div[role="combobox"] * {{
   color: {input_text} !important;
   opacity: 1 !important;
+  -webkit-text-fill-color: {input_text} !important;
 }}
-div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {{
+div[data-testid="stSelectbox"] svg {{
   fill: {input_text} !important;
   color: {input_text} !important;
 }}
-div[data-testid="stSelectbox"] div[data-baseweb="select"] input {{
-  color: {input_text} !important;
-  -webkit-text-fill-color: {input_text} !important;
-}}
 
-/* ===== Cloud/Portal FIX: Dropdown açılınca (listbox/menu/popover) =====
-   Streamlit Cloud'da dropdown bazen "portal" ile body altına basılır.
-   Bu yüzden popover + listbox + option katmanlarını ZORLARIZ.
-*/
-div[data-baseweb="popover"],
+/* =====================================================
+   DROPDOWN AÇILINCA (PORTAL/POPOVER/LISTBOX/MENU)
+   ===================================================== */
+div[data-baseweb="popover"] {{
+  background: {card_bg} !important;
+}}
 div[data-baseweb="popover"] * {{
   background: {card_bg} !important;
   border-color: {border_color} !important;
@@ -405,16 +420,17 @@ ul[role="listbox"] {{
 
 div[role="option"],
 li[role="option"],
-div[data-baseweb="menu"] * {{
+div[data-baseweb="menu"] *,
+div[data-baseweb="menu"] span {{
   color: {text_color} !important;
   opacity: 1 !important;
+  -webkit-text-fill-color: {text_color} !important;
 }}
 
 div[role="option"][aria-selected="true"],
 li[role="option"][aria-selected="true"] {{
   background: rgba(13,110,253,0.12) !important;
 }}
-
 div[role="option"]:hover,
 li[role="option"]:hover {{
   background: rgba(13,110,253,0.10) !important;
@@ -451,7 +467,7 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* ===== Sticky TOPBAR ===== */
+/* Sticky topbar */
 div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
   position: sticky;
   top: {STREAMLIT_TOPBAR_PX}px;
@@ -488,10 +504,7 @@ h1, h2, h3 {{
   line-height: 1.03 !important;
 }}
 
-/* ===== Checkbox görünürlüğü: tick her iki modda da net görünsün =====
-   Switch çizimi yok. Sadece native checkbox.
-   accent-color çoğu modern tarayıcıda çalışır ve tick'i belirgin yapar.
-*/
+/* Checkbox: tek kontrol tick */
 div[data-testid="stCheckbox"] input[type="checkbox"] {{
   accent-color: #ef4444;
 }}
