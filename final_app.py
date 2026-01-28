@@ -23,12 +23,12 @@ TR = {
     "info_sel": "Hesaplama modülünü seçiniz:",
     "mode_toggle": "Gece Modu",
     
-    "m_invest": "Yatırım Getiri Oranı",
-    "m_rates": "Basit - Bileşik Faiz",
-    "m_single": "Tek Dönemlik Faiz",
-    "m_comp": "Bileşik Faizle Para",
-    "m_install": "Kredi / Taksit Hesapla",
-    "m_table": "Ödeme Tablosu Oluştur",
+    "m_invest": "📈 Yatırım Getiri Oranı",
+    "m_rates": "🔄 Basit - Bileşik Faiz",
+    "m_single": "📅 Tek Dönemlik Faiz",
+    "m_comp": "💰 Bileşik Faizle Para",
+    "m_install": "💳 Kredi / Taksit Hesapla",
+    "m_table": "📋 Ödeme Tablosu Oluştur",
     "m_disc": "⚡ İskontolu Alacak",
     "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)",
     
@@ -55,7 +55,7 @@ TR = {
     "dep_info_desc": "ℹ️ Temmuz 2025 Kararnamesi (%17,5 / %15) uygulanmıştır.",
     
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan"],
-    "opt_comp_rate": "Yıllık Bileşik Faiz (%)", "opt_simp_rate": "Yıllık Basit Faiz (%)",
+    "opt_comp_rate": "Bileşik Faiz (%)", "opt_simp_rate": "Basit Faiz (%)",
     "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu (FV)"
 }
 EN = TR.copy(); FR = TR.copy(); DE = TR.copy()
@@ -73,14 +73,14 @@ def fmt(value):
     except:
         return "0,00"
 
-# --- 4. RENK VE TEMA AYARLARI (CSS'DEN ÖNCE) ---
+# --- 4. RENK VE TEMA AYARLARI (CSS'DEN ÖNCE!) ---
 # Önce durumu kontrol et
 if st.session_state.dark_mode:
     # GECE MODU
     bg_color = "#0e1117"
     card_bg = "#262730"
     text_color = "#ffffff"
-    metric_color = "#4dabf7" # Açık Mavi
+    metric_color = "#4dabf7" # Parlak Mavi
     input_bg = "#262730"
     input_text = "#ffffff"
     btn_border = "#495057"
@@ -251,7 +251,6 @@ elif st.session_state.page == "comp":
         m1.metric(res_lbl, f"{fmt(res)} ₺")
         m2.metric(T("cm_res_diff"), f"{fmt(abs(val-res))} ₺")
 
-# --- YENİ MEVDUAT MODÜLÜ (STOPAJ MANTIĞI EKLENDİ) ---
 elif st.session_state.page == "deposit":
     st.subheader(T("m_deposit"))
     st.info(T("dep_info_desc"))
@@ -259,16 +258,12 @@ elif st.session_state.page == "deposit":
     with c1: amount = st.number_input(T("dep_amt"), value=100000.0, step=1000.0, format="%.2f", key="dep_amt")
     with c2: rate = st.number_input(T("dep_rate"), value=45.0, format="%.2f", key="dep_rate")
     days = st.number_input(T("dep_days"), value=32, step=1, key="dep_days")
-    
     if st.button(T("calc"), type="primary", use_container_width=True):
-        # 2025 Stopaj Oranları
-        if days <= 182: stopaj_rate = 17.5 # 6 Ay
-        elif days <= 365: stopaj_rate = 15.0 # 1 Yıl
-        else: stopaj_rate = 10.0 # 1 Yıl Üstü
-        
+        if days <= 182: stopaj_rate = 17.5
+        elif days <= 365: stopaj_rate = 15.0
+        else: stopaj_rate = 10.0
         gross = (amount * rate * days) / 36500
         net = gross * (1 - stopaj_rate/100)
-        
         c1, c2, c3 = st.columns(3)
         c1.metric(T("dep_info_stopaj"), f"%{stopaj_rate}")
         c2.metric(T("dep_res_net"), f"{fmt(net)} ₺")
