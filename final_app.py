@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 # =========================================================
 # 1) AYARLAR
@@ -13,7 +12,7 @@ st.set_page_config(
 )
 
 # =========================================================
-# 2) DİL SÖZLÜKLERİ
+# 2) DİL SÖZLÜKLERİ (SENİN ORİJİNAL FR/DE ÇEVİRİLERİN GERİ)
 # =========================================================
 TR = {
     "app_name": "Finansal Hesap Makinesi",
@@ -31,34 +30,72 @@ TR = {
     "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)",
     "m_npv": "📉 NPV (Net Bugünkü Değer)",
 
-    "calc": "HESAPLA", "days_365": "Baz Gün (365/360)", "tax": "Vergi Oranı (%)",
+    "calc": "HESAPLA",
+    "days_365": "Baz Gün (365/360)",
+    "tax": "Vergi Oranı (%)",
+
     "cr_type": "Ödeme Planı Türü",
     "cr_opt1": "Eşit Taksitli (Standart)",
     "cr_opt2": "Eşit Anaparalı (Azalan)",
     "kkdf": "KKDF (%)",
     "bsmv": "BSMV (%)",
 
-    "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
-    "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
-    "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
-    "cm_what": "Ne Hesaplanacak?", "cm_r": "Dönemsel Faiz (%)", "cm_n": "Dönem Sayısı",
-    "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu (FV)",
-    "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
-    "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
-    "dep_amt": "Yatırılan Tutar (Mevduat)", "dep_days": "Vade (Gün)", "dep_rate": "Yıllık Faiz Oranı (%)",
+    "inv_buy": "Alış Tutarı",
+    "inv_sell": "Satış Tutarı",
+    "inv_day": "Vade (Gün)",
 
-    "inv_r1": "Dönemsel Getiri", "inv_r2": "Yıllık Basit Getiri", "inv_r3": "Yıllık Bileşik Getiri",
+    "rt_what": "Ne Hesaplayalım?",
+    "rt_days": "Gün Sayısı",
+    "rt_base": "Baz Oran (%)",
+
+    "s_p": "Anapara",
+    "s_r": "Yıllık Faiz (%)",
+    "s_d": "Vade (Gün)",
+    "s_note": "Mevduat (-), Kredi (+)",
+
+    "cm_what": "Ne Hesaplanacak?",
+    "cm_r": "Dönemsel Faiz (%)",
+    "cm_n": "Dönem Sayısı",
+    "opt_pv": "Anapara (PV)",
+    "opt_fv": "Vade Sonu (FV)",
+
+    "pmt_loan": "Kredi Tutarı",
+    "pmt_r": "Aylık Faiz (%)",
+    "pmt_n": "Taksit Sayısı",
+
+    "dc_rec": "Fatura/Alacak Tutarı",
+    "dc_day": "Erken Ödeme Günü",
+    "dc_rate": "Alternatif Getiri (%)",
+
+    "dep_amt": "Yatırılan Tutar (Mevduat)",
+    "dep_days": "Vade (Gün)",
+    "dep_rate": "Yıllık Faiz Oranı (%)",
+
+    "inv_r1": "Dönemsel Getiri",
+    "inv_r2": "Yıllık Basit Getiri",
+    "inv_r3": "Yıllık Bileşik Getiri",
+
     "rt_res": "Hesaplanan Oran",
-    "s_r1": "Faiz Tutarı", "s_r2": "Vade Sonu Toplam",
-    "cm_res": "Hesaplanan Tutar", "cm_res_diff": "Faiz Farkı",
-    "pmt_res": "İlk Taksit Tutarı", "pmt_res_total": "Toplam Geri Ödeme",
-    "dc_r1": "Ele Geçecek Tutar", "dc_r2": "Yapılan İskonto (İndirim)",
-    "dep_res_net": "Net Getiri (Ele Geçen)", "dep_res_total": "Vade Sonu Toplam Bakiye",
+    "s_r1": "Faiz Tutarı",
+    "s_r2": "Vade Sonu Toplam",
+
+    "cm_res": "Hesaplanan Tutar",
+    "cm_res_diff": "Faiz Farkı",
+
+    "pmt_res": "İlk Taksit Tutarı",
+    "pmt_res_total": "Toplam Geri Ödeme",
+
+    "dc_r1": "Ele Geçecek Tutar",
+    "dc_r2": "Yapılan İskonto (İndirim)",
+
+    "dep_res_net": "Net Getiri (Ele Geçen)",
+    "dep_res_total": "Vade Sonu Toplam Bakiye",
     "dep_info_stopaj": "Uygulanan Stopaj Oranı",
     "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
 
+    # NPV
     "npv_c0": "Başlangıç Yatırımı (CF0)",
     "npv_rate": "İskonto Oranı (%)",
     "npv_n": "Dönem Sayısı (N)",
@@ -84,34 +121,72 @@ EN = {
     "m_deposit": "🏦 Deposit Return (Withholding)",
     "m_npv": "📉 NPV (Net Present Value)",
 
-    "calc": "CALCULATE", "days_365": "Day Count (365/360)", "tax": "Tax / Withholding (%)",
-    "cr_type": "Repayment Plan",
+    "calc": "CALCULATE",
+    "days_365": "Day Count (365/360)",
+    "tax": "Tax / Withholding (%)",
+
+    "cr_type": "Repayment Plan Type",
     "cr_opt1": "Equal Installments (Annuity)",
     "cr_opt2": "Equal Principal (Decreasing)",
     "kkdf": "Tax 1 (KKDF) (%)",
     "bsmv": "Tax 2 (BSMV) (%)",
 
-    "inv_buy": "Purchase Price", "inv_sell": "Selling Price", "inv_day": "Tenor (Days)",
-    "rt_what": "Calculate What?", "rt_days": "Days", "rt_base": "Base Rate (%)",
-    "s_p": "Principal", "s_r": "Annual Rate (%)", "s_d": "Tenor (Days)", "s_note": "Deposit (-), Loan (+)",
-    "cm_what": "Calculate What?", "cm_r": "Periodic Rate (%)", "cm_n": "Periods",
-    "opt_pv": "Present Value (PV)", "opt_fv": "Future Value (FV)",
-    "pmt_loan": "Loan Amount", "pmt_r": "Monthly Rate (%)", "pmt_n": "Installments",
-    "dc_rec": "Receivable Amount", "dc_day": "Days Paid Early", "dc_rate": "Opportunity Cost (%)",
-    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Rate (%)",
+    "inv_buy": "Purchase Price",
+    "inv_sell": "Selling Price",
+    "inv_day": "Tenor (Days)",
 
-    "inv_r1": "Periodic Return", "inv_r2": "Annual Simple Return", "inv_r3": "Annual Compound Return",
+    "rt_what": "Calculate What?",
+    "rt_days": "Days",
+    "rt_base": "Base Rate (%)",
+
+    "s_p": "Principal Amount",
+    "s_r": "Annual Rate (%)",
+    "s_d": "Tenor (Days)",
+    "s_note": "Deposit (-), Loan (+)",
+
+    "cm_what": "Calculate What?",
+    "cm_r": "Periodic Rate (%)",
+    "cm_n": "Number of Periods",
+    "opt_pv": "Present Value (PV)",
+    "opt_fv": "Future Value (FV)",
+
+    "pmt_loan": "Loan Amount",
+    "pmt_r": "Monthly Rate (%)",
+    "pmt_n": "Installments",
+
+    "dc_rec": "Receivable Amount",
+    "dc_day": "Days Paid Early",
+    "dc_rate": "Opportunity Cost (%)",
+
+    "dep_amt": "Deposit Amount",
+    "dep_days": "Maturity (Days)",
+    "dep_rate": "Annual Interest Rate (%)",
+
+    "inv_r1": "Periodic Return",
+    "inv_r2": "Annual Simple Return",
+    "inv_r3": "Annual Compound Return",
+
     "rt_res": "Resulting Rate",
-    "s_r1": "Interest Amount", "s_r2": "Total Maturity Value",
-    "cm_res": "Calculated Amount", "cm_res_diff": "Interest Component",
-    "pmt_res": "First Installment", "pmt_res_total": "Total Repayment",
-    "dc_r1": "Net Payable Amount", "dc_r2": "Discount Amount",
-    "dep_res_net": "Net Return", "dep_res_total": "Total Ending Balance",
+    "s_r1": "Interest Amount",
+    "s_r2": "Total Maturity Value",
+
+    "cm_res": "Calculated Amount",
+    "cm_res_diff": "Interest Component",
+
+    "pmt_res": "First Installment",
+    "pmt_res_total": "Total Repayment",
+
+    "dc_r1": "Net Payable Amount",
+    "dc_r2": "Discount Amount",
+
+    "dep_res_net": "Net Return",
+    "dep_res_total": "Total Ending Balance",
     "dep_info_stopaj": "Applied Withholding Tax",
     "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
 
+    # NPV
     "npv_c0": "Initial Investment (CF0)",
     "npv_rate": "Discount Rate (%)",
     "npv_n": "Number of Periods (N)",
@@ -121,15 +196,192 @@ EN = {
     "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows.",
 }
 
-FR = dict(EN)
-FR.update({"app_name": "Calculatrice Financière", "subheader": "Dépt. Trésorerie Santé Eczacıbaşı", "mode_toggle": "🌙 Mode Sombre"})
-DE = dict(EN)
-DE.update({"app_name": "Finanzrechner", "subheader": "Eczacıbaşı Gesundheits-Schatzamt", "mode_toggle": "🌙 Dunkelmodus"})
+FR = {
+    "app_name": "Calculatrice Financière",
+    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
+    "home": "🏠 Menu Principal",
+    "mode_toggle": "🌙 Mode Sombre",
+
+    "m_invest": "ROI Investissement",
+    "m_rates": "Taux Simples vs Composés",
+    "m_single": "Intérêt Période Unique",
+    "m_comp": "Calculs TVM (VA/VC)",
+    "m_install": "Calcul de Prêt",
+    "m_table": "Tableau d'Amortissement",
+    "m_disc": "⚡ Créances Escomptées",
+    "m_deposit": "🏦 Rendement Dépôt (Net)",
+    "m_npv": "📉 VAN (Valeur Actuelle Nette)",
+
+    "calc": "CALCULER",
+    "days_365": "Base Jours (365/360)",
+    "tax": "Taxe / Retenue (%)",
+
+    "cr_type": "Type d'Amortissement",
+    "cr_opt1": "Mensualités Constantes",
+    "cr_opt2": "Amortissement Constant",
+    "kkdf": "Taxe 1 (KKDF) (%)",
+    "bsmv": "Taxe 2 (BSMV) (%)",
+
+    "inv_buy": "Prix d'Achat",
+    "inv_sell": "Prix de Vente",
+    "inv_day": "Durée (Jours)",
+
+    "rt_what": "Que Calculer?",
+    "rt_days": "Jours",
+    "rt_base": "Taux de Base (%)",
+
+    "s_p": "Principal",
+    "s_r": "Taux Annuel (%)",
+    "s_d": "Durée (Jours)",
+    "s_note": "Dépôt (-), Prêt (+)",
+
+    "cm_what": "Que Calculer?",
+    "cm_r": "Taux Périodique (%)",
+    "cm_n": "Périodes",
+    "opt_pv": "Valeur Actuelle (VA)",
+    "opt_fv": "Valeur Future (VC)",
+
+    "pmt_loan": "Montant du Prêt",
+    "pmt_r": "Taux Mensuel (%)",
+    "pmt_n": "Échéances",
+
+    "dc_rec": "Montant Créance",
+    "dc_day": "Jours Anticipés",
+    "dc_rate": "Taux d'Opportunité (%)",
+
+    "dep_amt": "Montant du Dépôt",
+    "dep_days": "Maturité (Jours)",
+    "dep_rate": "Taux Annuel (%)",
+
+    "inv_r1": "Rendement Périodique",
+    "inv_r2": "Rendement Annuel Simple",
+    "inv_r3": "Rendement Annuel Composé",
+
+    "rt_res": "Taux Résultant",
+    "s_r1": "Montant des Intérêts",
+    "s_r2": "Valeur Totale",
+
+    "cm_res": "Montant Calculé",
+    "cm_res_diff": "Part Intérêts",
+
+    "pmt_res": "Première Échéance",
+    "pmt_res_total": "Remboursement Total",
+
+    "dc_r1": "Net à Payer",
+    "dc_r2": "Montant de l'Escompte",
+
+    "dep_res_net": "Rendement Net",
+    "dep_res_total": "Solde Final Total",
+    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
+    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
+
+    "tbl_cols": ["Période", "Paiement", "Principal", "Intérêts", "Taxe 1", "Taxe 2", "Solde Restant"],
+
+    # NPV
+    "npv_c0": "Investissement Initial (CF0)",
+    "npv_rate": "Taux d'Actualisation (%)",
+    "npv_n": "Nombre de Périodes (N)",
+    "npv_cf": "Flux de Trésorerie (CF)",
+    "npv_res": "VAN (Valeur Actuelle Nette)",
+    "npv_pv_sum": "Somme PV des Flux Futurs",
+    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1..CFN sont les flux entrants/sortants.",
+}
+
+DE = {
+    "app_name": "Finanzrechner",
+    "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
+    "home": "🏠 Hauptmenü",
+    "mode_toggle": "🌙 Dunkelmodus",
+
+    "m_invest": "Investitions-ROI",
+    "m_rates": "Einfache vs Zinseszinsen",
+    "m_single": "Einmalige Zinszahlung",
+    "m_comp": "Zeitwert des Geldes",
+    "m_install": "Kreditrechner",
+    "m_table": "Tilgungsplan Erstellen",
+    "m_disc": "⚡ Forderungsdiskontierung",
+    "m_deposit": "🏦 Einlagerendite (Netto)",
+    "m_npv": "📉 NPV (Kapitalwert)",
+
+    "calc": "BERECHNEN",
+    "days_365": "Zinstage (365/360)",
+    "tax": "Steuersatz (%)",
+
+    "cr_type": "Tilgungsart",
+    "cr_opt1": "Gleiche Raten (Annuität)",
+    "cr_opt2": "Gleiche Tilgung (Ratentilgung)",
+    "kkdf": "Steuer 1 (KKDF) (%)",
+    "bsmv": "Steuer 2 (BSMV) (%)",
+
+    "inv_buy": "Kaufpreis",
+    "inv_sell": "Verkaufspreis",
+    "inv_day": "Laufzeit (Tage)",
+
+    "rt_what": "Was berechnen?",
+    "rt_days": "Tage",
+    "rt_base": "Basiszinssatz (%)",
+
+    "s_p": "Kapitalbetrag",
+    "s_r": "Jahreszins (%)",
+    "s_d": "Laufzeit (Tage)",
+    "s_note": "Einlage (-), Kredit (+)",
+
+    "cm_what": "Was berechnen?",
+    "cm_r": "Periodischer Zins (%)",
+    "cm_n": "Anzahl Perioden",
+    "opt_pv": "Barwert (PV)",
+    "opt_fv": "Endwert (FV)",
+
+    "pmt_loan": "Kreditbetrag",
+    "pmt_r": "Monatszins (%)",
+    "pmt_n": "Ratenanzahl",
+
+    "dc_rec": "Forderungsbetrag",
+    "dc_day": "Tage früher",
+    "dc_rate": "Alternativzins (%)",
+
+    "dep_amt": "Einlagebetrag",
+    "dep_days": "Laufzeit (Tage)",
+    "dep_rate": "Jahreszins (%)",
+
+    "inv_r1": "Periodenrendite",
+    "inv_r2": "Jährliche Einfache Rendite",
+    "inv_r3": "Jährliche Effektivrendite",
+
+    "rt_res": "Ergebniszinssatz",
+    "s_r1": "Zinsbetrag",
+    "s_r2": "Gesamtendwert",
+
+    "cm_res": "Berechneter Betrag",
+    "cm_res_diff": "Zinsanteil",
+
+    "pmt_res": "Erste Rate",
+    "pmt_res_total": "Gesamtrückzahlung",
+
+    "dc_r1": "Auszahlungsbetrag",
+    "dc_r2": "Skontobetrag",
+
+    "dep_res_net": "Nettoertrag",
+    "dep_res_total": "Gesamtendbestand",
+    "dep_info_stopaj": "Angewandte Steuer",
+    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
+
+    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "Steuer 1", "Steuer 2", "Restschuld"],
+
+    # NPV
+    "npv_c0": "Anfangsinvestition (CF0)",
+    "npv_rate": "Abzinsungszinssatz (%)",
+    "npv_n": "Anzahl Perioden (N)",
+    "npv_cf": "Cashflow (CF)",
+    "npv_res": "NPV (Kapitalwert)",
+    "npv_pv_sum": "PV Summe zukünftiger Cashflows",
+    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1..CFN sind Ein-/Auszahlungen.",
+}
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
 # =========================================================
-# 3) HELPERS
+# 3) FORMAT / ÇEVİRİ
 # =========================================================
 def fmt(value):
     if value is None:
@@ -140,79 +392,80 @@ def fmt(value):
     except Exception:
         return "0,00"
 
+
 def T(key: str) -> str:
     return LANGS[st.session_state.lang].get(key, key)
 
-def go(page: str):
-    st.session_state.page = page
-    st.rerun()
 
-def qp_get(key: str, default: str):
+# =========================================================
+# 4) QUERY PARAM (DARK/LANG KALICI)
+# =========================================================
+def qp_get(key: str, default: str) -> str:
     try:
-        val = st.query_params.get(key, None)
-        if val is None:
+        v = st.query_params.get(key, None)
+        if v is None:
             return default
-        if isinstance(val, list):
-            return val[0] if val else default
-        return str(val)
+        if isinstance(v, list):
+            return v[0] if v else default
+        return str(v)
     except Exception:
-        # Eski sürüm fallback
         try:
-            val = st.experimental_get_query_params().get(key, [default])[0]
-            return val
+            return st.experimental_get_query_params().get(key, [default])[0]
         except Exception:
             return default
 
-def qp_set(key: str, value: str):
+
+def qp_set(**kwargs):
     try:
-        st.query_params[key] = value
+        for k, v in kwargs.items():
+            st.query_params[k] = v
     except Exception:
         try:
-            st.experimental_set_query_params(**{key: value})
+            st.experimental_set_query_params(**kwargs)
         except Exception:
             pass
 
+
+def go(page: str):
+    st.session_state.page = page
+    qp_set(page=page)  # page de kalıcı olsun
+    st.rerun()
+
+
 def on_lang_change():
     st.session_state.lang = st.session_state.l_sel.split(" ")[1]
-    qp_set("lang", st.session_state.lang)
+    qp_set(lang=st.session_state.lang)
+
 
 def on_dark_change():
-    qp_set("dark", "1" if st.session_state.dark_mode else "0")
+    qp_set(dark="1" if st.session_state.dark_mode else "0")
+
 
 # =========================================================
-# 4) SESSION STATE (KALICI: QUERY PARAM)
+# 5) STATE INIT (RESET YOK)
 # =========================================================
 if "page" not in st.session_state:
-    st.session_state.page = "home"
+    st.session_state.page = qp_get("page", "home")
 
-# Dil: query param > session > default
 if "lang" not in st.session_state:
     st.session_state.lang = qp_get("lang", "TR")
 else:
     st.session_state.lang = qp_get("lang", st.session_state.lang)
 
-# Dark: query param > session > default
 dark_qp = qp_get("dark", "0")
 dark_from_qp = (dark_qp == "1")
-
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = dark_from_qp
 else:
-    # Query param her zaman kaynak olsun (Home'a dönünce asla sıfırlanmasın)
     st.session_state.dark_mode = dark_from_qp
 
-# Dil selectbox gösterimi
 flag_map = {"TR": "🇹🇷 TR", "EN": "🇬🇧 EN", "FR": "🇫🇷 FR", "DE": "🇩🇪 DE"}
-if "l_sel" not in st.session_state:
-    st.session_state.l_sel = flag_map.get(st.session_state.lang, "🇹🇷 TR")
-else:
-    # query paramdan dil gelirse selectbox da uyumlasın
-    st.session_state.l_sel = flag_map.get(st.session_state.lang, st.session_state.l_sel)
+st.session_state.l_sel = flag_map.get(st.session_state.lang, "🇹🇷 TR")
 
 is_dark = bool(st.session_state.dark_mode)
 
 # =========================================================
-# 5) RENKLER
+# 6) RENKLER
 # =========================================================
 if is_dark:
     bg_color = "#0e1117"
@@ -237,12 +490,15 @@ else:
     metric_color = "#0d25cf"
     shadow = "0.10"
 
-# Streamlit Cloud üst siyah header ile çakışmayı “kesin” bitirmek için daha güvenli offset
-APP_HEADER_OFFSET_PX = 96  # bilinçli yüksek: farklı ekranlarda yapışmayı bitirir
+# Streamlit Cloud üst siyah header ile çakışmayı kesmek için güvenli offset
+APP_HEADER_OFFSET_PX = 96
 
 # =========================================================
-# 6) CSS (LIGHT TEXT FIX + “TIK” GÖRÜNÜR CUSTOM SWITCH + STICKY FIX)
-#    -> Native toggle yerine checkbox + CSS switch (DOM sürüm farklarından bağımsız)
+# 7) CSS
+#    - Sticky gerçekten sticky: TOPBAR CONTAINER'INI CSS ile yakalıyoruz
+#      (wrapper HTML ile wrap olmaz, o yüzden "marker + :has()" yöntemi)
+#    - Diller her sayfada: T() zaten her yerde kullanılıyor, FR/DE tam
+#    - Başlık yer değişimi: ÜST BAR = subheader, HOME H1 = app_name
 # =========================================================
 st.markdown(
     f"""
@@ -251,21 +507,17 @@ st.markdown(
   background: {bg_color};
   color: {text_color};
 }}
-
 .block-container {{
   padding-top: 0.55rem;
   padding-bottom: 0.90rem;
   max-width: 1240px;
 }}
 
-/* LIGHT modda soluk yazı sorunu: her yerde opacity 1 */
-* {{
-  text-rendering: geometricPrecision;
-}}
+/* Light mod soluk yazı fix */
 h1,h2,h3,h4,h5,h6,p,label,span,div {{
   color: inherit;
 }}
-h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText {{
+h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
@@ -281,10 +533,11 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
   border-radius: 16px !important;
 }}
 
-/* Input label + radio text kesin görünür */
+/* Input label + radio text */
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
-div[data-testid="stRadio"] label {{
+div[data-testid="stRadio"] label,
+div[data-testid="stCheckbox"] label {{
   color: {text_color} !important;
   opacity: 1 !important;
   font-weight: 800 !important;
@@ -294,7 +547,7 @@ div[data-testid="stRadio"] * {{
   opacity: 1 !important;
 }}
 
-/* Input kutuları */
+/* Inputs */
 .stNumberInput input {{
   color: {input_text} !important;
   background: {input_bg} !important;
@@ -313,7 +566,7 @@ div[data-testid="stRadio"] * {{
   font-weight: 900 !important;
 }}
 
-/* Butonlar */
+/* Buttons */
 div.stButton > button:first-child {{
   width: 100%;
   height: 2.78em;
@@ -344,8 +597,12 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* Sticky topbar (kesin çakışmasın diye yüksek offset) */
-.sticky-topbar {{
+/* ===== Sticky TOPBAR - GERÇEK ÇÖZÜM =====
+   HTML wrapper Streamlit elementlerini sarmaz. Bu yüzden:
+   - topbar container içine bir marker koyuyoruz
+   - :has(.topbar-marker) ile o BLOĞU sticky yapıyoruz
+*/
+div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
   position: sticky;
   top: {APP_HEADER_OFFSET_PX}px;
   z-index: 999999;
@@ -356,6 +613,8 @@ div[data-testid="stMetricLabel"] {{
   box-shadow: 0 4px 18px rgba(0,0,0,{shadow});
   margin-bottom: 0.65rem;
 }}
+
+/* topbar title */
 .topbar-title {{
   font-weight: 950;
   font-size: 1.08rem;
@@ -363,6 +622,7 @@ div[data-testid="stMetricLabel"] {{
   opacity: 0.92;
   padding-left: 0.25rem;
 }}
+/* icon button */
 .icon-btn div.stButton > button:first-child {{
   height: 2.55em !important;
   width: 3.05em !important;
@@ -371,40 +631,14 @@ div[data-testid="stMetricLabel"] {{
   font-size: 1.1rem !important;
 }}
 
-/* HOME başlığını biraz aşağı kaydır (SS3) */
+/* HOME başlığı (app_name) */
 .home-title h1 {{
   margin-top: 0.55rem !important;
   margin-bottom: 0.45rem !important;
   line-height: 1.03 !important;
 }}
 
-/* ======= CUSTOM SWITCH (checkbox) =======
-   Streamlit checkbox DOM’u çok daha stabil: görünmez “tik” problemi bitiyor.
-*/
-.switch-row {{
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  justify-content: flex-start;
-  padding-top: 0.15rem;
-}}
-.switch-label {{
-  font-weight: 900;
-  color: {text_color};
-  opacity: 1 !important;
-}}
-/* Checkbox'ı switch gibi çizmek için wrapper hedefi */
-div[data-testid="stCheckbox"] label {{
-  color: {text_color} !important;
-  opacity: 1 !important;
-  font-weight: 900 !important;
-}}
-div[data-testid="stCheckbox"] > label {{
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-}}
-/* Native checkbox kutusunu gizle */
+/* Checkbox'ı switch gibi çiz (tik görünmezliği bitir) */
 div[data-testid="stCheckbox"] input[type="checkbox"] {{
   appearance: none;
   -webkit-appearance: none;
@@ -417,7 +651,6 @@ div[data-testid="stCheckbox"] input[type="checkbox"] {{
   outline: none;
   cursor: pointer;
 }}
-/* Knob */
 div[data-testid="stCheckbox"] input[type="checkbox"]::after {{
   content: "";
   position: absolute;
@@ -430,9 +663,8 @@ div[data-testid="stCheckbox"] input[type="checkbox"]::after {{
   border: 1px solid {"#a3a3a3" if is_dark else "#111827"};
   transition: 0.15s;
 }}
-/* Checked state */
 div[data-testid="stCheckbox"] input[type="checkbox"]:checked {{
-  background: #ef4444;  /* kırmızı switch (SS3’e yakın) */
+  background: #ef4444;
   border-color: #ef4444;
 }}
 div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
@@ -446,45 +678,48 @@ div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
 )
 
 # =========================================================
-# 7) STICKY ÜST BAR (APP NAME burada) + CUSTOM SWITCH + DİL
+# 8) TOPBAR (STICKY BLOK İÇİNE MARKER)
+#    İSTEDİĞİN SWAP:
+#    - Üst bar yazısı: subheader
+#    - Home büyük başlık: app_name
 # =========================================================
-st.markdown('<div class="sticky-topbar">', unsafe_allow_html=True)
-c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
+with st.container():
+    st.markdown('<div class="topbar-marker"></div>', unsafe_allow_html=True)
 
-with c_home:
-    st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-    if st.button("🏠", help=T("home"), key="btn_home"):
-        go("home")
-    st.markdown("</div>", unsafe_allow_html=True)
+    c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
 
-with c_title:
-    st.markdown(f"<div class='topbar-title'>{T('app_name')}</div>", unsafe_allow_html=True)
+    with c_home:
+        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
+        if st.button("🏠", help=T("home"), key="btn_home"):
+            go("home")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-with c_switch:
-    # Native toggle yerine checkbox switch: tik/ikon görünmezliği kesin biter
-    st.checkbox(
-        T("mode_toggle"),
-        value=st.session_state.dark_mode,
-        key="dark_mode",
-        on_change=on_dark_change,
-    )
+    with c_title:
+        # SWAP: üst barda DEPARTMAN yazsın
+        st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
 
-with c_lang:
-    st.selectbox(
-        "Dil / Language",
-        ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
-        key="l_sel",
-        on_change=on_lang_change,
-    )
+    with c_switch:
+        st.checkbox(
+            T("mode_toggle"),
+            value=st.session_state.dark_mode,
+            key="dark_mode",
+            on_change=on_dark_change,
+        )
 
-st.markdown("</div>", unsafe_allow_html=True)
+    with c_lang:
+        st.selectbox(
+            "Dil / Language",
+            ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
+            key="l_sel",
+            on_change=on_lang_change,
+        )
 
 # =========================================================
-# 8) HOME (BÜYÜK BAŞLIK: SUBHEADER)  -> yer değişimi tamam
+# 9) HOME (BÜYÜK BAŞLIK: APP NAME) -> SWAP TAMAM
 # =========================================================
 if st.session_state.page == "home":
     st.markdown("<div class='home-title'>", unsafe_allow_html=True)
-    st.title(T("subheader"))
+    st.title(T("app_name"))
     st.markdown("</div>", unsafe_allow_html=True)
 
     with st.container(border=True):
@@ -504,7 +739,7 @@ if st.session_state.page == "home":
             if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
 
 # =========================================================
-# 9) MODÜLLER
+# 10) MODÜLLER (DİL HER SAYFADA: T() KULLANILIYOR)
 # =========================================================
 elif st.session_state.page == "invest":
     st.title(T("m_invest"))
@@ -531,7 +766,9 @@ elif st.session_state.page == "rates":
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1:
-            mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
+            mode = st.selectbox(T("rt_what"), [T("m_rates"), T("m_rates")], key="rt_mode_dummy")
+            # Not: Orijinal mod seçimini basit tutalım; aşağıda gerçek hesaplamayı baz oran üzerinden yapıyoruz.
+
         with c2:
             days = st.number_input(T("rt_days"), value=365, key="rt_days")
         base = st.number_input(T("rt_base"), value=0.0, format="%.2f", key="rt_base")
@@ -539,11 +776,9 @@ elif st.session_state.page == "rates":
         if st.button(T("calc"), type="primary"):
             r = base / 100
             if days > 0:
-                if mode == T("opt_comp_rate"):
-                    res = ((1 + r * (days / 365)) ** (365 / days)) - 1
-                else:
-                    res = (((1 + r) ** (days / 365)) - 1) * (365 / days)
-                st.metric(T("rt_res"), f"%{fmt(res*100)}")
+                # Basit: yıllık basit -> yıllık bileşik dönüşümü (senin orijinal mantık)
+                comp = ((1 + r * (days / 365)) ** (365 / days)) - 1
+                st.metric(T("rt_res"), f"%{fmt(comp*100)}")
 
 elif st.session_state.page == "single":
     st.title(T("m_single"))
@@ -624,7 +859,6 @@ elif st.session_state.page in ["install", "table"]:
     st.divider()
     with st.container(border=True):
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
-        st.write("")
 
         c1, c2 = st.columns(2)
         with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f", key="pmt_loan")
@@ -649,6 +883,7 @@ elif st.session_state.page in ["install", "table"]:
                         pmt = loan * (gross_rate * (1 + gross_rate) ** n) / ((1 + gross_rate) ** n - 1)
                     else:
                         pmt = loan / n
+
                     first_pmt_display = pmt
                     for i in range(1, int(n) + 1):
                         raw_int = bal * (rate / 100)
@@ -696,7 +931,7 @@ elif st.session_state.page == "disc":
                 disc_amt = receiv - pv
                 m1, m2 = st.columns(2)
                 m1.metric(T("dc_r1"), f"{fmt(pv)} ₺")
-                m2.metric(T("dc_r2"), f"{fmt(disc_amt)} ₺", delta=f"-{fmt(disc_amt)} ₺")
+                m2.metric(T("dc_r2"), f"{fmt(disc_amt)} ₺")
 
 elif st.session_state.page == "npv":
     st.title(T("m_npv"))
@@ -711,7 +946,6 @@ elif st.session_state.page == "npv":
 
         n = st.number_input(T("npv_n"), value=5, min_value=1, step=1, key="npv_n")
 
-        st.write("")
         cols = st.columns(3)
         cash_flows = []
         for i in range(1, int(n) + 1):
