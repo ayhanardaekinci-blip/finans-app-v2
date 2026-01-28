@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import math
 
 # =========================================================
 # 1) AYARLAR
@@ -13,6 +14,8 @@ st.set_page_config(
 
 # =========================================================
 # 2) DİL SÖZLÜKLERİ
+#   NOT: Bu sürümde 4 dilde TAM olan kısım:
+#        "Investment Evaluation" (NPV/IRR/Payback) modülüdür.
 # =========================================================
 TR = {
     "app_name": "Finansal Hesap Makinesi",
@@ -28,7 +31,37 @@ TR = {
     "m_table": "Ödeme Tablosu Oluştur",
     "m_disc": "⚡ İskontolu Alacak Hesapla",
     "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)",
-    "m_npv": "📉 NPV (Net Bugünkü Değer)",
+
+    # NEW (Final): CFO-grade Investment Evaluation
+    "m_eval": "📉 Yatırım Değerlendirme (NPV • IRR • Payback)",
+    "eval_title": "Yatırım Değerlendirme",
+    "eval_project": "Proje Adı",
+    "eval_ccy": "Para Birimi",
+    "eval_wacc": "İskonto Oranı (WACC / Required Return) (%)",
+    "eval_n": "Dönem Sayısı (Yıl)",
+    "eval_cf0": "Başlangıç Yatırımı (CF0)",
+    "eval_cft": "Nakit Akışı (CF)",
+    "eval_calc": "HESAPLA",
+    "eval_kpi_npv": "NPV (Net Bugünkü Değer)",
+    "eval_kpi_irr": "IRR (İç Verim Oranı)",
+    "eval_kpi_dpb": "Discounted Payback (Yıl)",
+    "eval_kpi_pvsum": "Gelecek Akışlar PV Toplamı",
+    "eval_summary_title": "Executive Summary",
+    "eval_decision": "Karar",
+    "eval_rationale": "Gerekçe",
+    "eval_risk_note": "Risk Notu",
+    "eval_dec_ok": "Ekonomik olarak uygundur",
+    "eval_dec_review": "Şartlı / gözden geçirilmeli",
+    "eval_dec_no": "Ekonomik olarak uygun değildir",
+    "eval_warn_multi_irr": "Uyarı: Nakit akışında birden fazla işaret değişimi var; IRR birden fazla olabilir.",
+    "eval_irr_na": "IRR hesaplanamadı",
+    "eval_dpb_na": "Payback oluşmuyor",
+    "eval_table_title": "İskontolu Nakit Akışı Tablosu",
+    "eval_col_t": "Yıl",
+    "eval_col_cf": "CF",
+    "eval_col_df": "İskonto Katsayısı",
+    "eval_col_pv": "PV(CF)",
+    "eval_col_cum": "Kümülatif PV",
 
     "calc": "HESAPLA",
     "days_365": "Baz Gün (365/360)",
@@ -49,7 +82,6 @@ TR = {
     "rt_base": "Baz Oran (%)",
     "opt_comp_rate": "Yıllık Bileşik Faiz (%)",
     "opt_simp_rate": "Yıllık Basit Faiz (%)",
-
     "rt_res": "Hesaplanan Oran",
 
     "s_p": "Anapara",
@@ -92,14 +124,6 @@ TR = {
     "inv_r3": "Yıllık Bileşik Getiri",
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
-
-    "npv_c0": "Başlangıç Yatırımı (CF0)",
-    "npv_rate": "İskonto Oranı (%)",
-    "npv_n": "Dönem Sayısı (N)",
-    "npv_cf": "Nakit Akışı (CF)",
-    "npv_res": "NPV (Net Bugünkü Değer)",
-    "npv_pv_sum": "Gelecek Akışlar PV Toplamı",
-    "npv_hint": "ℹ️ CF0 genelde negatiftir (yatırım). CF1..CFN nakit giriş/çıkışlarıdır.",
 }
 
 EN = {
@@ -109,14 +133,44 @@ EN = {
     "mode_toggle": "🌙 Dark Mode",
 
     "m_invest": "Investment ROI",
-    "m_rates": "Simple - Compound",
+    "m_rates": "Simple vs Compound",
     "m_single": "Single Period Interest",
     "m_comp": "TVM Calculations",
     "m_install": "Loan / Installment",
     "m_table": "Amortization Schedule",
     "m_disc": "⚡ Discounted Receivables",
     "m_deposit": "🏦 Deposit Return (Withholding)",
-    "m_npv": "📉 NPV (Net Present Value)",
+
+    # NEW (Final): CFO-grade Investment Evaluation
+    "m_eval": "📉 Investment Evaluation (NPV • IRR • Payback)",
+    "eval_title": "Investment Evaluation",
+    "eval_project": "Project Name",
+    "eval_ccy": "Currency",
+    "eval_wacc": "Discount Rate (WACC / Required Return) (%)",
+    "eval_n": "Number of Periods (Years)",
+    "eval_cf0": "Initial Investment (CF0)",
+    "eval_cft": "Cash Flow (CF)",
+    "eval_calc": "CALCULATE",
+    "eval_kpi_npv": "NPV (Net Present Value)",
+    "eval_kpi_irr": "IRR (Internal Rate of Return)",
+    "eval_kpi_dpb": "Discounted Payback (Years)",
+    "eval_kpi_pvsum": "PV Sum of Future Flows",
+    "eval_summary_title": "Executive Summary",
+    "eval_decision": "Decision",
+    "eval_rationale": "Rationale",
+    "eval_risk_note": "Risk Note",
+    "eval_dec_ok": "Economically viable",
+    "eval_dec_review": "Conditional / requires review",
+    "eval_dec_no": "Not economically viable",
+    "eval_warn_multi_irr": "Warning: Cash flows have multiple sign changes; multiple IRRs may exist.",
+    "eval_irr_na": "IRR not available",
+    "eval_dpb_na": "No payback within horizon",
+    "eval_table_title": "Discounted Cash Flow Table",
+    "eval_col_t": "Year",
+    "eval_col_cf": "CF",
+    "eval_col_df": "Discount Factor",
+    "eval_col_pv": "PV(CF)",
+    "eval_col_cum": "Cumulative PV",
 
     "calc": "CALCULATE",
     "days_365": "Day Count (365/360)",
@@ -179,192 +233,103 @@ EN = {
     "inv_r3": "Annual Compound Return",
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
-
-    "npv_c0": "Initial Investment (CF0)",
-    "npv_rate": "Discount Rate (%)",
-    "npv_n": "Number of Periods (N)",
-    "npv_cf": "Cash Flow (CF)",
-    "npv_res": "NPV (Net Present Value)",
-    "npv_pv_sum": "PV Sum of Future Flows",
-    "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows.",
 }
 
+# FR/DE: genel metinlerde EN fallback; Investment Evaluation kısmı PRO çeviri.
 FR = {
-    "app_name": "Calculateur Financier",
-    "subheader": "Département Trésorerie – Eczacıbaşı Santé",
-    "home": "🏠 Menu Principal",
+    "app_name": "Calculatrice Financière",
+    "subheader": "Trésorerie Santé – Eczacıbaşı",
+    "home": "🏠 Accueil",
     "mode_toggle": "🌙 Mode Sombre",
 
-    "m_invest": "Rendement de l’Investissement",
-    "m_rates": "Intérêts Simples et Composés",
-    "m_single": "Intérêt sur Période Unique",
-    "m_comp": "Valeur Temps de l’Argent (VA / VF)",
-    "m_install": "Calcul de Crédit / Échéances",
-    "m_table": "Tableau d’Amortissement",
-    "m_disc": "⚡ Actualisation des Créances",
-    "m_deposit": "🏦 Rendement du Dépôt (Net)",
-    "m_npv": "📉 VAN – Valeur Actuelle Nette",
+    # Menü (EN fallback olsa da sorun değil)
+    "m_eval": "📉 Évaluation d’Investissement (VAN • TRI • Payback)",
 
-    "calc": "CALCULER",
-    "days_365": "Base de Calcul (365 / 360)",
-    "tax": "Taux d’Imposition (%)",
+    # Investment Evaluation (PRO)
+    "eval_title": "Évaluation d’Investissement",
+    "eval_project": "Nom du Projet",
+    "eval_ccy": "Devise",
+    "eval_wacc": "Taux d’Actualisation (CMPC / Rendement Exigé) (%)",
+    "eval_n": "Nombre de Périodes (Années)",
+    "eval_cf0": "Investissement Initial (CF0)",
+    "eval_cft": "Flux de Trésorerie (CF)",
+    "eval_calc": "CALCULER",
+    "eval_kpi_npv": "VAN (Valeur Actuelle Nette)",
+    "eval_kpi_irr": "TRI (Taux de Rendement Interne)",
+    "eval_kpi_dpb": "Payback Actualisé (Années)",
+    "eval_kpi_pvsum": "Somme des Flux Actualisés (PV)",
+    "eval_summary_title": "Synthèse Exécutive",
+    "eval_decision": "Décision",
+    "eval_rationale": "Justification",
+    "eval_risk_note": "Note de Risque",
+    "eval_dec_ok": "Économiquement viable",
+    "eval_dec_review": "Sous conditions / à revoir",
+    "eval_dec_no": "Non viable économiquement",
+    "eval_warn_multi_irr": "Avertissement : plusieurs changements de signe des flux ; plusieurs TRI possibles.",
+    "eval_irr_na": "TRI indisponible",
+    "eval_dpb_na": "Payback non atteint sur l’horizon",
+    "eval_table_title": "Tableau des Flux Actualisés",
+    "eval_col_t": "Année",
+    "eval_col_cf": "Flux",
+    "eval_col_df": "Facteur d’Actualisation",
+    "eval_col_pv": "VA (Flux)",
+    "eval_col_cum": "VA Cumulée",
 
-    "cr_type": "Type de Plan de Remboursement",
-    "cr_opt1": "Annuités Constantes",
-    "cr_opt2": "Amortissement Constant",
-    "kkdf": "Taxe KKDF (%)",
-    "bsmv": "Taxe BSMV (%)",
-
-    "inv_buy": "Montant d’Achat",
-    "inv_sell": "Montant de Vente",
-    "inv_day": "Durée (Jours)",
-
-    "rt_what": "Type de Calcul",
-    "rt_days": "Nombre de Jours",
-    "rt_base": "Taux de Référence (%)",
-    "opt_comp_rate": "Taux Annuel Composé (%)",
-    "opt_simp_rate": "Taux Annuel Simple (%)",
-
-    "rt_res": "Taux Calculé",
-
-    "s_p": "Capital Initial",
-    "s_r": "Taux Annuel (%)",
-    "s_d": "Durée (Jours)",
-    "s_note": "Dépôt (-), Crédit (+)",
-    "s_r1": "Montant des Intérêts",
-    "s_r2": "Valeur Totale à Échéance",
-
-    "cm_what": "Valeur à Calculer",
-    "cm_r": "Taux Périodique (%)",
-    "cm_n": "Nombre de Périodes",
-    "opt_pv": "Valeur Actuelle (VA)",
-    "opt_fv": "Valeur Future (VF)",
-    "cm_res": "Valeur Calculée",
-    "cm_res_diff": "Part des Intérêts",
-
-    "pmt_loan": "Montant du Crédit",
-    "pmt_r": "Taux Mensuel (%)",
-    "pmt_n": "Nombre d’Échéances",
-    "pmt_res": "Première Échéance",
-    "pmt_res_total": "Remboursement Total",
-
-    "dc_rec": "Montant de la Créance",
-    "dc_day": "Paiement Anticipé (Jours)",
-    "dc_rate": "Taux de Rendement Alternatif (%)",
-    "dc_r1": "Montant Actualisé",
-    "dc_r2": "Montant de l’Escompte",
-
-    "dep_amt": "Montant du Dépôt",
-    "dep_days": "Durée (Jours)",
-    "dep_rate": "Taux Annuel (%)",
-    "dep_res_net": "Intérêts Nets",
-    "dep_res_total": "Solde Final",
-    "dep_info_stopaj": "Taux de Retenue",
-    "dep_info_desc": "ℹ️ Retenue appliquée automatiquement selon la réglementation 2025.",
-
-    "inv_r1": "Rendement de la Période",
-    "inv_r2": "Rendement Annuel Simple",
-    "inv_r3": "Rendement Annuel Composé",
-
-    "tbl_cols": ["Période", "Échéance", "Principal", "Intérêts", "KKDF", "BSMV", "Solde Restant"],
-
-    "npv_c0": "Investissement Initial (CF0)",
-    "npv_rate": "Taux d’Actualisation (%)",
-    "npv_n": "Nombre de Périodes",
-    "npv_cf": "Flux de Trésorerie",
-    "npv_res": "Valeur Actuelle Nette (VAN)",
-    "npv_pv_sum": "Somme Actualisée des Flux",
-    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1…CFN représentent les flux futurs.",
+    **{k: v for k, v in EN.items() if k not in {
+        "app_name","subheader","home","mode_toggle",
+        "m_eval","eval_title","eval_project","eval_ccy","eval_wacc","eval_n","eval_cf0","eval_cft","eval_calc",
+        "eval_kpi_npv","eval_kpi_irr","eval_kpi_dpb","eval_kpi_pvsum","eval_summary_title","eval_decision",
+        "eval_rationale","eval_risk_note","eval_dec_ok","eval_dec_review","eval_dec_no","eval_warn_multi_irr",
+        "eval_irr_na","eval_dpb_na","eval_table_title","eval_col_t","eval_col_cf","eval_col_df","eval_col_pv","eval_col_cum"
+    }},
 }
 
 DE = {
     "app_name": "Finanzrechner",
-    "subheader": "Treasury-Abteilung – Eczacıbaşı Gesundheit",
-    "home": "🏠 Hauptmenü",
+    "subheader": "Treasury – Eczacıbaşı Health",
+    "home": "🏠 Start",
     "mode_toggle": "🌙 Dunkelmodus",
 
-    "m_invest": "Investitionsrendite",
-    "m_rates": "Einfache und Zusammengesetzte Zinsen",
-    "m_single": "Einperiodige Verzinsung",
-    "m_comp": "Zeitwert des Geldes (BW / EW)",
-    "m_install": "Kredit- / Ratenberechnung",
-    "m_table": "Tilgungsplan",
-    "m_disc": "⚡ Forderungsabzinsung",
-    "m_deposit": "🏦 Einlagenrendite (Netto)",
-    "m_npv": "📉 Kapitalwert (NPV)",
+    "m_eval": "📉 Investitionsbewertung (NPV • IRR • Payback)",
 
-    "calc": "BERECHNEN",
-    "days_365": "Zinstage (365 / 360)",
-    "tax": "Steuersatz (%)",
+    # Investment Evaluation (PRO)
+    "eval_title": "Investitionsbewertung",
+    "eval_project": "Projektname",
+    "eval_ccy": "Währung",
+    "eval_wacc": "Diskontsatz (WACC / Required Return) (%)",
+    "eval_n": "Anzahl Perioden (Jahre)",
+    "eval_cf0": "Anfangsinvestition (CF0)",
+    "eval_cft": "Cashflow (CF)",
+    "eval_calc": "BERECHNEN",
+    "eval_kpi_npv": "NPV (Kapitalwert)",
+    "eval_kpi_irr": "IRR (Interner Zinsfuß)",
+    "eval_kpi_dpb": "Abgezinster Payback (Jahre)",
+    "eval_kpi_pvsum": "Barwertsumme der zukünftigen Cashflows",
+    "eval_summary_title": "Executive Summary",
+    "eval_decision": "Entscheidung",
+    "eval_rationale": "Begründung",
+    "eval_risk_note": "Risikohinweis",
+    "eval_dec_ok": "Wirtschaftlich sinnvoll",
+    "eval_dec_review": "Bedingt / prüfen",
+    "eval_dec_no": "Nicht wirtschaftlich sinnvoll",
+    "eval_warn_multi_irr": "Warnung: Mehrere Vorzeichenwechsel der Cashflows; mehrere IRRs möglich.",
+    "eval_irr_na": "IRR nicht verfügbar",
+    "eval_dpb_na": "Kein Payback im Betrachtungszeitraum",
+    "eval_table_title": "Abgezinste Cashflow-Tabelle",
+    "eval_col_t": "Jahr",
+    "eval_col_cf": "Cashflow",
+    "eval_col_df": "Diskontfaktor",
+    "eval_col_pv": "Barwert (CF)",
+    "eval_col_cum": "Kumul. Barwert",
 
-    "cr_type": "Rückzahlungsart",
-    "cr_opt1": "Annuitätendarlehen",
-    "cr_opt2": "Lineare Tilgung",
-    "kkdf": "KKDF-Steuer (%)",
-    "bsmv": "BSMV-Steuer (%)",
-
-    "inv_buy": "Kaufbetrag",
-    "inv_sell": "Verkaufsbetrag",
-    "inv_day": "Laufzeit (Tage)",
-
-    "rt_what": "Berechnungsart",
-    "rt_days": "Anzahl der Tage",
-    "rt_base": "Referenzzinssatz (%)",
-    "opt_comp_rate": "Effektiver Jahreszins (%)",
-    "opt_simp_rate": "Nominaler Jahreszins (%)",
-
-    "rt_res": "Berechneter Zinssatz",
-
-    "s_p": "Anfangskapital",
-    "s_r": "Jahreszins (%)",
-    "s_d": "Laufzeit (Tage)",
-    "s_note": "Einlage (-), Kredit (+)",
-    "s_r1": "Zinsbetrag",
-    "s_r2": "Endbetrag",
-
-    "cm_what": "Zu Berechnender Wert",
-    "cm_r": "Periodischer Zinssatz (%)",
-    "cm_n": "Anzahl der Perioden",
-    "opt_pv": "Barwert (BW)",
-    "opt_fv": "Endwert (EW)",
-    "cm_res": "Berechneter Betrag",
-    "cm_res_diff": "Zinsanteil",
-
-    "pmt_loan": "Kreditbetrag",
-    "pmt_r": "Monatlicher Zinssatz (%)",
-    "pmt_n": "Anzahl der Raten",
-    "pmt_res": "Erste Rate",
-    "pmt_res_total": "Gesamtrückzahlung",
-
-    "dc_rec": "Forderungsbetrag",
-    "dc_day": "Vorzeitige Zahlung (Tage)",
-    "dc_rate": "Alternativer Zinssatz (%)",
-    "dc_r1": "Abgezinster Betrag",
-    "dc_r2": "Abzinsungsbetrag",
-
-    "dep_amt": "Einlagebetrag",
-    "dep_days": "Laufzeit (Tage)",
-    "dep_rate": "Jahreszinssatz (%)",
-    "dep_res_net": "Nettozinsertrag",
-    "dep_res_total": "Endsaldo",
-    "dep_info_stopaj": "Quellensteuersatz",
-    "dep_info_desc": "ℹ️ Automatische Besteuerung gemäß Regelung 2025.",
-
-    "inv_r1": "Periodenrendite",
-    "inv_r2": "Einfache Jahresrendite",
-    "inv_r3": "Effektive Jahresrendite",
-
-    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zinsen", "KKDF", "BSMV", "Restschuld"],
-
-    "npv_c0": "Anfangsinvestition (CF0)",
-    "npv_rate": "Diskontierungszinssatz (%)",
-    "npv_n": "Anzahl der Perioden",
-    "npv_cf": "Cashflow",
-    "npv_res": "Kapitalwert (NPV)",
-    "npv_pv_sum": "Barwert der Zahlungsströme",
-    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1…CFN sind zukünftige Zahlungsströme.",
+    **{k: v for k, v in EN.items() if k not in {
+        "app_name","subheader","home","mode_toggle",
+        "m_eval","eval_title","eval_project","eval_ccy","eval_wacc","eval_n","eval_cf0","eval_cft","eval_calc",
+        "eval_kpi_npv","eval_kpi_irr","eval_kpi_dpb","eval_kpi_pvsum","eval_summary_title","eval_decision",
+        "eval_rationale","eval_risk_note","eval_dec_ok","eval_dec_review","eval_dec_no","eval_warn_multi_irr",
+        "eval_irr_na","eval_dpb_na","eval_table_title","eval_col_t","eval_col_cf","eval_col_df","eval_col_pv","eval_col_cum"
+    }},
 }
-
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
@@ -372,7 +337,8 @@ LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 # 3) HELPERS
 # =========================================================
 def fmt(value):
-    if value is None:
+S=None:
+    if value is None or (isinstance(value, float) and (math.isnan(value) or math.isinf(value))):
         return "0,00"
     try:
         s = "{:,.2f}".format(float(value))
@@ -380,8 +346,95 @@ def fmt(value):
     except Exception:
         return "0,00"
 
+def fmt_pct(value):
+    if value is None or (isinstance(value, float) and (math.isnan(value) or math.isinf(value))):
+        return "N/A"
+    return f"%{fmt(value)}"
+
 def T(key: str) -> str:
     return LANGS[st.session_state.lang].get(key, key)
+
+def sign_changes(seq):
+    # count sign changes ignoring zeros
+    cleaned = [x for x in seq if abs(x) > 1e-12]
+    if len(cleaned) < 2:
+        return 0
+    changes = 0
+    for a, b in zip(cleaned, cleaned[1:]):
+        if a * b < 0:
+            changes += 1
+    return changes
+
+def npv_calc(c0, cfs, r):
+    # r as decimal annual
+    total = c0
+    for t, cf in enumerate(cfs, start=1):
+        total += cf / ((1.0 + r) ** t)
+    return total
+
+def irr_calc(c0, cfs):
+    """
+    Robust IRR:
+    - find root of NPV(r)=0 with bisection
+    - return None if no sign change in search range
+    """
+    cash = [c0] + list(cfs)
+    # Need at least one sign change for IRR existence (common case)
+    if sign_changes(cash) == 0:
+        return None
+
+    # Lower bound cannot be <= -1
+    lo = -0.9999
+    hi = 1.0
+
+    f_lo = npv_calc(c0, cfs, lo)
+    f_hi = npv_calc(c0, cfs, hi)
+
+    # Expand hi until sign change or limit
+    expand = 0
+    while f_lo * f_hi > 0 and hi < 10.0 and expand < 40:
+        hi *= 1.5
+        f_hi = npv_calc(c0, cfs, hi)
+        expand += 1
+
+    if f_lo * f_hi > 0:
+        return None
+
+    # Bisection
+    for _ in range(120):
+        mid = (lo + hi) / 2.0
+        f_mid = npv_calc(c0, cfs, mid)
+        if abs(f_mid) < 1e-9:
+            return mid
+        if f_lo * f_mid <= 0:
+            hi, f_hi = mid, f_mid
+        else:
+            lo, f_lo = mid, f_mid
+
+    return (lo + hi) / 2.0
+
+def discounted_payback_years(c0, cfs, r):
+    """
+    Discounted payback on cumulative PV including CF0.
+    Returns float years (e.g., 2.75) or None if never >= 0.
+    """
+    cum = c0
+    if cum >= 0:
+        return 0.0
+
+    prev_cum = cum
+    for t, cf in enumerate(cfs, start=1):
+        pv = cf / ((1.0 + r) ** t)
+        cum += pv
+        if cum >= 0:
+            # interpolate within year t
+            denom = (cum - prev_cum)
+            if abs(denom) < 1e-12:
+                return float(t)
+            frac = (0.0 - prev_cum) / denom
+            return (t - 1) + max(0.0, min(1.0, frac))
+        prev_cum = cum
+    return None
 
 # =========================================================
 # 4) QUERY PARAM (LANG/DARK/PAGE KALICI)
@@ -434,10 +487,7 @@ else:
     st.session_state.lang = qp_get("lang", st.session_state.lang)
 
 dark_from_qp = (qp_get("dark", "0") == "1")
-if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = dark_from_qp
-else:
-    st.session_state.dark_mode = dark_from_qp
+st.session_state.dark_mode = dark_from_qp
 
 flag_map = {"TR": "🇹🇷 TR", "EN": "🇬🇧 EN", "FR": "🇫🇷 FR", "DE": "🇩🇪 DE"}
 st.session_state.l_sel = flag_map.get(st.session_state.lang, "🇹🇷 TR")
@@ -474,13 +524,12 @@ TOPBAR_THIN_PADDING_X = "0.55rem"
 
 # =========================================================
 # 7) CSS
-#   - Switch çizimi yok: sadece tick (native checkbox)
-#   - Selectbox hem kapalı halde hem de açılan listbox/portal katmanında zorlanır
+#   - Tek kontrol: checkbox (native)
+#   - Cloud dropdown portal renk fix
 # =========================================================
 st.markdown(
     f"""
 <style>
-/* App genel */
 .stApp {{
   background: {bg_color};
   color: {text_color};
@@ -491,7 +540,6 @@ st.markdown(
   max-width: 1240px;
 }}
 
-/* Metinler */
 h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
   color: {text_color} !important;
   opacity: 1 !important;
@@ -501,14 +549,12 @@ h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
   opacity: 1 !important;
 }}
 
-/* Kart */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
   background: {card_bg} !important;
   border: 1px solid {border_color} !important;
   border-radius: 14px !important;
 }}
 
-/* Label + radio/checkbox text */
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
 div[data-testid="stRadio"] label,
@@ -522,7 +568,6 @@ div[data-testid="stRadio"] * {{
   opacity: 1 !important;
 }}
 
-/* Number input */
 .stNumberInput input {{
   color: {input_text} !important;
   background: {input_bg} !important;
@@ -531,64 +576,40 @@ div[data-testid="stRadio"] * {{
   font-weight: 900 !important;
 }}
 
-/* =====================================================
-   SELECTBOX FIX (KAPALI HAL + FOCUS HAL + ICON + INPUT)
-   ===================================================== */
 div[data-testid="stSelectbox"] div[data-baseweb="select"] {{
   background: {input_bg} !important;
   border: 1px solid {border_color} !important;
   border-radius: 12px !important;
 }}
-
-/* Kapalı selectbox'ın asıl boyalı katmanı (cloud'da bazen burası beyaz kalıyor) */
-div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {{
-  background: {input_bg} !important;
-}}
-
-/* Combobox role'u da zorla */
-div[data-testid="stSelectbox"] div[role="combobox"] {{
-  background: {input_bg} !important;
-  color: {input_text} !important;
-}}
-
-/* İç yazı/placeholder/ikon */
-div[data-testid="stSelectbox"] div[data-baseweb="select"] *,
-div[data-testid="stSelectbox"] div[role="combobox"] * {{
+div[data-testid="stSelectbox"] div[data-baseweb="select"] * {{
   color: {input_text} !important;
   opacity: 1 !important;
-  -webkit-text-fill-color: {input_text} !important;
 }}
-div[data-testid="stSelectbox"] svg {{
+div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {{
   fill: {input_text} !important;
   color: {input_text} !important;
 }}
-
-/* =====================================================
-   DROPDOWN AÇILINCA (PORTAL/POPOVER/LISTBOX/MENU)
-   ===================================================== */
-div[data-baseweb="popover"] {{
-  background: {card_bg} !important;
+div[data-testid="stSelectbox"] div[data-baseweb="select"] input {{
+  color: {input_text} !important;
+  -webkit-text-fill-color: {input_text} !important;
 }}
+
+div[data-baseweb="popover"],
 div[data-baseweb="popover"] * {{
   background: {card_bg} !important;
   border-color: {border_color} !important;
 }}
-
 div[role="listbox"],
 ul[role="listbox"] {{
   background: {card_bg} !important;
   border: 1px solid {border_color} !important;
 }}
-
 div[role="option"],
 li[role="option"],
-div[data-baseweb="menu"] *,
-div[data-baseweb="menu"] span {{
+div[data-baseweb="menu"] * {{
   color: {text_color} !important;
   opacity: 1 !important;
-  -webkit-text-fill-color: {text_color} !important;
 }}
-
 div[role="option"][aria-selected="true"],
 li[role="option"][aria-selected="true"] {{
   background: rgba(13,110,253,0.12) !important;
@@ -598,7 +619,6 @@ li[role="option"]:hover {{
   background: rgba(13,110,253,0.10) !important;
 }}
 
-/* Buttons */
 div.stButton > button:first-child {{
   width: 100%;
   height: 2.7em;
@@ -616,7 +636,6 @@ div.stButton > button:first-child:hover {{
   color: #0d6efd;
 }}
 
-/* Metric */
 div[data-testid="stMetricValue"] {{
   font-size: 1.55rem !important;
   color: {metric_color} !important;
@@ -629,7 +648,6 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* Sticky topbar */
 div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
   position: sticky;
   top: {STREAMLIT_TOPBAR_PX}px;
@@ -666,7 +684,6 @@ h1, h2, h3 {{
   line-height: 1.03 !important;
 }}
 
-/* Checkbox: tek kontrol tick */
 div[data-testid="stCheckbox"] input[type="checkbox"] {{
   accent-color: #ef4444;
 }}
@@ -724,7 +741,7 @@ if st.session_state.page == "home":
             if st.button(f"🔄 {T('m_rates')}", use_container_width=True): go("rates")
             if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
             if st.button(f"💰 {T('m_comp')}", use_container_width=True): go("comp")
-            if st.button(f"{T('m_npv')}", use_container_width=True): go("npv")
+            if st.button(f"{T('m_eval')}", use_container_width=True): go("eval")
 
         with right:
             if st.button(f"💳 {T('m_install')}", use_container_width=True): go("install")
@@ -735,6 +752,124 @@ if st.session_state.page == "home":
 # =========================================================
 # 10) MODÜLLER
 # =========================================================
+elif st.session_state.page == "eval":
+    st.title(T("eval_title"))
+    st.divider()
+
+    # ---------- Inputs + Summary layout ----------
+    inp_col, sum_col = st.columns([1.15, 1.0], gap="large")
+
+    with inp_col:
+        with st.container(border=True):
+            project = st.text_input(T("eval_project"), value=st.session_state.get("eval_project_val", "Project A"), key="eval_project_val")
+            ccy = st.selectbox(T("eval_ccy"), ["TRY", "USD", "EUR"], index=0, key="eval_ccy_val")
+
+            wacc = st.number_input(T("eval_wacc"), value=float(st.session_state.get("eval_wacc_val", 30.0)), format="%.2f", key="eval_wacc_val")
+            n = st.number_input(T("eval_n"), value=int(st.session_state.get("eval_n_val", 5)), min_value=1, step=1, key="eval_n_val")
+
+            st.write("---")
+            c0 = st.number_input(T("eval_cf0"), value=float(st.session_state.get("eval_cf0_val", -100000.0)), step=1000.0, format="%.2f", key="eval_cf0_val")
+
+            cols = st.columns(3)
+            cfs = []
+            for i in range(1, int(n) + 1):
+                with cols[(i - 1) % 3]:
+                    cf = st.number_input(
+                        f"{T('eval_cft')} {i}",
+                        value=float(st.session_state.get(f"eval_cf_{i}", 30000.0)),
+                        step=1000.0,
+                        format="%.2f",
+                        key=f"eval_cf_{i}",
+                    )
+                    cfs.append(cf)
+
+            calc = st.button(T("eval_calc"), type="primary", use_container_width=True)
+
+    # ---------- Computation & Rendering ----------
+    if calc:
+        r = float(wacc) / 100.0
+
+        cash_all = [c0] + list(cfs)
+        multi_irr_risk = (sign_changes(cash_all) > 1)
+
+        npv = npv_calc(c0, cfs, r)
+        pv_sum = npv - c0
+        irr = irr_calc(c0, cfs)
+        dpb = discounted_payback_years(c0, cfs, r)
+
+        # Decision logic (simple, CFO-friendly)
+        # - OK: NPV>0 and (IRR exists and IRR>WACC)
+        # - NO: NPV<0 and (IRR missing or IRR<WACC)
+        # - REVIEW: otherwise (mixed signals)
+        ok = (npv > 0) and (irr is not None) and (irr > r)
+        no = (npv < 0) and ((irr is None) or (irr < r))
+        if ok:
+            decision = T("eval_dec_ok")
+        elif no:
+            decision = T("eval_dec_no")
+        else:
+            decision = T("eval_dec_review")
+
+        # Rationale & risk note text
+        irr_txt = T("eval_irr_na") if irr is None else f"{(irr*100):.2f}%"
+        wacc_txt = f"{(r*100):.2f}%"
+
+        if irr is None:
+            rationale = f"{T('eval_kpi_npv')} {('pozitiftir' if st.session_state.lang=='TR' else 'is positive' ) if npv>0 else ('negatiftir' if st.session_state.lang=='TR' else 'is negative')}. {T('eval_irr_na')}."
+        else:
+            # language-neutral sentence pattern; still reads fine
+            rationale = f"{T('eval_kpi_npv')}: {fmt(npv)} • {T('eval_kpi_irr')}: {irr_txt} • {T('eval_wacc')}: {wacc_txt}"
+
+        if dpb is None:
+            risk_note = T("eval_dpb_na")
+        else:
+            risk_note = f"{T('eval_kpi_dpb')}: {dpb:.2f}"
+
+        with sum_col:
+            # KPI band
+            k1, k2, k3 = st.columns(3)
+            k1.metric(T("eval_kpi_npv"), f"{fmt(npv)} {ccy}")
+            k2.metric(T("eval_kpi_irr"), (T("eval_irr_na") if irr is None else f"%{fmt(irr*100)}"))
+            k3.metric(T("eval_kpi_dpb"), (T("eval_dpb_na") if dpb is None else f"{dpb:.2f}"))
+
+            k4, _ = st.columns([1, 1])
+            k4.metric(T("eval_kpi_pvsum"), f"{fmt(pv_sum)} {ccy}")
+
+            st.write("")
+            with st.container(border=True):
+                st.subheader(T("eval_summary_title"))
+                st.write(f"**{T('eval_decision')}:** {decision}")
+                st.write(f"**{T('eval_rationale')}:** {rationale}")
+                st.write(f"**{T('eval_risk_note')}:** {risk_note}")
+                if multi_irr_risk:
+                    st.warning(T("eval_warn_multi_irr"))
+
+        # Table (full width)
+        st.write("")
+        st.subheader(T("eval_table_title"))
+        rows = []
+        cum = c0
+        rows.append([0, c0, 1.0, c0, cum])
+        for t, cf in enumerate(cfs, start=1):
+            df = 1.0 / ((1.0 + r) ** t)
+            pv = cf * df
+            cum += pv
+            rows.append([t, cf, df, pv, cum])
+
+        df_table = pd.DataFrame(
+            rows,
+            columns=[T("eval_col_t"), T("eval_col_cf"), T("eval_col_df"), T("eval_col_pv"), T("eval_col_cum")],
+        )
+
+        # format display
+        disp = df_table.copy()
+        disp[T("eval_col_cf")] = disp[T("eval_col_cf")].apply(lambda x: f"{fmt(x)} {ccy}")
+        disp[T("eval_col_df")] = disp[T("eval_col_df")].apply(lambda x: f"{x:.6f}")
+        disp[T("eval_col_pv")] = disp[T("eval_col_pv")].apply(lambda x: f"{fmt(x)} {ccy}")
+        disp[T("eval_col_cum")] = disp[T("eval_col_cum")].apply(lambda x: f"{fmt(x)} {ccy}")
+
+        st.dataframe(disp, use_container_width=True, hide_index=True)
+
 elif st.session_state.page == "invest":
     st.title(T("m_invest"))
     st.divider()
@@ -927,41 +1062,3 @@ elif st.session_state.page == "disc":
                 m1, m2 = st.columns(2)
                 m1.metric(T("dc_r1"), f"{fmt(pv)} ₺")
                 m2.metric(T("dc_r2"), f"{fmt(disc_amt)} ₺")
-
-elif st.session_state.page == "npv":
-    st.title(T("m_npv"))
-    st.divider()
-    st.info(T("npv_hint"))
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1:
-            c0 = st.number_input(T("npv_c0"), value=-100000.0, step=1000.0, format="%.2f", key="npv_c0")
-        with c2:
-            rate = st.number_input(T("npv_rate"), value=30.0, format="%.2f", key="npv_rate")
-
-        n = st.number_input(T("npv_n"), value=5, min_value=1, step=1, key="npv_n")
-
-        cols = st.columns(3)
-        cash_flows = []
-        for i in range(1, int(n) + 1):
-            with cols[(i - 1) % 3]:
-                cf = st.number_input(
-                    f"{T('npv_cf')} {i}",
-                    value=30000.0,
-                    step=1000.0,
-                    format="%.2f",
-                    key=f"npv_cf_{i}",
-                )
-                cash_flows.append(cf)
-
-        if st.button(T("calc"), type="primary"):
-            r = rate / 100.0
-            pv_sum = 0.0
-            for t, cf in enumerate(cash_flows, start=1):
-                pv_sum += cf / ((1 + r) ** t)
-            npv = c0 + pv_sum
-
-            m1, m2 = st.columns(2)
-            m1.metric(T("npv_res"), f"{fmt(npv)} ₺")
-            m2.metric(T("npv_pv_sum"), f"{fmt(pv_sum)} ₺")
-
