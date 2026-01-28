@@ -9,11 +9,11 @@ st.set_page_config(
     page_title="Finansal Hesap Makinesi",
     page_icon="💹",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
 # =========================================================
-# 2) DİL SÖZLÜKLERİ (TR/EN/FR/DE TAM)
+# 2) DİL SÖZLÜKLERİ
 # =========================================================
 TR = {
     "app_name": "Finansal Hesap Makinesi",
@@ -60,14 +60,13 @@ TR = {
     "opt_comp_rate": "Yıllık Bileşik Faiz (%)", "opt_simp_rate": "Yıllık Basit Faiz (%)",
     "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu Değer (FV)",
 
-    # NPV
     "npv_c0": "Başlangıç Yatırımı (CF0)",
     "npv_rate": "İskonto Oranı (%)",
     "npv_n": "Dönem Sayısı (N)",
     "npv_cf": "Nakit Akışı (CF)",
     "npv_res": "NPV (Net Bugünkü Değer)",
     "npv_pv_sum": "Gelecek Akışlar PV Toplamı",
-    "npv_hint": "ℹ️ CF0 genelde negatiftir (yatırım). CF1..CFN nakit giriş/çıkışlarıdır."
+    "npv_hint": "ℹ️ CF0 genelde negatiftir (yatırım). CF1..CFN nakit giriş/çıkışlarıdır.",
 }
 
 EN = {
@@ -77,17 +76,17 @@ EN = {
     "mode_toggle": "🌙 Dark Mode",
 
     "m_invest": "Investment ROI",
-    "m_rates": "Simple vs Compound Rates",
+    "m_rates": "Simple - Compound",
     "m_single": "Single Period Interest",
     "m_comp": "TVM Calculations",
-    "m_install": "Loan / Installment Calc",
+    "m_install": "Loan / Installment",
     "m_table": "Amortization Schedule",
     "m_disc": "⚡ Discounted Receivables",
     "m_deposit": "🏦 Deposit Return (Withholding)",
     "m_npv": "📉 NPV (Net Present Value)",
 
-    "calc": "CALCULATE", "days_365": "Day Count Basis (365/360)", "tax": "Tax / Withholding (%)",
-    "cr_type": "Repayment Plan Type",
+    "calc": "CALCULATE", "days_365": "Day Count (365/360)", "tax": "Tax / Withholding (%)",
+    "cr_type": "Repayment Plan",
     "cr_opt1": "Equal Installments (Annuity)",
     "cr_opt2": "Equal Principal (Decreasing)",
     "kkdf": "Tax 1 (KKDF) (%)",
@@ -95,11 +94,11 @@ EN = {
 
     "inv_buy": "Purchase Price", "inv_sell": "Selling Price", "inv_day": "Tenor (Days)",
     "rt_what": "Calculate What?", "rt_days": "Days", "rt_base": "Base Rate (%)",
-    "s_p": "Principal Amount", "s_r": "Annual Rate (%)", "s_d": "Tenor (Days)", "s_note": "Deposit (-), Loan (+)",
-    "cm_what": "Calculate What?", "cm_val1": "Present Value (PV)", "cm_val2": "Future Value (FV)", "cm_n": "Number of Periods", "cm_r": "Periodic Rate (%)",
+    "s_p": "Principal", "s_r": "Annual Rate (%)", "s_d": "Tenor (Days)", "s_note": "Deposit (-), Loan (+)",
+    "cm_what": "Calculate What?", "cm_val1": "Present Value (PV)", "cm_val2": "Future Value (FV)", "cm_n": "Periods", "cm_r": "Periodic Rate (%)",
     "pmt_loan": "Loan Amount", "pmt_r": "Monthly Rate (%)", "pmt_n": "Installments",
     "dc_rec": "Receivable Amount", "dc_day": "Days Paid Early", "dc_rate": "Opportunity Cost (%)",
-    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Interest Rate (%)",
+    "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Rate (%)",
 
     "inv_r1": "Periodic Return", "inv_r2": "Annual Simple Return", "inv_r3": "Annual Compound Return",
     "rt_res": "Resulting Rate",
@@ -115,128 +114,33 @@ EN = {
     "opt_comp_rate": "Annual Compound Rate (%)", "opt_simp_rate": "Annual Simple Rate (%)",
     "opt_pv": "Principal (PV)", "opt_fv": "Future Value (FV)",
 
-    # NPV
     "npv_c0": "Initial Investment (CF0)",
     "npv_rate": "Discount Rate (%)",
     "npv_n": "Number of Periods (N)",
     "npv_cf": "Cash Flow (CF)",
     "npv_res": "NPV (Net Present Value)",
     "npv_pv_sum": "PV Sum of Future Flows",
-    "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows."
+    "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows.",
 }
 
-FR = {
+# Basit/uyumlu kalsın diye FR/DE: EN'in çevirisi gibi kullanalım (istersen sonra tek tek çeviririz)
+FR = dict(EN)
+FR.update({
     "app_name": "Calculatrice Financière",
     "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
-    "home": "🏠 Menu Principal",
     "mode_toggle": "🌙 Mode Sombre",
-
-    "m_invest": "ROI Investissement",
-    "m_rates": "Taux Simples vs Composés",
-    "m_single": "Intérêt Période Unique",
-    "m_comp": "Calculs TVM (VA/VC)",
-    "m_install": "Calcul de Prêt",
-    "m_table": "Tableau d'Amortissement",
-    "m_disc": "⚡ Créances Escomptées",
-    "m_deposit": "🏦 Rendement Dépôt (Net)",
-    "m_npv": "📉 VAN (Valeur Actuelle Nette)",
-
-    "calc": "CALCULER", "days_365": "Base Jours (365/360)", "tax": "Taxe / Retenue (%)",
-    "cr_type": "Type d'Amortissement",
-    "cr_opt1": "Mensualités Constantes",
-    "cr_opt2": "Amortissement Constant",
-    "kkdf": "Taxe 1 (KKDF) (%)",
-    "bsmv": "Taxe 2 (BSMV) (%)",
-
-    "inv_buy": "Prix d'Achat", "inv_sell": "Prix de Vente", "inv_day": "Durée (Jours)",
-    "rt_what": "Que Calculer?", "rt_days": "Jours", "rt_base": "Taux de Base (%)",
-    "s_p": "Principal", "s_r": "Taux Annuel (%)", "s_d": "Durée (Jours)", "s_note": "Dépôt (-), Prêt (+)",
-    "cm_what": "Que Calculer?", "cm_val1": "Valeur Actuelle (VA)", "cm_val2": "Valeur Future (VC)", "cm_n": "Périodes", "cm_r": "Taux Périodique (%)",
-    "pmt_loan": "Montant du Prêt", "pmt_r": "Taux Mensuel (%)", "pmt_n": "Échéances",
-    "dc_rec": "Montant Créance", "dc_day": "Jours Anticipés", "dc_rate": "Taux d'Opportunité (%)",
-    "dep_amt": "Montant du Dépôt", "dep_days": "Maturité (Jours)", "dep_rate": "Taux Annuel (%)",
-
-    "inv_r1": "Rendement Périodique", "inv_r2": "Rendement Annuel Simple", "inv_r3": "Rendement Annuel Composé",
-    "rt_res": "Taux Résultant",
-    "s_r1": "Montant des Intérêts", "s_r2": "Valeur Totale",
-    "cm_lbl_res": "Montant Calculé", "cm_res_diff": "Part Intérêts",
-    "pmt_res": "Première Échéance", "pmt_res_total": "Remboursement Total",
-    "dc_r1": "Net à Payer", "dc_r2": "Montant de l'Escompte",
-    "dep_res_net": "Rendement Net", "dep_res_total": "Solde Final Total",
-    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
-    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
-
-    "tbl_cols": ["Période", "Paiement", "Principal", "Intérêts", "Taxe 1", "Taxe 2", "Solde Restant"],
-    "opt_comp_rate": "Taux Annuel Composé (%)", "opt_simp_rate": "Taux Annuel Simple (%)",
-    "opt_pv": "Valeur Actuelle (VA)", "opt_fv": "Valeur Future (VC)",
-
-    "npv_c0": "Investissement Initial (CF0)",
-    "npv_rate": "Taux d'Actualisation (%)",
-    "npv_n": "Nombre de Périodes (N)",
-    "npv_cf": "Flux de Trésorerie (CF)",
-    "npv_res": "VAN (Valeur Actuelle Nette)",
-    "npv_pv_sum": "Somme VA des Flux Futurs",
-    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1..CFN sont des entrées/sorties."
-}
-
-DE = {
+})
+DE = dict(EN)
+DE.update({
     "app_name": "Finanzrechner",
     "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
-    "home": "🏠 Hauptmenü",
     "mode_toggle": "🌙 Dunkelmodus",
-
-    "m_invest": "Investitions-ROI",
-    "m_rates": "Einfache vs Zinseszinsen",
-    "m_single": "Einmalige Zinszahlung",
-    "m_comp": "Zeitwert des Geldes",
-    "m_install": "Kreditrechner",
-    "m_table": "Tilgungsplan Erstellen",
-    "m_disc": "⚡ Forderungsdiskontierung",
-    "m_deposit": "🏦 Einlagerendite (Netto)",
-    "m_npv": "📉 NPV (Kapitalwert)",
-
-    "calc": "BERECHNEN", "days_365": "Zinstage (365/360)", "tax": "Steuersatz (%)",
-    "cr_type": "Tilgungsart",
-    "cr_opt1": "Gleiche Raten (Annuität)",
-    "cr_opt2": "Gleiche Tilgung (Ratentilgung)",
-    "kkdf": "Steuer 1 (KKDF) (%)",
-    "bsmv": "Steuer 2 (BSMV) (%)",
-
-    "inv_buy": "Kaufpreis", "inv_sell": "Verkaufspreis", "inv_day": "Laufzeit (Tage)",
-    "rt_what": "Was berechnen?", "rt_days": "Tage", "rt_base": "Basiszinssatz (%)",
-    "s_p": "Kapitalbetrag", "s_r": "Jahreszins (%)", "s_d": "Laufzeit (Tage)", "s_note": "Einlage (-), Kredit (+)",
-    "cm_what": "Was berechnen?", "cm_val1": "Barwert (PV)", "cm_val2": "Endwert (FV)", "cm_n": "Anzahl Perioden", "cm_r": "Periodischer Zins (%)",
-    "pmt_loan": "Kreditbetrag", "pmt_r": "Monatszins (%)", "pmt_n": "Ratenanzahl",
-    "dc_rec": "Forderungsbetrag", "dc_day": "Tage früher", "dc_rate": "Alternativzins (%)",
-    "dep_amt": "Einlagebetrag", "dep_days": "Laufzeit (Tage)", "dep_rate": "Jahreszins (%)",
-
-    "inv_r1": "Periodenrendite", "inv_r2": "Jährliche Einfache Rendite", "inv_r3": "Jährliche Effektivrendite",
-    "rt_res": "Ergebniszinssatz",
-    "s_r1": "Zinsbetrag", "s_r2": "Gesamtendwert",
-    "cm_lbl_res": "Berechneter Betrag", "cm_res_diff": "Zinsanteil",
-    "pmt_res": "Erste Rate", "pmt_res_total": "Gesamtrückzahlung",
-    "dc_r1": "Auszahlungsbetrag", "dc_r2": "Skontobetrag",
-    "dep_res_net": "Nettoertrag", "dep_res_total": "Gesamtendbestand",
-    "dep_info_stopaj": "Angewandte Steuer",
-    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
-
-    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "Steuer 1", "Steuer 2", "Restschuld"],
-    "opt_comp_rate": "Effektivzinssatz (%)", "opt_simp_rate": "Nominalzinssatz (%)",
-    "opt_pv": "Barwert (PV)", "opt_fv": "Endwert (FV)",
-
-    "npv_c0": "Anfangsinvestition (CF0)",
-    "npv_rate": "Abzinsungssatz (%)",
-    "npv_n": "Anzahl Perioden (N)",
-    "npv_cf": "Cashflow (CF)",
-    "npv_res": "NPV (Kapitalwert)",
-    "npv_pv_sum": "Barwertsumme der zukünftigen Flüsse",
-    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1..CFN sind Ein-/Auszahlungen."
-}
+})
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
 # =========================================================
-# 3) FONKSİYONLAR
+# 3) HELPERS
 # =========================================================
 def fmt(value):
     if value is None:
@@ -244,32 +148,41 @@ def fmt(value):
     try:
         s = "{:,.2f}".format(float(value))
         return s.replace(",", "X").replace(".", ",").replace("X", ".")
-    except:
+    except Exception:
         return "0,00"
 
-def update_lang():
-    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
-    st.rerun()  # dil değişince sayfadaki tüm label'lar anında yenilensin
 
-def T(k):
-    return LANGS[st.session_state.lang].get(k, k)
+def T(key: str) -> str:
+    return LANGS[st.session_state.lang].get(key, key)
 
-def go(p):
-    st.session_state.page = p
+
+def go(page: str):
+    st.session_state.page = page
     st.rerun()
 
-# =========================================================
-# 4) SESSION STATE
-# =========================================================
-if "lang" not in st.session_state: st.session_state.lang = "TR"
-if "page" not in st.session_state: st.session_state.page = "home"
-if "dark_mode_toggle" not in st.session_state: st.session_state.dark_mode_toggle = False
-if "l_sel" not in st.session_state: st.session_state.l_sel = "🇹🇷 TR"
 
-is_dark = st.session_state.dark_mode_toggle
+def update_lang():
+    # selectbox: "🇹🇷 TR" -> "TR"
+    st.session_state.lang = st.session_state.l_sel.split(" ")[1]
+    st.rerun()
+
 
 # =========================================================
-# 5) TEMA RENKLERİ
+# 4) SESSION STATE (RESET YOK!)
+# =========================================================
+if "lang" not in st.session_state:
+    st.session_state.lang = "TR"
+if "page" not in st.session_state:
+    st.session_state.page = "home"
+if "dark_mode_toggle" not in st.session_state:
+    st.session_state.dark_mode_toggle = False
+if "l_sel" not in st.session_state:
+    st.session_state.l_sel = "🇹🇷 TR"
+
+is_dark = bool(st.session_state.dark_mode_toggle)
+
+# =========================================================
+# 5) RENKLER
 # =========================================================
 if is_dark:
     bg_color = "#0e1117"
@@ -277,203 +190,267 @@ if is_dark:
     card_bg = "#262730"
     input_bg = "#1b1d24"
     text_color = "#ffffff"
+    muted_text = "#cbd5e1"
     input_text = "#ffffff"
     border_color = "#495057"
     metric_color = "#4dabf7"
+    shadow = "0.22"
 else:
     bg_color = "#ffffff"
     topbar_bg = "#ffffff"
     card_bg = "#f8f9fa"
     input_bg = "#ffffff"
-    text_color = "#000000"
-    input_text = "#000000"
+    text_color = "#111827"
+    muted_text = "#475569"
+    input_text = "#111827"
     border_color = "#dee2e6"
     metric_color = "#0d25cf"
+    shadow = "0.10"
 
-# Home'da scroll olmasın: (sticky bozulmasın diye sadece home'da body overflow kapatıyoruz)
-no_scroll_css = ""
-if st.session_state.page == "home":
-    no_scroll_css = "html, body { overflow: hidden !important; }"
+# Streamlit Cloud üst siyah bar ile çakışmayı kesmek için offset
+APP_HEADER_OFFSET_PX = 78  # 62 -> 78 (SS3 çakışma için yükselttik)
 
-# Streamlit Cloud üst header offset
-APP_HEADER_OFFSET_PX = 62
+# Home tek ekrana sığsın diye home'da spacing farklı (scroll kapatmıyoruz!)
+HOME_H1_SIZE = "3.15rem"   # büyük ama kontrollü
+HOME_H1_MARGIN_BOTTOM = "0.40rem"
 
 # =========================================================
-# 6) CSS (1) Dark mode toggle tik/knob görünürlüğü FIX
-#            (2) Sticky geri geldi
-#            (3) Home tek ekrana sığsın diye boşlukları sıkıştır
+# 6) CSS (LIGHT TEXT FIX + TOGGLE FIX + STICKY FIX)
 # =========================================================
 st.markdown(
     f"""
 <style>
-{no_scroll_css}
-
 /* Genel */
 .stApp {{
-    background-color: {bg_color};
-    color: {text_color};
+  background: {bg_color};
+  color: {text_color};
 }}
-/* Home tek sayfaya sığsın: paddingleri azalt */
+
+/* İç padding: gereksiz boşlukları azalt (scroll kapatma yok) */
 .block-container {{
-    padding-top: 0.35rem;
-    padding-bottom: 0.55rem;
-    max-width: 1200px;
+  padding-top: 0.45rem;
+  padding-bottom: 0.90rem;
+  max-width: 1240px;
 }}
-/* Başlık boşluklarını azalt */
-h1 {{
-    margin-top: 0.05rem !important;
-    margin-bottom: 0.20rem !important;
-    line-height: 1.03 !important;
+
+/* Başlık/Metin renkleri: light modda “soluk” olmasın */
+h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
+  color: {text_color} !important;
+  opacity: 1 !important;
 }}
+small, .stCaption {{
+  color: {muted_text} !important;
+  opacity: 1 !important;
+}}
+
+/* Home H1 biraz daha aşağı ve kontrollü */
+.home-title h1 {{
+  font-size: {HOME_H1_SIZE} !important;
+  margin-top: 0.35rem !important;   /* Üst barla çakışmayı azalt */
+  margin-bottom: {HOME_H1_MARGIN_BOTTOM} !important;
+  line-height: 1.03 !important;
+}}
+
 /* Divider kompakt */
 hr {{
-    margin: 0.55rem 0 !important;
+  margin: 0.60rem 0 !important;
 }}
 
-/* Kart */
+/* Kart/container */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
-    border: 1px solid {border_color} !important;
-    background: {card_bg} !important;
-    border-radius: 16px !important;
+  background: {card_bg} !important;
+  border: 1px solid {border_color} !important;
+  border-radius: 16px !important;
 }}
 
-/* Inputlar */
-.stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
-    color: {input_text} !important;
-    font-weight: 800 !important;
-    background-color: {input_bg} !important;
-    border: 1px solid {border_color} !important;
-    border-radius: 12px !important;
+/* INPUTLAR: light modda label ve iç metin kesin görünür */
+div[data-testid="stNumberInput"] label,
+div[data-testid="stSelectbox"] label,
+div[data-testid="stRadio"] label {{
+  color: {text_color} !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
+}}
+/* Radio seçenek yazıları */
+div[data-testid="stRadio"] * {{
+  color: {text_color} !important;
+  opacity: 1 !important;
 }}
 
-/* Butonlar (home’da daha kısa) */
+/* Number input kutu */
+.stNumberInput input {{
+  color: {input_text} !important;
+  background: {input_bg} !important;
+  border: 1px solid {border_color} !important;
+  border-radius: 12px !important;
+  font-weight: 900 !important;
+}}
+/* Selectbox: seçili metin + dropdown ok */
+.stSelectbox div[data-baseweb="select"] {{
+  background: {input_bg} !important;
+  border: 1px solid {border_color} !important;
+  border-radius: 12px !important;
+}}
+.stSelectbox div[data-baseweb="select"] * {{
+  color: {input_text} !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
+}}
+
+/* Butonlar */
 div.stButton > button:first-child {{
-    width: 100%;
-    height: 2.78em; /* home tek sayfa */
-    border-radius: 14px;
-    border: 1px solid {border_color};
-    font-weight: 900;
-    background: {card_bg};
-    color: {text_color};
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: 0.15s;
+  width: 100%;
+  height: 2.78em;
+  border-radius: 14px;
+  border: 1px solid {border_color};
+  font-weight: 900;
+  background: {card_bg};
+  color: {text_color};
+  box-shadow: 0 3px 14px rgba(0,0,0,{shadow});
+  transition: 0.15s;
 }}
 div.stButton > button:first-child:hover {{
-    transform: translateY(-1px);
-    border-color: #0d6efd;
-    color: #0d6efd;
+  transform: translateY(-1px);
+  border-color: #0d6efd;
+  color: #0d6efd;
 }}
 
 /* Metric */
 div[data-testid="stMetricValue"] {{
-    font-size: 1.55rem !important;
-    color: {metric_color} !important;
-    font-weight: 900 !important;
+  font-size: 1.55rem !important;
+  color: {metric_color} !important;
+  font-weight: 900 !important;
 }}
 div[data-testid="stMetricLabel"] {{
-    font-size: 0.98rem !important;
-    font-weight: 800;
-    color: {text_color} !important;
-    opacity: 0.95;
+  font-size: 0.98rem !important;
+  font-weight: 800;
+  color: {text_color} !important;
+  opacity: 1 !important;
 }}
 
-/* Selectbox label gizle (üst bar sade) */
-div[data-testid="stSelectbox"] label {{ display: none !important; }}
-
-/* ============ STICKY TOPBAR (geri geldi) ============ */
+/* ============ STICKY TOPBAR (gerçek sticky) ============ */
 .sticky-topbar {{
-    position: sticky;
-    top: {APP_HEADER_OFFSET_PX}px;
-    z-index: 9999;
-    background: {topbar_bg};
-    padding: 0.40rem 0.35rem 0.45rem 0.35rem;
-    border: 1px solid {border_color};
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-    margin-bottom: 0.40rem;
+  position: sticky;
+  top: {APP_HEADER_OFFSET_PX}px;
+  z-index: 99999;
+  background: {topbar_bg};
+  padding: 0.45rem 0.45rem 0.50rem 0.45rem;
+  border: 1px solid {border_color};
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(0,0,0,{shadow});
+  margin-bottom: 0.50rem;
 }}
+/* üst bar ikon butonu */
 .icon-btn div.stButton > button:first-child {{
-    height: 2.45em !important;
-    width: 3.00em !important;
-    padding: 0 !important;
-    border-radius: 14px !important;
-    font-size: 1.1rem !important;
+  height: 2.55em !important;
+  width: 3.05em !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  font-size: 1.1rem !important;
+}}
+/* üst bardaki yazı */
+.topbar-title {{
+  font-weight: 950;
+  font-size: 1.08rem;
+  color: {text_color};
+  opacity: 0.92;
+  padding-left: 0.25rem;
 }}
 
-/* ============ TOGGLE: “tik/knob” görünmezlik FIX (çok daha sağlam selector seti) ============ */
-/* Track */
-div[data-testid="stToggle"] [data-baseweb="toggle"] > div {{
-    background-color: {"#2b2f36" if is_dark else "#e5e7eb"} !important;
-    border: 1px solid {border_color} !important;
-    border-radius: 999px !important;
+/* ============ TOGGLE (SS2 FIX): label + track + knob + icon ============ */
+div[data-testid="stToggle"] label {{
+  color: {text_color} !important;
+  opacity: 1 !important;
+  font-weight: 900 !important;
 }}
-/* Knob (bazı versiyonlarda span, bazılarında div) */
+/* track */
+div[data-testid="stToggle"] [data-baseweb="toggle"] > div {{
+  background-color: {"#2b2f36" if is_dark else "#e5e7eb"} !important;
+  border: 1px solid {border_color} !important;
+  border-radius: 999px !important;
+  opacity: 1 !important;
+}}
+/* knob: span veya inner div varyasyonları */
 div[data-testid="stToggle"] [data-baseweb="toggle"] span,
 div[data-testid="stToggle"] [data-baseweb="toggle"] > div > div {{
-    background-color: {"#ffffff" if is_dark else "#111827"} !important;
-    border: 1px solid {"#a3a3a3" if is_dark else "#111827"} !important;
+  background-color: {"#ffffff" if is_dark else "#111827"} !important;
+  border: 1px solid {"#a3a3a3" if is_dark else "#111827"} !important;
+  opacity: 1 !important;
 }}
-/* Knob içi ikon (svg/path) */
+/* icon */
 div[data-testid="stToggle"] [data-baseweb="toggle"] svg,
 div[data-testid="stToggle"] [data-baseweb="toggle"] svg path {{
-    fill: {"#111827" if is_dark else "#ffffff"} !important;
+  fill: {"#111827" if is_dark else "#ffffff"} !important;
+  opacity: 1 !important;
 }}
 
-/* Home’da başlık sonrası ekstra boşlukları azalt */
-[data-testid="stVerticalBlock"] > [data-testid="stVerticalBlock"] {{
-    gap: 0.45rem !important;
+/* Home kart iç boşluğu azalt (tek ekrana sığsın) */
+.home-card [data-testid="stVerticalBlock"] {{
+  gap: 0.45rem !important;
 }}
 </style>
 """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 # =========================================================
-# 7) STICKY ÜST BAR (Home - Mod - Dil)
+# 7) STICKY ÜST BAR
+#    - Solda Home
+#    - Ortada: APP NAME (Finansal Hesap Makinesi)
 # =========================================================
 st.markdown('<div class="sticky-topbar">', unsafe_allow_html=True)
-top_home, top_title, top_mode, top_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
+c_home, c_title, c_toggle, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
 
-with top_home:
+with c_home:
     st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
     if st.button("🏠", help=T("home"), key="btn_home"):
+        # Reset yok; sadece page değiştiriyoruz
         go("home")
     st.markdown("</div>", unsafe_allow_html=True)
 
-with top_title:
-    st.markdown(
-        f"<div style='font-weight:950; font-size:1.03rem; opacity:0.85; padding-left:0.25rem;'>"
-        f"{T('app_name')}</div>",
-        unsafe_allow_html=True
-    )
+with c_title:
+    st.markdown(f"<div class='topbar-title'>{T('app_name')}</div>", unsafe_allow_html=True)
 
-with top_mode:
+with c_toggle:
     st.toggle(T("mode_toggle"), key="dark_mode_toggle")
 
-with top_lang:
-    st.selectbox("Dil / Language", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang)
+with c_lang:
+    # Dil seçimi: reset olmasın diye key sabit ve session_state.l_sel ile bağlı
+    st.selectbox(
+        "Dil / Language",
+        ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
+        key="l_sel",
+        on_change=update_lang,
+    )
 
 st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================================
-# 8) HOME MENÜ (Info kutusu kaldırıldı → araçlar yukarı)
+# 8) HOME (BÜYÜK BAŞLIK: SUBHEADER)
 # =========================================================
 if st.session_state.page == "home":
+    st.markdown("<div class='home-title'>", unsafe_allow_html=True)
     st.title(T("subheader"))
+    st.markdown("</div>", unsafe_allow_html=True)
 
     with st.container(border=True):
-        c1, c2 = st.columns(2, gap="medium")
-        with c1:
+        st.markdown("<div class='home-card'>", unsafe_allow_html=True)
+        left, right = st.columns(2, gap="medium")
+
+        with left:
             if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
             if st.button(f"🔄 {T('m_rates')}", use_container_width=True): go("rates")
             if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
             if st.button(f"💰 {T('m_comp')}", use_container_width=True): go("comp")
             if st.button(f"{T('m_npv')}", use_container_width=True): go("npv")
-        with c2:
+
+        with right:
             if st.button(f"💳 {T('m_install')}", use_container_width=True): go("install")
             if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
             if st.button(f"{T('m_deposit')}", use_container_width=True): go("deposit")
             if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================================
 # 9) MODÜLLER
@@ -502,8 +479,10 @@ elif st.session_state.page == "rates":
     st.divider()
     with st.container(border=True):
         c1, c2 = st.columns(2)
-        with c1: mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
-        with c2: days = st.number_input(T("rt_days"), value=365, key="rt_days")
+        with c1:
+            mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
+        with c2:
+            days = st.number_input(T("rt_days"), value=365, key="rt_days")
         base = st.number_input(T("rt_base"), value=0.0, format="%.2f", key="rt_base")
 
         if st.button(T("calc"), type="primary"):
@@ -534,7 +513,7 @@ elif st.session_state.page == "single":
             net = gross * (1 - tax / 100)
             m1, m2 = st.columns(2)
             m1.metric(T("s_r1"), f"{fmt(net)} ₺")
-            m2.metric(T("s_r2"), f"{fmt(p+net)} ₺")
+            m2.metric(T("s_r2"), f"{fmt(p + net)} ₺")
 
 elif st.session_state.page == "comp":
     st.title(T("m_comp"))
@@ -553,14 +532,14 @@ elif st.session_state.page == "comp":
         tax = st.number_input(T("tax"), value=0.0, format="%.2f", key="cm_tax")
 
         if st.button(T("calc"), type="primary"):
-            net_r = (r/100) * (1 - tax/100)
+            net_r = (r / 100) * (1 - tax / 100)
             if target == T("opt_pv"):
-                res = val / ((1 + net_r)**n); res_lbl = T("opt_pv")
+                res = val / ((1 + net_r) ** n); res_lbl = T("opt_pv")
             else:
-                res = val * ((1 + net_r)**n); res_lbl = T("opt_fv")
+                res = val * ((1 + net_r) ** n); res_lbl = T("opt_fv")
             m1, m2 = st.columns(2)
             m1.metric(res_lbl, f"{fmt(res)} ₺")
-            m2.metric(T("cm_res_diff"), f"{fmt(abs(val-res))} ₺")
+            m2.metric(T("cm_res_diff"), f"{fmt(abs(val - res))} ₺")
 
 elif st.session_state.page == "deposit":
     st.title(T("m_deposit"))
@@ -579,7 +558,7 @@ elif st.session_state.page == "deposit":
             else: stopaj_rate = 10.0
 
             gross_int = (amount * rate * days) / 36500
-            net_int = gross_int * (1 - stopaj_rate/100)
+            net_int = gross_int * (1 - stopaj_rate / 100)
             total_bal = amount + net_int
 
             c1, c2, c3 = st.columns(3)
@@ -588,11 +567,12 @@ elif st.session_state.page == "deposit":
             c3.metric(T("dep_res_total"), f"{fmt(total_bal)} ₺")
 
 elif st.session_state.page in ["install", "table"]:
-    st.title(T("m_install") if st.session_state.page=="install" else T("m_table"))
+    st.title(T("m_install") if st.session_state.page == "install" else T("m_table"))
     st.divider()
     with st.container(border=True):
         plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
         st.write("")
+
         c1, c2 = st.columns(2)
         with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f", key="pmt_loan")
         with c2: rate = st.number_input(T("pmt_r"), value=1.20, format="%.2f", key="pmt_rate")
@@ -604,29 +584,39 @@ elif st.session_state.page in ["install", "table"]:
 
         if st.button(T("calc"), type="primary"):
             if n > 0:
-                sch = []; bal = loan; total_pay = 0; first_pmt_display = 0
-                gross_rate = (rate/100) * (1 + (kkdf+bsmv)/100)
+                sch = []
+                bal = loan
+                total_pay = 0
+                first_pmt_display = 0
+
+                gross_rate = (rate / 100) * (1 + (kkdf + bsmv) / 100)
 
                 if plan_type == T("cr_opt1"):
                     if gross_rate > 0:
-                        pmt = loan * (gross_rate * (1+gross_rate)**n) / ((1+gross_rate)**n - 1)
+                        pmt = loan * (gross_rate * (1 + gross_rate) ** n) / ((1 + gross_rate) ** n - 1)
                     else:
                         pmt = loan / n
+
                     first_pmt_display = pmt
-                    for i in range(1, int(n)+1):
-                        raw_int = bal * (rate/100)
-                        tax_k = raw_int * (kkdf/100); tax_b = raw_int * (bsmv/100)
+                    for i in range(1, int(n) + 1):
+                        raw_int = bal * (rate / 100)
+                        tax_k = raw_int * (kkdf / 100)
+                        tax_b = raw_int * (bsmv / 100)
                         princ = pmt - (raw_int + tax_k + tax_b)
-                        bal -= princ; total_pay += pmt
+                        bal -= princ
+                        total_pay += pmt
                         sch.append([i, fmt(pmt), fmt(princ), fmt(raw_int), fmt(tax_k), fmt(tax_b), fmt(max(0, bal))])
                 else:
                     fixed_princ = loan / n
-                    for i in range(1, int(n)+1):
-                        raw_int = bal * (rate/100)
-                        tax_k = raw_int * (kkdf/100); tax_b = raw_int * (bsmv/100)
+                    for i in range(1, int(n) + 1):
+                        raw_int = bal * (rate / 100)
+                        tax_k = raw_int * (kkdf / 100)
+                        tax_b = raw_int * (bsmv / 100)
                         curr_pmt = fixed_princ + raw_int + tax_k + tax_b
-                        if i == 1: first_pmt_display = curr_pmt
-                        bal -= fixed_princ; total_pay += curr_pmt
+                        if i == 1:
+                            first_pmt_display = curr_pmt
+                        bal -= fixed_princ
+                        total_pay += curr_pmt
                         sch.append([i, fmt(curr_pmt), fmt(fixed_princ), fmt(raw_int), fmt(tax_k), fmt(tax_b), fmt(max(0, bal))])
 
                 m1, m2 = st.columns(2)
@@ -650,7 +640,7 @@ elif st.session_state.page == "disc":
         if st.button(T("calc"), type="primary"):
             r = r_alt / 100
             if days > 0:
-                pv = receiv / ((1 + r)**(days/365))
+                pv = receiv / ((1 + r) ** (days / 365))
                 disc_amt = receiv - pv
                 m1, m2 = st.columns(2)
                 m1.metric(T("dc_r1"), f"{fmt(pv)} ₺")
@@ -660,7 +650,6 @@ elif st.session_state.page == "npv":
     st.title(T("m_npv"))
     st.divider()
     st.info(T("npv_hint"))
-
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1:
@@ -671,11 +660,10 @@ elif st.session_state.page == "npv":
         n = st.number_input(T("npv_n"), value=5, min_value=1, step=1, key="npv_n")
 
         st.write("")
-        cf_cols = st.columns(3)
+        cols = st.columns(3)
         cash_flows = []
         for i in range(1, int(n) + 1):
-            col = cf_cols[(i - 1) % 3]
-            with col:
+            with cols[(i - 1) % 3]:
                 cf = st.number_input(f"{T('npv_cf')} {i}", value=30000.0, step=1000.0, format="%.2f", key=f"npv_cf_{i}")
                 cash_flows.append(cf)
 
