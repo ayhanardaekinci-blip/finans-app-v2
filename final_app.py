@@ -41,7 +41,8 @@ TR = {
     "inv_buy": "Alış Tutarı", "inv_sell": "Satış Tutarı", "inv_day": "Vade (Gün)",
     "rt_what": "Ne Hesaplayalım?", "rt_days": "Gün Sayısı", "rt_base": "Baz Oran (%)",
     "s_p": "Anapara", "s_r": "Yıllık Faiz (%)", "s_d": "Vade (Gün)", "s_note": "Mevduat (-), Kredi (+)",
-    "cm_what": "Ne Hesaplanacak?", "cm_val1": "Anapara (PV)", "cm_val2": "Vade Sonu (FV)", "cm_n": "Dönem Sayısı", "cm_r": "Dönemsel Faiz (%)",
+    "cm_what": "Ne Hesaplanacak?", "cm_r": "Dönemsel Faiz (%)", "cm_n": "Dönem Sayısı",
+    "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu (FV)",
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura/Alacak Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
     "dep_amt": "Yatırılan Tutar (Mevduat)", "dep_days": "Vade (Gün)", "dep_rate": "Yıllık Faiz Oranı (%)",
@@ -49,7 +50,7 @@ TR = {
     "inv_r1": "Dönemsel Getiri", "inv_r2": "Yıllık Basit Getiri", "inv_r3": "Yıllık Bileşik Getiri",
     "rt_res": "Hesaplanan Oran",
     "s_r1": "Faiz Tutarı", "s_r2": "Vade Sonu Toplam",
-    "cm_lbl_res": "Hesaplanan Tutar", "cm_res_diff": "Faiz Farkı",
+    "cm_res": "Hesaplanan Tutar", "cm_res_diff": "Faiz Farkı",
     "pmt_res": "İlk Taksit Tutarı", "pmt_res_total": "Toplam Geri Ödeme",
     "dc_r1": "Ele Geçecek Tutar", "dc_r2": "Yapılan İskonto (İndirim)",
     "dep_res_net": "Net Getiri (Ele Geçen)", "dep_res_total": "Vade Sonu Toplam Bakiye",
@@ -57,8 +58,6 @@ TR = {
     "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
-    "opt_comp_rate": "Yıllık Bileşik Faiz (%)", "opt_simp_rate": "Yıllık Basit Faiz (%)",
-    "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu Değer (FV)",
 
     "npv_c0": "Başlangıç Yatırımı (CF0)",
     "npv_rate": "İskonto Oranı (%)",
@@ -95,7 +94,8 @@ EN = {
     "inv_buy": "Purchase Price", "inv_sell": "Selling Price", "inv_day": "Tenor (Days)",
     "rt_what": "Calculate What?", "rt_days": "Days", "rt_base": "Base Rate (%)",
     "s_p": "Principal", "s_r": "Annual Rate (%)", "s_d": "Tenor (Days)", "s_note": "Deposit (-), Loan (+)",
-    "cm_what": "Calculate What?", "cm_val1": "Present Value (PV)", "cm_val2": "Future Value (FV)", "cm_n": "Periods", "cm_r": "Periodic Rate (%)",
+    "cm_what": "Calculate What?", "cm_r": "Periodic Rate (%)", "cm_n": "Periods",
+    "opt_pv": "Present Value (PV)", "opt_fv": "Future Value (FV)",
     "pmt_loan": "Loan Amount", "pmt_r": "Monthly Rate (%)", "pmt_n": "Installments",
     "dc_rec": "Receivable Amount", "dc_day": "Days Paid Early", "dc_rate": "Opportunity Cost (%)",
     "dep_amt": "Deposit Amount", "dep_days": "Maturity (Days)", "dep_rate": "Annual Rate (%)",
@@ -103,7 +103,7 @@ EN = {
     "inv_r1": "Periodic Return", "inv_r2": "Annual Simple Return", "inv_r3": "Annual Compound Return",
     "rt_res": "Resulting Rate",
     "s_r1": "Interest Amount", "s_r2": "Total Maturity Value",
-    "cm_lbl_res": "Calculated Amount", "cm_res_diff": "Interest Component",
+    "cm_res": "Calculated Amount", "cm_res_diff": "Interest Component",
     "pmt_res": "First Installment", "pmt_res_total": "Total Repayment",
     "dc_r1": "Net Payable Amount", "dc_r2": "Discount Amount",
     "dep_res_net": "Net Return", "dep_res_total": "Total Ending Balance",
@@ -111,8 +111,6 @@ EN = {
     "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
-    "opt_comp_rate": "Annual Compound Rate (%)", "opt_simp_rate": "Annual Simple Rate (%)",
-    "opt_pv": "Principal (PV)", "opt_fv": "Future Value (FV)",
 
     "npv_c0": "Initial Investment (CF0)",
     "npv_rate": "Discount Rate (%)",
@@ -123,19 +121,10 @@ EN = {
     "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows.",
 }
 
-# Basit/uyumlu kalsın diye FR/DE: EN'in çevirisi gibi kullanalım (istersen sonra tek tek çeviririz)
 FR = dict(EN)
-FR.update({
-    "app_name": "Calculatrice Financière",
-    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
-    "mode_toggle": "🌙 Mode Sombre",
-})
+FR.update({"app_name": "Calculatrice Financière", "subheader": "Dépt. Trésorerie Santé Eczacıbaşı", "mode_toggle": "🌙 Mode Sombre"})
 DE = dict(EN)
-DE.update({
-    "app_name": "Finanzrechner",
-    "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
-    "mode_toggle": "🌙 Dunkelmodus",
-})
+DE.update({"app_name": "Finanzrechner", "subheader": "Eczacıbaşı Gesundheits-Schatzamt", "mode_toggle": "🌙 Dunkelmodus"})
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
@@ -151,35 +140,76 @@ def fmt(value):
     except Exception:
         return "0,00"
 
-
 def T(key: str) -> str:
     return LANGS[st.session_state.lang].get(key, key)
-
 
 def go(page: str):
     st.session_state.page = page
     st.rerun()
 
+def qp_get(key: str, default: str):
+    try:
+        val = st.query_params.get(key, None)
+        if val is None:
+            return default
+        if isinstance(val, list):
+            return val[0] if val else default
+        return str(val)
+    except Exception:
+        # Eski sürüm fallback
+        try:
+            val = st.experimental_get_query_params().get(key, [default])[0]
+            return val
+        except Exception:
+            return default
 
-def update_lang():
-    # selectbox: "🇹🇷 TR" -> "TR"
+def qp_set(key: str, value: str):
+    try:
+        st.query_params[key] = value
+    except Exception:
+        try:
+            st.experimental_set_query_params(**{key: value})
+        except Exception:
+            pass
+
+def on_lang_change():
     st.session_state.lang = st.session_state.l_sel.split(" ")[1]
-    st.rerun()
+    qp_set("lang", st.session_state.lang)
 
+def on_dark_change():
+    qp_set("dark", "1" if st.session_state.dark_mode else "0")
 
 # =========================================================
-# 4) SESSION STATE (RESET YOK!)
+# 4) SESSION STATE (KALICI: QUERY PARAM)
 # =========================================================
-if "lang" not in st.session_state:
-    st.session_state.lang = "TR"
 if "page" not in st.session_state:
     st.session_state.page = "home"
-if "dark_mode_toggle" not in st.session_state:
-    st.session_state.dark_mode_toggle = False
-if "l_sel" not in st.session_state:
-    st.session_state.l_sel = "🇹🇷 TR"
 
-is_dark = bool(st.session_state.dark_mode_toggle)
+# Dil: query param > session > default
+if "lang" not in st.session_state:
+    st.session_state.lang = qp_get("lang", "TR")
+else:
+    st.session_state.lang = qp_get("lang", st.session_state.lang)
+
+# Dark: query param > session > default
+dark_qp = qp_get("dark", "0")
+dark_from_qp = (dark_qp == "1")
+
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = dark_from_qp
+else:
+    # Query param her zaman kaynak olsun (Home'a dönünce asla sıfırlanmasın)
+    st.session_state.dark_mode = dark_from_qp
+
+# Dil selectbox gösterimi
+flag_map = {"TR": "🇹🇷 TR", "EN": "🇬🇧 EN", "FR": "🇫🇷 FR", "DE": "🇩🇪 DE"}
+if "l_sel" not in st.session_state:
+    st.session_state.l_sel = flag_map.get(st.session_state.lang, "🇹🇷 TR")
+else:
+    # query paramdan dil gelirse selectbox da uyumlasın
+    st.session_state.l_sel = flag_map.get(st.session_state.lang, st.session_state.l_sel)
+
+is_dark = bool(st.session_state.dark_mode)
 
 # =========================================================
 # 5) RENKLER
@@ -207,63 +237,51 @@ else:
     metric_color = "#0d25cf"
     shadow = "0.10"
 
-# Streamlit Cloud üst siyah bar ile çakışmayı kesmek için offset
-APP_HEADER_OFFSET_PX = 78  # 62 -> 78 (SS3 çakışma için yükselttik)
-
-# Home tek ekrana sığsın diye home'da spacing farklı (scroll kapatmıyoruz!)
-HOME_H1_SIZE = "3.15rem"   # büyük ama kontrollü
-HOME_H1_MARGIN_BOTTOM = "0.40rem"
+# Streamlit Cloud üst siyah header ile çakışmayı “kesin” bitirmek için daha güvenli offset
+APP_HEADER_OFFSET_PX = 96  # bilinçli yüksek: farklı ekranlarda yapışmayı bitirir
 
 # =========================================================
-# 6) CSS (LIGHT TEXT FIX + TOGGLE FIX + STICKY FIX)
+# 6) CSS (LIGHT TEXT FIX + “TIK” GÖRÜNÜR CUSTOM SWITCH + STICKY FIX)
+#    -> Native toggle yerine checkbox + CSS switch (DOM sürüm farklarından bağımsız)
 # =========================================================
 st.markdown(
     f"""
 <style>
-/* Genel */
 .stApp {{
   background: {bg_color};
   color: {text_color};
 }}
 
-/* İç padding: gereksiz boşlukları azalt (scroll kapatma yok) */
 .block-container {{
-  padding-top: 0.45rem;
+  padding-top: 0.55rem;
   padding-bottom: 0.90rem;
   max-width: 1240px;
 }}
 
-/* Başlık/Metin renkleri: light modda “soluk” olmasın */
-h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
+/* LIGHT modda soluk yazı sorunu: her yerde opacity 1 */
+* {{
+  text-rendering: geometricPrecision;
+}}
+h1,h2,h3,h4,h5,h6,p,label,span,div {{
+  color: inherit;
+}}
+h1, h2, h3, h4, h5, h6, p, label, .stMarkdown, .stText {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
-small, .stCaption {{
+.stCaption, small {{
   color: {muted_text} !important;
   opacity: 1 !important;
 }}
 
-/* Home H1 biraz daha aşağı ve kontrollü */
-.home-title h1 {{
-  font-size: {HOME_H1_SIZE} !important;
-  margin-top: 0.35rem !important;   /* Üst barla çakışmayı azalt */
-  margin-bottom: {HOME_H1_MARGIN_BOTTOM} !important;
-  line-height: 1.03 !important;
-}}
-
-/* Divider kompakt */
-hr {{
-  margin: 0.60rem 0 !important;
-}}
-
-/* Kart/container */
+/* Kart */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
   background: {card_bg} !important;
   border: 1px solid {border_color} !important;
   border-radius: 16px !important;
 }}
 
-/* INPUTLAR: light modda label ve iç metin kesin görünür */
+/* Input label + radio text kesin görünür */
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
 div[data-testid="stRadio"] label {{
@@ -271,13 +289,12 @@ div[data-testid="stRadio"] label {{
   opacity: 1 !important;
   font-weight: 800 !important;
 }}
-/* Radio seçenek yazıları */
 div[data-testid="stRadio"] * {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
 
-/* Number input kutu */
+/* Input kutuları */
 .stNumberInput input {{
   color: {input_text} !important;
   background: {input_bg} !important;
@@ -285,7 +302,6 @@ div[data-testid="stRadio"] * {{
   border-radius: 12px !important;
   font-weight: 900 !important;
 }}
-/* Selectbox: seçili metin + dropdown ok */
 .stSelectbox div[data-baseweb="select"] {{
   background: {input_bg} !important;
   border: 1px solid {border_color} !important;
@@ -328,27 +344,18 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* ============ STICKY TOPBAR (gerçek sticky) ============ */
+/* Sticky topbar (kesin çakışmasın diye yüksek offset) */
 .sticky-topbar {{
   position: sticky;
   top: {APP_HEADER_OFFSET_PX}px;
-  z-index: 99999;
+  z-index: 999999;
   background: {topbar_bg};
-  padding: 0.45rem 0.45rem 0.50rem 0.45rem;
+  padding: 0.55rem 0.55rem 0.60rem 0.55rem;
   border: 1px solid {border_color};
   border-radius: 16px;
   box-shadow: 0 4px 18px rgba(0,0,0,{shadow});
-  margin-bottom: 0.50rem;
+  margin-bottom: 0.65rem;
 }}
-/* üst bar ikon butonu */
-.icon-btn div.stButton > button:first-child {{
-  height: 2.55em !important;
-  width: 3.05em !important;
-  padding: 0 !important;
-  border-radius: 14px !important;
-  font-size: 1.1rem !important;
-}}
-/* üst bardaki yazı */
 .topbar-title {{
   font-weight: 950;
   font-size: 1.08rem;
@@ -356,37 +363,82 @@ div[data-testid="stMetricLabel"] {{
   opacity: 0.92;
   padding-left: 0.25rem;
 }}
+.icon-btn div.stButton > button:first-child {{
+  height: 2.55em !important;
+  width: 3.05em !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  font-size: 1.1rem !important;
+}}
 
-/* ============ TOGGLE (SS2 FIX): label + track + knob + icon ============ */
-div[data-testid="stToggle"] label {{
+/* HOME başlığını biraz aşağı kaydır (SS3) */
+.home-title h1 {{
+  margin-top: 0.55rem !important;
+  margin-bottom: 0.45rem !important;
+  line-height: 1.03 !important;
+}}
+
+/* ======= CUSTOM SWITCH (checkbox) =======
+   Streamlit checkbox DOM’u çok daha stabil: görünmez “tik” problemi bitiyor.
+*/
+.switch-row {{
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  justify-content: flex-start;
+  padding-top: 0.15rem;
+}}
+.switch-label {{
+  font-weight: 900;
+  color: {text_color};
+  opacity: 1 !important;
+}}
+/* Checkbox'ı switch gibi çizmek için wrapper hedefi */
+div[data-testid="stCheckbox"] label {{
   color: {text_color} !important;
   opacity: 1 !important;
   font-weight: 900 !important;
 }}
-/* track */
-div[data-testid="stToggle"] [data-baseweb="toggle"] > div {{
-  background-color: {"#2b2f36" if is_dark else "#e5e7eb"} !important;
-  border: 1px solid {border_color} !important;
-  border-radius: 999px !important;
-  opacity: 1 !important;
+div[data-testid="stCheckbox"] > label {{
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 }}
-/* knob: span veya inner div varyasyonları */
-div[data-testid="stToggle"] [data-baseweb="toggle"] span,
-div[data-testid="stToggle"] [data-baseweb="toggle"] > div > div {{
-  background-color: {"#ffffff" if is_dark else "#111827"} !important;
-  border: 1px solid {"#a3a3a3" if is_dark else "#111827"} !important;
-  opacity: 1 !important;
+/* Native checkbox kutusunu gizle */
+div[data-testid="stCheckbox"] input[type="checkbox"] {{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: {"#2b2f36" if is_dark else "#e5e7eb"};
+  border: 1px solid {border_color};
+  position: relative;
+  outline: none;
+  cursor: pointer;
 }}
-/* icon */
-div[data-testid="stToggle"] [data-baseweb="toggle"] svg,
-div[data-testid="stToggle"] [data-baseweb="toggle"] svg path {{
-  fill: {"#111827" if is_dark else "#ffffff"} !important;
-  opacity: 1 !important;
+/* Knob */
+div[data-testid="stCheckbox"] input[type="checkbox"]::after {{
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: {"#ffffff" if is_dark else "#111827"};
+  border: 1px solid {"#a3a3a3" if is_dark else "#111827"};
+  transition: 0.15s;
 }}
-
-/* Home kart iç boşluğu azalt (tek ekrana sığsın) */
-.home-card [data-testid="stVerticalBlock"] {{
-  gap: 0.45rem !important;
+/* Checked state */
+div[data-testid="stCheckbox"] input[type="checkbox"]:checked {{
+  background: #ef4444;  /* kırmızı switch (SS3’e yakın) */
+  border-color: #ef4444;
+}}
+div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
+  left: 22px;
+  background: #ffffff;
+  border-color: #ffffff;
 }}
 </style>
 """,
@@ -394,39 +446,41 @@ div[data-testid="stToggle"] [data-baseweb="toggle"] svg path {{
 )
 
 # =========================================================
-# 7) STICKY ÜST BAR
-#    - Solda Home
-#    - Ortada: APP NAME (Finansal Hesap Makinesi)
+# 7) STICKY ÜST BAR (APP NAME burada) + CUSTOM SWITCH + DİL
 # =========================================================
 st.markdown('<div class="sticky-topbar">', unsafe_allow_html=True)
-c_home, c_title, c_toggle, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
+c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
 
 with c_home:
     st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
     if st.button("🏠", help=T("home"), key="btn_home"):
-        # Reset yok; sadece page değiştiriyoruz
         go("home")
     st.markdown("</div>", unsafe_allow_html=True)
 
 with c_title:
     st.markdown(f"<div class='topbar-title'>{T('app_name')}</div>", unsafe_allow_html=True)
 
-with c_toggle:
-    st.toggle(T("mode_toggle"), key="dark_mode_toggle")
+with c_switch:
+    # Native toggle yerine checkbox switch: tik/ikon görünmezliği kesin biter
+    st.checkbox(
+        T("mode_toggle"),
+        value=st.session_state.dark_mode,
+        key="dark_mode",
+        on_change=on_dark_change,
+    )
 
 with c_lang:
-    # Dil seçimi: reset olmasın diye key sabit ve session_state.l_sel ile bağlı
     st.selectbox(
         "Dil / Language",
         ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
         key="l_sel",
-        on_change=update_lang,
+        on_change=on_lang_change,
     )
 
 st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================================
-# 8) HOME (BÜYÜK BAŞLIK: SUBHEADER)
+# 8) HOME (BÜYÜK BAŞLIK: SUBHEADER)  -> yer değişimi tamam
 # =========================================================
 if st.session_state.page == "home":
     st.markdown("<div class='home-title'>", unsafe_allow_html=True)
@@ -434,7 +488,6 @@ if st.session_state.page == "home":
     st.markdown("</div>", unsafe_allow_html=True)
 
     with st.container(border=True):
-        st.markdown("<div class='home-card'>", unsafe_allow_html=True)
         left, right = st.columns(2, gap="medium")
 
         with left:
@@ -449,8 +502,6 @@ if st.session_state.page == "home":
             if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
             if st.button(f"{T('m_deposit')}", use_container_width=True): go("deposit")
             if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================================================
 # 9) MODÜLLER
@@ -520,7 +571,8 @@ elif st.session_state.page == "comp":
     st.divider()
     with st.container(border=True):
         c1, c2 = st.columns(2)
-        with c1: target = st.selectbox(T("cm_what"), [T("opt_pv"), T("opt_fv")], key="cm_target")
+        with c1:
+            target = st.selectbox(T("cm_what"), [T("opt_pv"), T("opt_fv")], key="cm_target")
         with c2:
             lbl = T("opt_fv") if target == T("opt_pv") else T("opt_pv")
             val = st.number_input(lbl, value=0.0, step=1000.0, format="%.2f", key="cm_val")
@@ -534,11 +586,12 @@ elif st.session_state.page == "comp":
         if st.button(T("calc"), type="primary"):
             net_r = (r / 100) * (1 - tax / 100)
             if target == T("opt_pv"):
-                res = val / ((1 + net_r) ** n); res_lbl = T("opt_pv")
+                res = val / ((1 + net_r) ** n)
             else:
-                res = val * ((1 + net_r) ** n); res_lbl = T("opt_fv")
+                res = val * ((1 + net_r) ** n)
+
             m1, m2 = st.columns(2)
-            m1.metric(res_lbl, f"{fmt(res)} ₺")
+            m1.metric(T("cm_res"), f"{fmt(res)} ₺")
             m2.metric(T("cm_res_diff"), f"{fmt(abs(val - res))} ₺")
 
 elif st.session_state.page == "deposit":
@@ -596,7 +649,6 @@ elif st.session_state.page in ["install", "table"]:
                         pmt = loan * (gross_rate * (1 + gross_rate) ** n) / ((1 + gross_rate) ** n - 1)
                     else:
                         pmt = loan / n
-
                     first_pmt_display = pmt
                     for i in range(1, int(n) + 1):
                         raw_int = bal * (rate / 100)
