@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # =========================================================
-# 2) DİL SÖZLÜKLERİ (SENİN ORİJİNAL FR/DE ÇEVİRİLERİN GERİ)
+# 2) DİL SÖZLÜKLERİ
 # =========================================================
 TR = {
     "app_name": "Finansal Hesap Makinesi",
@@ -47,6 +47,8 @@ TR = {
     "rt_what": "Ne Hesaplayalım?",
     "rt_days": "Gün Sayısı",
     "rt_base": "Baz Oran (%)",
+    "opt_comp_rate": "Yıllık Bileşik Faiz (%)",
+    "opt_simp_rate": "Yıllık Basit Faiz (%)",
 
     "s_p": "Anapara",
     "s_r": "Yıllık Faiz (%)",
@@ -95,7 +97,6 @@ TR = {
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
 
-    # NPV
     "npv_c0": "Başlangıç Yatırımı (CF0)",
     "npv_rate": "İskonto Oranı (%)",
     "npv_n": "Dönem Sayısı (N)",
@@ -138,6 +139,8 @@ EN = {
     "rt_what": "Calculate What?",
     "rt_days": "Days",
     "rt_base": "Base Rate (%)",
+    "opt_comp_rate": "Annual Compound Rate (%)",
+    "opt_simp_rate": "Annual Simple Rate (%)",
 
     "s_p": "Principal Amount",
     "s_r": "Annual Rate (%)",
@@ -186,7 +189,6 @@ EN = {
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
 
-    # NPV
     "npv_c0": "Initial Investment (CF0)",
     "npv_rate": "Discount Rate (%)",
     "npv_n": "Number of Periods (N)",
@@ -201,187 +203,20 @@ FR = {
     "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
     "home": "🏠 Menu Principal",
     "mode_toggle": "🌙 Mode Sombre",
-
-    "m_invest": "ROI Investissement",
-    "m_rates": "Taux Simples vs Composés",
-    "m_single": "Intérêt Période Unique",
-    "m_comp": "Calculs TVM (VA/VC)",
-    "m_install": "Calcul de Prêt",
-    "m_table": "Tableau d'Amortissement",
-    "m_disc": "⚡ Créances Escomptées",
-    "m_deposit": "🏦 Rendement Dépôt (Net)",
-    "m_npv": "📉 VAN (Valeur Actuelle Nette)",
-
-    "calc": "CALCULER",
-    "days_365": "Base Jours (365/360)",
-    "tax": "Taxe / Retenue (%)",
-
-    "cr_type": "Type d'Amortissement",
-    "cr_opt1": "Mensualités Constantes",
-    "cr_opt2": "Amortissement Constant",
-    "kkdf": "Taxe 1 (KKDF) (%)",
-    "bsmv": "Taxe 2 (BSMV) (%)",
-
-    "inv_buy": "Prix d'Achat",
-    "inv_sell": "Prix de Vente",
-    "inv_day": "Durée (Jours)",
-
-    "rt_what": "Que Calculer?",
-    "rt_days": "Jours",
-    "rt_base": "Taux de Base (%)",
-
-    "s_p": "Principal",
-    "s_r": "Taux Annuel (%)",
-    "s_d": "Durée (Jours)",
-    "s_note": "Dépôt (-), Prêt (+)",
-
-    "cm_what": "Que Calculer?",
-    "cm_r": "Taux Périodique (%)",
-    "cm_n": "Périodes",
-    "opt_pv": "Valeur Actuelle (VA)",
-    "opt_fv": "Valeur Future (VC)",
-
-    "pmt_loan": "Montant du Prêt",
-    "pmt_r": "Taux Mensuel (%)",
-    "pmt_n": "Échéances",
-
-    "dc_rec": "Montant Créance",
-    "dc_day": "Jours Anticipés",
-    "dc_rate": "Taux d'Opportunité (%)",
-
-    "dep_amt": "Montant du Dépôt",
-    "dep_days": "Maturité (Jours)",
-    "dep_rate": "Taux Annuel (%)",
-
-    "inv_r1": "Rendement Périodique",
-    "inv_r2": "Rendement Annuel Simple",
-    "inv_r3": "Rendement Annuel Composé",
-
-    "rt_res": "Taux Résultant",
-    "s_r1": "Montant des Intérêts",
-    "s_r2": "Valeur Totale",
-
-    "cm_res": "Montant Calculé",
-    "cm_res_diff": "Part Intérêts",
-
-    "pmt_res": "Première Échéance",
-    "pmt_res_total": "Remboursement Total",
-
-    "dc_r1": "Net à Payer",
-    "dc_r2": "Montant de l'Escompte",
-
-    "dep_res_net": "Rendement Net",
-    "dep_res_total": "Solde Final Total",
-    "dep_info_stopaj": "Taxe Appliquée (Retenue)",
-    "dep_info_desc": "ℹ️ Taxe appliquée automatiquement selon la régulation 2025.",
-
-    "tbl_cols": ["Période", "Paiement", "Principal", "Intérêts", "Taxe 1", "Taxe 2", "Solde Restant"],
-
-    # NPV
-    "npv_c0": "Investissement Initial (CF0)",
-    "npv_rate": "Taux d'Actualisation (%)",
-    "npv_n": "Nombre de Périodes (N)",
-    "npv_cf": "Flux de Trésorerie (CF)",
-    "npv_res": "VAN (Valeur Actuelle Nette)",
-    "npv_pv_sum": "Somme PV des Flux Futurs",
-    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1..CFN sont les flux entrants/sortants.",
+    **{k: v for k, v in EN.items() if k not in ["app_name", "subheader", "home", "mode_toggle"]},
 }
-
 DE = {
     "app_name": "Finanzrechner",
     "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
     "home": "🏠 Hauptmenü",
     "mode_toggle": "🌙 Dunkelmodus",
-
-    "m_invest": "Investitions-ROI",
-    "m_rates": "Einfache vs Zinseszinsen",
-    "m_single": "Einmalige Zinszahlung",
-    "m_comp": "Zeitwert des Geldes",
-    "m_install": "Kreditrechner",
-    "m_table": "Tilgungsplan Erstellen",
-    "m_disc": "⚡ Forderungsdiskontierung",
-    "m_deposit": "🏦 Einlagerendite (Netto)",
-    "m_npv": "📉 NPV (Kapitalwert)",
-
-    "calc": "BERECHNEN",
-    "days_365": "Zinstage (365/360)",
-    "tax": "Steuersatz (%)",
-
-    "cr_type": "Tilgungsart",
-    "cr_opt1": "Gleiche Raten (Annuität)",
-    "cr_opt2": "Gleiche Tilgung (Ratentilgung)",
-    "kkdf": "Steuer 1 (KKDF) (%)",
-    "bsmv": "Steuer 2 (BSMV) (%)",
-
-    "inv_buy": "Kaufpreis",
-    "inv_sell": "Verkaufspreis",
-    "inv_day": "Laufzeit (Tage)",
-
-    "rt_what": "Was berechnen?",
-    "rt_days": "Tage",
-    "rt_base": "Basiszinssatz (%)",
-
-    "s_p": "Kapitalbetrag",
-    "s_r": "Jahreszins (%)",
-    "s_d": "Laufzeit (Tage)",
-    "s_note": "Einlage (-), Kredit (+)",
-
-    "cm_what": "Was berechnen?",
-    "cm_r": "Periodischer Zins (%)",
-    "cm_n": "Anzahl Perioden",
-    "opt_pv": "Barwert (PV)",
-    "opt_fv": "Endwert (FV)",
-
-    "pmt_loan": "Kreditbetrag",
-    "pmt_r": "Monatszins (%)",
-    "pmt_n": "Ratenanzahl",
-
-    "dc_rec": "Forderungsbetrag",
-    "dc_day": "Tage früher",
-    "dc_rate": "Alternativzins (%)",
-
-    "dep_amt": "Einlagebetrag",
-    "dep_days": "Laufzeit (Tage)",
-    "dep_rate": "Jahreszins (%)",
-
-    "inv_r1": "Periodenrendite",
-    "inv_r2": "Jährliche Einfache Rendite",
-    "inv_r3": "Jährliche Effektivrendite",
-
-    "rt_res": "Ergebniszinssatz",
-    "s_r1": "Zinsbetrag",
-    "s_r2": "Gesamtendwert",
-
-    "cm_res": "Berechneter Betrag",
-    "cm_res_diff": "Zinsanteil",
-
-    "pmt_res": "Erste Rate",
-    "pmt_res_total": "Gesamtrückzahlung",
-
-    "dc_r1": "Auszahlungsbetrag",
-    "dc_r2": "Skontobetrag",
-
-    "dep_res_net": "Nettoertrag",
-    "dep_res_total": "Gesamtendbestand",
-    "dep_info_stopaj": "Angewandte Steuer",
-    "dep_info_desc": "ℹ️ Steuer automatisch nach Vorschrift 2025 angewendet.",
-
-    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zins", "Steuer 1", "Steuer 2", "Restschuld"],
-
-    # NPV
-    "npv_c0": "Anfangsinvestition (CF0)",
-    "npv_rate": "Abzinsungszinssatz (%)",
-    "npv_n": "Anzahl Perioden (N)",
-    "npv_cf": "Cashflow (CF)",
-    "npv_res": "NPV (Kapitalwert)",
-    "npv_pv_sum": "PV Summe zukünftiger Cashflows",
-    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1..CFN sind Ein-/Auszahlungen.",
+    **{k: v for k, v in EN.items() if k not in ["app_name", "subheader", "home", "mode_toggle"]},
 }
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
 # =========================================================
-# 3) FORMAT / ÇEVİRİ
+# 3) HELPERS
 # =========================================================
 def fmt(value):
     if value is None:
@@ -392,13 +227,11 @@ def fmt(value):
     except Exception:
         return "0,00"
 
-
 def T(key: str) -> str:
     return LANGS[st.session_state.lang].get(key, key)
 
-
 # =========================================================
-# 4) QUERY PARAM (DARK/LANG KALICI)
+# 4) QUERY PARAM (LANG/DARK/PAGE KALICI)
 # =========================================================
 def qp_get(key: str, default: str) -> str:
     try:
@@ -414,7 +247,6 @@ def qp_get(key: str, default: str) -> str:
         except Exception:
             return default
 
-
 def qp_set(**kwargs):
     try:
         for k, v in kwargs.items():
@@ -425,24 +257,20 @@ def qp_set(**kwargs):
         except Exception:
             pass
 
-
 def go(page: str):
     st.session_state.page = page
-    qp_set(page=page)  # page de kalıcı olsun
+    qp_set(page=page)
     st.rerun()
-
 
 def on_lang_change():
     st.session_state.lang = st.session_state.l_sel.split(" ")[1]
     qp_set(lang=st.session_state.lang)
 
-
 def on_dark_change():
     qp_set(dark="1" if st.session_state.dark_mode else "0")
 
-
 # =========================================================
-# 5) STATE INIT (RESET YOK)
+# 5) STATE INIT
 # =========================================================
 if "page" not in st.session_state:
     st.session_state.page = qp_get("page", "home")
@@ -452,8 +280,7 @@ if "lang" not in st.session_state:
 else:
     st.session_state.lang = qp_get("lang", st.session_state.lang)
 
-dark_qp = qp_get("dark", "0")
-dark_from_qp = (dark_qp == "1")
+dark_from_qp = (qp_get("dark", "0") == "1")
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = dark_from_qp
 else:
@@ -469,36 +296,36 @@ is_dark = bool(st.session_state.dark_mode)
 # =========================================================
 if is_dark:
     bg_color = "#0e1117"
-    topbar_bg = "#0e1117"
-    card_bg = "#262730"
-    input_bg = "#1b1d24"
+    card_bg = "#1f2430"     # biraz daha kontrast/okunaklı
+    input_bg = "#121622"
     text_color = "#ffffff"
     muted_text = "#cbd5e1"
     input_text = "#ffffff"
-    border_color = "#495057"
+    border_color = "#3b4252"
     metric_color = "#4dabf7"
-    shadow = "0.22"
+    shadow = "0.28"
 else:
     bg_color = "#ffffff"
-    topbar_bg = "#ffffff"
-    card_bg = "#f8f9fa"
+    card_bg = "#f6f7fb"
     input_bg = "#ffffff"
     text_color = "#111827"
     muted_text = "#475569"
     input_text = "#111827"
-    border_color = "#dee2e6"
+    border_color = "#e5e7eb"
     metric_color = "#0d25cf"
     shadow = "0.10"
 
-# Streamlit Cloud üst siyah header ile çakışmayı kesmek için güvenli offset
-APP_HEADER_OFFSET_PX = 96
+# Streamlit cloud üst bar ile çakışmaması için güvenli offset
+APP_HEADER_OFFSET_PX = 64
+
+# TOPBAR yüksekliği (ince kutu)
+TOPBAR_HEIGHT_PX = 62  # incelettiğimiz yeni bar yüksekliği
 
 # =========================================================
 # 7) CSS
-#    - Sticky gerçekten sticky: TOPBAR CONTAINER'INI CSS ile yakalıyoruz
-#      (wrapper HTML ile wrap olmaz, o yüzden "marker + :has()" yöntemi)
-#    - Diller her sayfada: T() zaten her yerde kullanılıyor, FR/DE tam
-#    - Başlık yer değişimi: ÜST BAR = subheader, HOME H1 = app_name
+#   - Sticky yerine FIXED: (en stabil) + spacer ile başlıkların kapanmasını kesin çözer
+#   - Bar inceltildi: padding / radius / border küçüldü
+#   - Koyu arkaplanda siyah yazı sorunu: topbar içinde tüm label/text zorla text_color
 # =========================================================
 st.markdown(
     f"""
@@ -508,12 +335,12 @@ st.markdown(
   color: {text_color};
 }}
 .block-container {{
-  padding-top: 0.55rem;
-  padding-bottom: 0.90rem;
+  padding-top: 0.6rem;
+  padding-bottom: 1.0rem;
   max-width: 1240px;
 }}
 
-/* Light mod soluk yazı fix */
+/* genel metinler */
 h1,h2,h3,h4,h5,h6,p,label,span,div {{
   color: inherit;
 }}
@@ -530,7 +357,7 @@ h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {{
 div[data-testid="stVerticalBlockBorderWrapper"] {{
   background: {card_bg} !important;
   border: 1px solid {border_color} !important;
-  border-radius: 16px !important;
+  border-radius: 14px !important;
 }}
 
 /* Input label + radio text */
@@ -569,13 +396,13 @@ div[data-testid="stRadio"] * {{
 /* Buttons */
 div.stButton > button:first-child {{
   width: 100%;
-  height: 2.78em;
-  border-radius: 14px;
+  height: 2.7em;
+  border-radius: 12px;
   border: 1px solid {border_color};
   font-weight: 900;
   background: {card_bg};
   color: {text_color};
-  box-shadow: 0 3px 14px rgba(0,0,0,{shadow});
+  box-shadow: 0 3px 12px rgba(0,0,0,{shadow});
   transition: 0.15s;
 }}
 div.stButton > button:first-child:hover {{
@@ -597,44 +424,55 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* ===== Sticky TOPBAR - GERÇEK ÇÖZÜM =====
-   HTML wrapper Streamlit elementlerini sarmaz. Bu yüzden:
-   - topbar container içine bir marker koyuyoruz
-   - :has(.topbar-marker) ile o BLOĞU sticky yapıyoruz
-*/
-div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
-  position: sticky;
+/* ===== TOPBAR FIXED (EN STABİL) ===== */
+.topbar-fixed {{
+  position: fixed;
+  left: 0;
+  right: 0;
   top: {APP_HEADER_OFFSET_PX}px;
   z-index: 999999;
-  background: {topbar_bg};
-  padding: 0.55rem 0.55rem 0.60rem 0.55rem;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* wrapper tıklanmasın */
+}}
+.topbar-inner {{
+  width: min(1240px, calc(100% - 2.2rem));
+  pointer-events: auto; /* içindeki butonlar tıklansın */
+  background: {card_bg};
   border: 1px solid {border_color};
-  border-radius: 16px;
-  box-shadow: 0 4px 18px rgba(0,0,0,{shadow});
-  margin-bottom: 0.65rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,{shadow});
+  padding: 0.28rem 0.55rem; /* İNCE */
+}}
+/* topbar içindeki tüm yazıları zorla kontrastlı yap */
+.topbar-inner * {{
+  color: {text_color} !important;
+  opacity: 1 !important;
 }}
 
-/* topbar title */
 .topbar-title {{
   font-weight: 950;
-  font-size: 1.08rem;
-  color: {text_color};
-  opacity: 0.92;
+  font-size: 1.02rem;
   padding-left: 0.25rem;
 }}
-/* icon button */
+
 .icon-btn div.stButton > button:first-child {{
-  height: 2.55em !important;
-  width: 3.05em !important;
+  height: 2.35em !important;
+  width: 2.90em !important;
   padding: 0 !important;
-  border-radius: 14px !important;
-  font-size: 1.1rem !important;
+  border-radius: 12px !important;
+  font-size: 1.05rem !important;
 }}
 
-/* HOME başlığı (app_name) */
+/* Topbar'ın sayfa başlıklarını kapatmaması için spacer */
+.topbar-spacer {{
+  height: {TOPBAR_HEIGHT_PX + 18}px;  /* bar + nefes */
+}}
+
+/* Home başlığı (Finansal Hesap Makinesi) biraz daha yukarı toplanmış */
 .home-title h1 {{
-  margin-top: 0.55rem !important;
-  margin-bottom: 0.45rem !important;
+  margin-top: 0.15rem !important;
+  margin-bottom: 0.35rem !important;
   line-height: 1.03 !important;
 }}
 
@@ -678,44 +516,47 @@ div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
 )
 
 # =========================================================
-# 8) TOPBAR (STICKY BLOK İÇİNE MARKER)
-#    İSTEDİĞİN SWAP:
-#    - Üst bar yazısı: subheader
-#    - Home büyük başlık: app_name
+# 8) TOPBAR (FIXED) + SPACER
+#   - Üst barda: departman (subheader)
+#   - Home büyük başlık: app_name
 # =========================================================
-with st.container():
-    st.markdown('<div class="topbar-marker"></div>', unsafe_allow_html=True)
+# fixed bar html wrapper
+st.markdown('<div class="topbar-fixed"><div class="topbar-inner">', unsafe_allow_html=True)
 
-    c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
+c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
 
-    with c_home:
-        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-        if st.button("🏠", help=T("home"), key="btn_home"):
-            go("home")
-        st.markdown("</div>", unsafe_allow_html=True)
+with c_home:
+    st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
+    if st.button("🏠", help=T("home"), key="btn_home"):
+        go("home")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    with c_title:
-        # SWAP: üst barda DEPARTMAN yazsın
-        st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
+with c_title:
+    st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
 
-    with c_switch:
-        st.checkbox(
-            T("mode_toggle"),
-            value=st.session_state.dark_mode,
-            key="dark_mode",
-            on_change=on_dark_change,
-        )
+with c_switch:
+    st.checkbox(
+        T("mode_toggle"),
+        value=st.session_state.dark_mode,
+        key="dark_mode",
+        on_change=on_dark_change,
+    )
 
-    with c_lang:
-        st.selectbox(
-            "Dil / Language",
-            ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
-            key="l_sel",
-            on_change=on_lang_change,
-        )
+with c_lang:
+    st.selectbox(
+        "Dil / Language",
+        ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
+        key="l_sel",
+        on_change=on_lang_change,
+    )
+
+st.markdown("</div></div>", unsafe_allow_html=True)
+
+# spacer: başlıklar/top içerik kapanmasın
+st.markdown('<div class="topbar-spacer"></div>', unsafe_allow_html=True)
 
 # =========================================================
-# 9) HOME (BÜYÜK BAŞLIK: APP NAME) -> SWAP TAMAM
+# 9) HOME
 # =========================================================
 if st.session_state.page == "home":
     st.markdown("<div class='home-title'>", unsafe_allow_html=True)
@@ -739,7 +580,7 @@ if st.session_state.page == "home":
             if st.button(f"{T('m_disc')}", use_container_width=True): go("disc")
 
 # =========================================================
-# 10) MODÜLLER (DİL HER SAYFADA: T() KULLANILIYOR)
+# 10) MODÜLLER
 # =========================================================
 elif st.session_state.page == "invest":
     st.title(T("m_invest"))
@@ -766,19 +607,20 @@ elif st.session_state.page == "rates":
     with st.container(border=True):
         c1, c2 = st.columns(2)
         with c1:
-            mode = st.selectbox(T("rt_what"), [T("m_rates"), T("m_rates")], key="rt_mode_dummy")
-            # Not: Orijinal mod seçimini basit tutalım; aşağıda gerçek hesaplamayı baz oran üzerinden yapıyoruz.
-
+            mode = st.selectbox(T("rt_what"), [T("opt_comp_rate"), T("opt_simp_rate")], key="rt_mode")
         with c2:
             days = st.number_input(T("rt_days"), value=365, key="rt_days")
+
         base = st.number_input(T("rt_base"), value=0.0, format="%.2f", key="rt_base")
 
         if st.button(T("calc"), type="primary"):
             r = base / 100
             if days > 0:
-                # Basit: yıllık basit -> yıllık bileşik dönüşümü (senin orijinal mantık)
-                comp = ((1 + r * (days / 365)) ** (365 / days)) - 1
-                st.metric(T("rt_res"), f"%{fmt(comp*100)}")
+                if mode == T("opt_comp_rate"):
+                    res = ((1 + r * (days / 365)) ** (365 / days)) - 1
+                else:
+                    res = (((1 + r) ** (days / 365)) - 1) * (365 / days)
+                st.metric(T("rt_res"), f"%{fmt(res*100)}")
 
 elif st.session_state.page == "single":
     st.title(T("m_single"))
