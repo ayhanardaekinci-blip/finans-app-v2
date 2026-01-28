@@ -311,7 +311,9 @@ TOPBAR_THIN_PADDING_Y = "0.20rem"
 TOPBAR_THIN_PADDING_X = "0.55rem"
 
 # =========================================================
-# 7) CSS (FIX EKLENDİ: checkbox tek olsun + dropdown yazı görünür)
+# 7) CSS
+#   - Switch çizimi TAMAMEN kaldırıldı => sadece tick kalır (tek kontrol)
+#   - Dropdown/portal renkleri light/dark'a göre ZORLANIR (cloud bug fix)
 # =========================================================
 st.markdown(
     f"""
@@ -385,21 +387,37 @@ div[data-testid="stSelectbox"] div[data-baseweb="select"] input {{
   -webkit-text-fill-color: {input_text} !important;
 }}
 
-/* ===== FIX-2: Dropdown açılınca (listbox/menu) Koyu yazı sorunu olmasın ===== */
+/* ===== Cloud/Portal FIX: Dropdown açılınca (listbox/menu/popover) =====
+   Streamlit Cloud'da dropdown bazen "portal" ile body altına basılır.
+   Bu yüzden popover + listbox + option katmanlarını ZORLARIZ.
+*/
+div[data-baseweb="popover"],
+div[data-baseweb="popover"] * {{
+  background: {card_bg} !important;
+  border-color: {border_color} !important;
+}}
+
 div[role="listbox"],
-ul[role="listbox"],
-div[data-baseweb="popover"] {{
+ul[role="listbox"] {{
   background: {card_bg} !important;
   border: 1px solid {border_color} !important;
 }}
+
 div[role="option"],
 li[role="option"],
 div[data-baseweb="menu"] * {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
-div[role="option"][aria-selected="true"] {{
+
+div[role="option"][aria-selected="true"],
+li[role="option"][aria-selected="true"] {{
   background: rgba(13,110,253,0.12) !important;
+}}
+
+div[role="option"]:hover,
+li[role="option"]:hover {{
+  background: rgba(13,110,253,0.10) !important;
 }}
 
 /* Buttons */
@@ -418,6 +436,19 @@ div.stButton > button:first-child:hover {{
   transform: translateY(-1px);
   border-color: #0d6efd;
   color: #0d6efd;
+}}
+
+/* Metric */
+div[data-testid="stMetricValue"] {{
+  font-size: 1.55rem !important;
+  color: {metric_color} !important;
+  font-weight: 900 !important;
+}}
+div[data-testid="stMetricLabel"] {{
+  font-size: 0.98rem !important;
+  font-weight: 800;
+  color: {text_color} !important;
+  opacity: 1 !important;
 }}
 
 /* ===== Sticky TOPBAR ===== */
@@ -457,44 +488,12 @@ h1, h2, h3 {{
   line-height: 1.03 !important;
 }}
 
-/* ===== Checkbox'ı switch gibi çiz ===== */
+/* ===== Checkbox görünürlüğü: tick her iki modda da net görünsün =====
+   Switch çizimi yok. Sadece native checkbox.
+   accent-color çoğu modern tarayıcıda çalışır ve tick'i belirgin yapar.
+*/
 div[data-testid="stCheckbox"] input[type="checkbox"] {{
-  appearance: none;
-  -webkit-appearance: none;
-  width: 44px;
-  height: 24px;
-  border-radius: 999px;
-  background: {"#2b2f36" if is_dark else "#e5e7eb"};
-  border: 1px solid {border_color};
-  position: relative;
-  outline: none;
-  cursor: pointer;
-}}
-div[data-testid="stCheckbox"] input[type="checkbox"]::after {{
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: {"#ffffff" if is_dark else "#111827"};
-  border: 1px solid {"#a3a3a3" if is_dark else "#111827"};
-  transition: 0.15s;
-}}
-div[data-testid="stCheckbox"] input[type="checkbox"]:checked {{
-  background: #ef4444;
-  border-color: #ef4444;
-}}
-div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
-  left: 22px;
-  background: #ffffff;
-  border-color: #ffffff;
-}}
-
-/* ===== FIX-1: Default kare/tik (span) görselini gizle, switch tek kalsın ===== */
-div[data-testid="stCheckbox"] > label > div:first-child span {{
-  display: none !important;
+  accent-color: #ef4444;
 }}
 </style>
 """,
