@@ -472,11 +472,6 @@ h1, h2, h3 {{
 }}
 
 /* Checkbox'ı switch gibi çiz (tik görünmezliği bitir) */
-/* ✅ default tik/kare görünümünü tamamen yok et */
-div[data-testid="stCheckbox"] > label > div:first-child {
-  display: none !important;
-}
-
 div[data-testid="stCheckbox"] input[type="checkbox"] {{
   appearance: none;
   -webkit-appearance: none;
@@ -798,4 +793,3 @@ elif st.session_state.page == "npv":
             m1, m2 = st.columns(2)
             m1.metric(T("npv_res"), f"{fmt(npv)} ₺")
             m2.metric(T("npv_pv_sum"), f"{fmt(pv_sum)} ₺")
-
