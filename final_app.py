@@ -50,50 +50,46 @@ TR = {
     "opt_comp_rate": "Yıllık Bileşik Faiz (%)",
     "opt_simp_rate": "Yıllık Basit Faiz (%)",
 
+    "rt_res": "Hesaplanan Oran",
+
     "s_p": "Anapara",
     "s_r": "Yıllık Faiz (%)",
     "s_d": "Vade (Gün)",
     "s_note": "Mevduat (-), Kredi (+)",
+    "s_r1": "Faiz Tutarı",
+    "s_r2": "Vade Sonu Toplam",
 
     "cm_what": "Ne Hesaplanacak?",
     "cm_r": "Dönemsel Faiz (%)",
     "cm_n": "Dönem Sayısı",
     "opt_pv": "Anapara (PV)",
     "opt_fv": "Vade Sonu (FV)",
+    "cm_res": "Hesaplanan Tutar",
+    "cm_res_diff": "Faiz Farkı",
 
     "pmt_loan": "Kredi Tutarı",
     "pmt_r": "Aylık Faiz (%)",
     "pmt_n": "Taksit Sayısı",
+    "pmt_res": "İlk Taksit Tutarı",
+    "pmt_res_total": "Toplam Geri Ödeme",
 
     "dc_rec": "Fatura/Alacak Tutarı",
     "dc_day": "Erken Ödeme Günü",
     "dc_rate": "Alternatif Getiri (%)",
+    "dc_r1": "Ele Geçecek Tutar",
+    "dc_r2": "Yapılan İskonto (İndirim)",
 
     "dep_amt": "Yatırılan Tutar (Mevduat)",
     "dep_days": "Vade (Gün)",
     "dep_rate": "Yıllık Faiz Oranı (%)",
-
-    "inv_r1": "Dönemsel Getiri",
-    "inv_r2": "Yıllık Basit Getiri",
-    "inv_r3": "Yıllık Bileşik Getiri",
-
-    "rt_res": "Hesaplanan Oran",
-    "s_r1": "Faiz Tutarı",
-    "s_r2": "Vade Sonu Toplam",
-
-    "cm_res": "Hesaplanan Tutar",
-    "cm_res_diff": "Faiz Farkı",
-
-    "pmt_res": "İlk Taksit Tutarı",
-    "pmt_res_total": "Toplam Geri Ödeme",
-
-    "dc_r1": "Ele Geçecek Tutar",
-    "dc_r2": "Yapılan İskonto (İndirim)",
-
     "dep_res_net": "Net Getiri (Ele Geçen)",
     "dep_res_total": "Vade Sonu Toplam Bakiye",
     "dep_info_stopaj": "Uygulanan Stopaj Oranı",
     "dep_info_desc": "ℹ️ 2025 Düzenlemesine göre vadeye bağlı otomatik stopaj uygulanmıştır.",
+
+    "inv_r1": "Dönemsel Getiri",
+    "inv_r2": "Yıllık Basit Getiri",
+    "inv_r3": "Yıllık Bileşik Getiri",
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
 
@@ -141,51 +137,46 @@ EN = {
     "rt_base": "Base Rate (%)",
     "opt_comp_rate": "Annual Compound Rate (%)",
     "opt_simp_rate": "Annual Simple Rate (%)",
+    "rt_res": "Resulting Rate",
 
     "s_p": "Principal Amount",
     "s_r": "Annual Rate (%)",
     "s_d": "Tenor (Days)",
     "s_note": "Deposit (-), Loan (+)",
+    "s_r1": "Interest Amount",
+    "s_r2": "Total Maturity Value",
 
     "cm_what": "Calculate What?",
     "cm_r": "Periodic Rate (%)",
     "cm_n": "Number of Periods",
     "opt_pv": "Present Value (PV)",
     "opt_fv": "Future Value (FV)",
+    "cm_res": "Calculated Amount",
+    "cm_res_diff": "Interest Component",
 
     "pmt_loan": "Loan Amount",
     "pmt_r": "Monthly Rate (%)",
     "pmt_n": "Installments",
+    "pmt_res": "First Installment",
+    "pmt_res_total": "Total Repayment",
 
     "dc_rec": "Receivable Amount",
     "dc_day": "Days Paid Early",
     "dc_rate": "Opportunity Cost (%)",
+    "dc_r1": "Net Payable Amount",
+    "dc_r2": "Discount Amount",
 
     "dep_amt": "Deposit Amount",
     "dep_days": "Maturity (Days)",
     "dep_rate": "Annual Interest Rate (%)",
-
-    "inv_r1": "Periodic Return",
-    "inv_r2": "Annual Simple Return",
-    "inv_r3": "Annual Compound Return",
-
-    "rt_res": "Resulting Rate",
-    "s_r1": "Interest Amount",
-    "s_r2": "Total Maturity Value",
-
-    "cm_res": "Calculated Amount",
-    "cm_res_diff": "Interest Component",
-
-    "pmt_res": "First Installment",
-    "pmt_res_total": "Total Repayment",
-
-    "dc_r1": "Net Payable Amount",
-    "dc_r2": "Discount Amount",
-
     "dep_res_net": "Net Return",
     "dep_res_total": "Total Ending Balance",
     "dep_info_stopaj": "Applied Withholding Tax",
     "dep_info_desc": "ℹ️ Withholding tax applied automatically based on 2025 regulation.",
+
+    "inv_r1": "Periodic Return",
+    "inv_r2": "Annual Simple Return",
+    "inv_r3": "Annual Compound Return",
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
 
@@ -296,14 +287,14 @@ is_dark = bool(st.session_state.dark_mode)
 # =========================================================
 if is_dark:
     bg_color = "#0e1117"
-    card_bg = "#1f2430"     # biraz daha kontrast/okunaklı
+    card_bg = "#1f2430"
     input_bg = "#121622"
     text_color = "#ffffff"
     muted_text = "#cbd5e1"
     input_text = "#ffffff"
     border_color = "#3b4252"
     metric_color = "#4dabf7"
-    shadow = "0.28"
+    shadow = "0.22"
 else:
     bg_color = "#ffffff"
     card_bg = "#f6f7fb"
@@ -315,17 +306,13 @@ else:
     metric_color = "#0d25cf"
     shadow = "0.10"
 
-# Streamlit cloud üst bar ile çakışmaması için güvenli offset
-APP_HEADER_OFFSET_PX = 64
-
-# TOPBAR yüksekliği (ince kutu)
-TOPBAR_HEIGHT_PX = 62  # incelettiğimiz yeni bar yüksekliği
+# Streamlit Cloud üst siyah header her zaman görünüyorsa:
+STREAMLIT_TOPBAR_PX = 64  # sabit
+TOPBAR_THIN_PADDING_Y = "0.20rem"  # ince bar
+TOPBAR_THIN_PADDING_X = "0.55rem"
 
 # =========================================================
-# 7) CSS
-#   - Sticky yerine FIXED: (en stabil) + spacer ile başlıkların kapanmasını kesin çözer
-#   - Bar inceltildi: padding / radius / border küçüldü
-#   - Koyu arkaplanda siyah yazı sorunu: topbar içinde tüm label/text zorla text_color
+# 7) CSS (sticky + ince + BaseWeb text fix + başlık kapanma azaltma)
 # =========================================================
 st.markdown(
     f"""
@@ -335,7 +322,7 @@ st.markdown(
   color: {text_color};
 }}
 .block-container {{
-  padding-top: 0.6rem;
+  padding-top: 0.35rem;
   padding-bottom: 1.0rem;
   max-width: 1240px;
 }}
@@ -382,15 +369,24 @@ div[data-testid="stRadio"] * {{
   border-radius: 12px !important;
   font-weight: 900 !important;
 }}
-.stSelectbox div[data-baseweb="select"] {{
+
+/* ===== BaseWeb SELECTBOX (koyu arka planda koyu yazı/ikon kesin fix) ===== */
+div[data-testid="stSelectbox"] div[data-baseweb="select"] {{
   background: {input_bg} !important;
   border: 1px solid {border_color} !important;
   border-radius: 12px !important;
 }}
-.stSelectbox div[data-baseweb="select"] * {{
+div[data-testid="stSelectbox"] div[data-baseweb="select"] * {{
   color: {input_text} !important;
   opacity: 1 !important;
-  font-weight: 900 !important;
+}}
+div[data-testid="stSelectbox"] div[data-baseweb="select"] svg {{
+  fill: {input_text} !important;
+  color: {input_text} !important;
+}}
+div[data-testid="stSelectbox"] div[data-baseweb="select"] input {{
+  color: {input_text} !important;
+  -webkit-text-fill-color: {input_text} !important;
 }}
 
 /* Buttons */
@@ -424,38 +420,35 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* ===== TOPBAR FIXED (EN STABİL) ===== */
-.topbar-fixed {{
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: {APP_HEADER_OFFSET_PX}px;
+/* ===== Sticky TOPBAR (ince) =====
+   Marker koyup, o marker'ı içeren bloğu sticky yapıyoruz.
+*/
+div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
+  position: sticky;
+  top: {STREAMLIT_TOPBAR_PX}px;
   z-index: 999999;
-  display: flex;
-  justify-content: center;
-  pointer-events: none; /* wrapper tıklanmasın */
-}}
-.topbar-inner {{
-  width: min(1240px, calc(100% - 2.2rem));
-  pointer-events: auto; /* içindeki butonlar tıklansın */
   background: {card_bg};
   border: 1px solid {border_color};
   border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0,0,0,{shadow});
-  padding: 0.28rem 0.55rem; /* İNCE */
+  box-shadow: 0 6px 18px rgba(0,0,0,{shadow});
+  padding: {TOPBAR_THIN_PADDING_Y} {TOPBAR_THIN_PADDING_X};
+  margin-bottom: 0.55rem; /* başlıkla arasına küçük nefes */
 }}
-/* topbar içindeki tüm yazıları zorla kontrastlı yap */
-.topbar-inner * {{
+
+/* topbar içindeki her şey okunur olsun */
+div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) * {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
 
+/* topbar title */
 .topbar-title {{
   font-weight: 950;
   font-size: 1.02rem;
   padding-left: 0.25rem;
 }}
 
+/* icon button */
 .icon-btn div.stButton > button:first-child {{
   height: 2.35em !important;
   width: 2.90em !important;
@@ -464,12 +457,14 @@ div[data-testid="stMetricLabel"] {{
   font-size: 1.05rem !important;
 }}
 
-/* Topbar'ın sayfa başlıklarını kapatmaması için spacer */
-.topbar-spacer {{
-  height: {TOPBAR_HEIGHT_PX + 18}px;  /* bar + nefes */
+/* Başlıkların sticky altında kalmasını azaltmak için:
+   - scroll-margin-top: link/odak durumlarında başlığı sticky altına iter
+*/
+h1, h2, h3 {{
+  scroll-margin-top: calc({STREAMLIT_TOPBAR_PX}px + 72px);
 }}
 
-/* Home başlığı (Finansal Hesap Makinesi) biraz daha yukarı toplanmış */
+/* Home başlığı biraz sıkı */
 .home-title h1 {{
   margin-top: 0.15rem !important;
   margin-bottom: 0.35rem !important;
@@ -516,44 +511,37 @@ div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
 )
 
 # =========================================================
-# 8) TOPBAR (FIXED) + SPACER
-#   - Üst barda: departman (subheader)
-#   - Home büyük başlık: app_name
+# 8) TOPBAR (STICKY BLOK)
 # =========================================================
-# fixed bar html wrapper
-st.markdown('<div class="topbar-fixed"><div class="topbar-inner">', unsafe_allow_html=True)
+with st.container():
+    st.markdown('<div class="topbar-marker"></div>', unsafe_allow_html=True)
 
-c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
+    c_home, c_title, c_switch, c_lang = st.columns([1, 6, 2, 2], vertical_alignment="center")
 
-with c_home:
-    st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-    if st.button("🏠", help=T("home"), key="btn_home"):
-        go("home")
-    st.markdown("</div>", unsafe_allow_html=True)
+    with c_home:
+        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
+        if st.button("🏠", help=T("home"), key="btn_home"):
+            go("home")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-with c_title:
-    st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
+    with c_title:
+        st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
 
-with c_switch:
-    st.checkbox(
-        T("mode_toggle"),
-        value=st.session_state.dark_mode,
-        key="dark_mode",
-        on_change=on_dark_change,
-    )
+    with c_switch:
+        st.checkbox(
+            T("mode_toggle"),
+            value=st.session_state.dark_mode,
+            key="dark_mode",
+            on_change=on_dark_change,
+        )
 
-with c_lang:
-    st.selectbox(
-        "Dil / Language",
-        ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
-        key="l_sel",
-        on_change=on_lang_change,
-    )
-
-st.markdown("</div></div>", unsafe_allow_html=True)
-
-# spacer: başlıklar/top içerik kapanmasın
-st.markdown('<div class="topbar-spacer"></div>', unsafe_allow_html=True)
+    with c_lang:
+        st.selectbox(
+            "Dil / Language",
+            ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"],
+            key="l_sel",
+            on_change=on_lang_change,
+        )
 
 # =========================================================
 # 9) HOME
