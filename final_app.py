@@ -10,32 +10,21 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 2. HAFIZA (SESSION STATE) BAŞLATMA ---
-# Sayfa yenilendiğinde ayarların kaybolmaması için
+# --- 2. HAFIZA BAŞLATMA ---
 if 'lang' not in st.session_state: st.session_state.lang = "TR"
 if 'page' not in st.session_state: st.session_state.page = "home"
-if 'dark_mode' not in st.session_state: st.session_state.dark_mode = False
 
-# --- 3. DİL SÖZLÜKLERİ (EMOJİLER SADECE BURADA) ---
+# --- 3. DİL SÖZLÜKLERİ ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
     "subheader": "Eczacıbaşı Sağlık Hazine",
-    "home": "🏠 Ana Menü",
+    "home": "Ana Menü",
     "info_sel": "Hesaplama modülünü seçiniz:",
-    "mode_dark": "Gece Modu",
-    "lang_sel": "Dil",
-    
-    # Modül İsimleri (Emojili)
-    "m_invest": "📈 Yatırım Getiri Oranı",
-    "m_rates": "🔄 Basit - Bileşik Faiz",
-    "m_single": "📅 Tek Dönemlik Faiz",
-    "m_comp": "💰 Bileşik Faizle Para",
-    "m_install": "💳 Kredi / Taksit Hesapla",
-    "m_table": "📋 Ödeme Tablosu Oluştur",
-    "m_disc": "⚡ İskontolu Alacak",
-    "m_deposit": "🏦 Mevduat Getirisi",
-    
-    # Etiketler
+    "mode_toggle": "Gece Modu", 
+    "m_invest": "Yatırım Getiri Oranı", "m_rates": "Basit - Bileşik Faiz",
+    "m_single": "Tek Dönemlik Faiz", "m_comp": "Bileşik Faizle Para",
+    "m_install": "Kredi / Taksit Hesapla", "m_table": "Ödeme Tablosu Oluştur",
+    "m_disc": "İskontolu Alacak", "m_deposit": "Mevduat Getirisi",
     "calc": "HESAPLA", "days_365": "Baz Gün", "tax": "Vergi (%)",
     "cr_type": "Plan Türü", "cr_opt1": "Eşit Taksit", "cr_opt2": "Eşit Anapara",
     "inv_buy": "Alış", "inv_sell": "Satış", "inv_day": "Vade (Gün)",
@@ -45,8 +34,6 @@ TR = {
     "pmt_loan": "Kredi Tutarı", "pmt_r": "Aylık Faiz (%)", "pmt_n": "Taksit Sayısı",
     "dc_rec": "Fatura Tutarı", "dc_day": "Erken Ödeme Günü", "dc_rate": "Alternatif Getiri (%)",
     "dep_amt": "Yatırılan Tutar", "dep_days": "Vade (Gün)", "dep_rate": "Yıllık Faiz (%)",
-    
-    # Sonuçlar
     "inv_r1": "Dönemsel Getiri", "inv_r2": "Yıllık Basit", "inv_r3": "Yıllık Bileşik",
     "rt_res": "Sonuç Oran", "s_r1": "Faiz Tutarı", "s_r2": "Toplam",
     "cm_lbl_res": "Sonuç", "cm_res_diff": "Faiz Farkı",
@@ -55,19 +42,14 @@ TR = {
     "dep_res_net": "Net Getiri", "dep_res_total": "Toplam Bakiye",
     "dep_info_stopaj": "Stopaj Oranı",
     "dep_info_desc": "ℹ️ 2025 Stopaj düzenlemesi aktiftir.",
-    
-    # Tablo ve Seçenekler
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan"],
     "opt_comp_rate": "Bileşik Faiz (%)", "opt_simp_rate": "Basit Faiz (%)",
     "opt_pv": "Anapara (PV)", "opt_fv": "Vade Sonu (FV)"
 }
-
-# Diğer dilleri TR kopyası olarak başlatıp sadece başlıkları değiştiriyoruz (Pratiklik için)
 EN = TR.copy(); FR = TR.copy(); DE = TR.copy()
-EN["mode_dark"] = "Dark Mode"; FR["mode_dark"] = "Mode Sombre"; DE["mode_dark"] = "Dunkelmodus"
+EN["mode_toggle"] = "Dark Mode"; FR["mode_toggle"] = "Mode Sombre"; DE["mode_toggle"] = "Dunkelmodus"
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
-# --- 4. YARDIMCI FONKSİYONLAR ---
 def T(k): return LANGS[st.session_state.lang].get(k, k)
 def update_lang(): st.session_state.lang = st.session_state.l_sel.split(" ")[1]
 def go(p): st.session_state.page = p; st.rerun()
@@ -79,12 +61,34 @@ def fmt(value):
     except:
         return "0,00"
 
-# --- 5. RENK VE TEMA MANTIĞI (CSS'DEN ÖNCE!) ---
-# Hata almamak için renkleri önce tanımlıyoruz.
-is_dark = st.session_state.dark_mode
+# --- 4. HEADER (ÜST KONTROL PANELİ) ---
+# Tasarım: [Logo/Başlık] --- [Dil] [Mod] [Ev]
+# Boşlukları (Columns) ayarlıyoruz ki sıkışık dursun, scroll gerektirmesin.
 
+c_head, c_lang, c_mode, c_home = st.columns([5, 2, 2, 1])
+
+with c_head:
+    st.markdown(f"#### {T('app_name')}") # Fontu küçülttüm (h4)
+    st.caption(T("subheader"))
+
+with c_lang:
+    # Dil seçimi
+    st.selectbox("Dil", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang, label_visibility="collapsed")
+
+with c_mode:
+    # GECE MODU ANAHTARI (TEK TIKLAMA İÇİN KEY KULLANDIM)
+    # Bu key 'theme_switch' session state'de otomatik tutulur.
+    is_dark = st.toggle(T("mode_toggle"), key="theme_switch")
+
+with c_home:
+    if st.button("🏠"): go("home")
+
+st.divider()
+
+# --- 5. RENK VE CSS AYARLARI ---
+# Renkleri 'is_dark' değişkenine göre belirliyoruz
 if is_dark:
-    # --- GECE MODU ---
+    # GECE MODU
     bg_color = "#0e1117"
     card_bg = "#262730"
     text_color = "#ffffff"
@@ -93,7 +97,7 @@ if is_dark:
     input_text = "#ffffff"
     btn_border = "#495057"
 else:
-    # --- GÜNDÜZ MODU ---
+    # GÜNDÜZ MODU
     bg_color = "#ffffff"
     card_bg = "#f8f9fa"
     text_color = "#000000"
@@ -102,60 +106,62 @@ else:
     input_text = "#000000"
     btn_border = "#dee2e6"
 
-# --- 6. CSS İLE TASARIM (ŞİMDİ GÜVENLE BOYUYORUZ) ---
+# CSS'i ŞİMDİ ENJEKTE EDİYORUZ (HATA VERMEZ)
 st.markdown(f"""
 <style>
-    /* 1. GENEL ARKAPLAN VE YAZI RENGİ */
+    /* 1. GENEL ARKAPLAN VE BOŞLUK ALMA (SCROLL ENGELLEME) */
     .stApp {{
         background-color: {bg_color};
         color: {text_color};
     }}
+    .block-container {{
+        padding-top: 1rem !important; /* Üst boşluğu aldım */
+        padding-bottom: 2rem !important;
+    }}
     
-    /* 2. YAN MENÜYÜ TAMAMEN GİZLE */
+    /* 2. YAN MENÜYÜ YOK ET */
     [data-testid="stSidebar"] {{display: none;}}
     
-    /* 3. TÜM YAZILARI ZORLA RENKLENDİR (Görünmezlik Önlemi) */
+    /* 3. YAZI RENKLERİNİ ZORLA (GÖRÜNMEZLİK ÇÖZÜMÜ) */
     h1, h2, h3, h4, h5, h6, p, label, span, div, li {{
         color: {text_color} !important;
     }}
     
-    /* Gece Modu Tikinin Yanındaki Yazı */
+    /* Gece Modu Yazısı */
     div[data-testid="stMarkdownContainer"] p {{
         color: {text_color} !important;
-        font-weight: bold;
+        font-weight: 600;
     }}
 
-    /* 4. HEADER (Üst Kısım) DÜZENİ */
-    .header-container {{
-        padding-bottom: 20px;
-        border-bottom: 1px solid {btn_border};
+    /* 4. DİL KUTUSU (SELECTBOX) DÜZELTMESİ - KRİTİK */
+    div[data-baseweb="select"] > div {{
+        background-color: {input_bg} !important;
+        border-color: {btn_border} !important;
+        color: {input_text} !important;
     }}
-
-    /* 5. INPUT KUTULARI (Selectbox ve NumberInput) */
-    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
+    div[data-baseweb="select"] span {{
+        color: {input_text} !important; /* İçindeki yazıyı zorla */
+    }}
+    ul[data-baseweb="menu"] {{
+        background-color: {input_bg} !important;
+    }}
+    
+    /* 5. INPUT KUTULARI */
+    .stNumberInput input {{
         color: {input_text} !important; 
         font-weight: 700 !important;
         background-color: {input_bg} !important; 
         border: 1px solid {btn_border} !important;
     }}
-    /* Selectbox içindeki açılır menü */
-    ul[data-baseweb="menu"] {{
-        background-color: {input_bg} !important;
-    }}
     
     /* 6. BUTONLAR */
     div.stButton > button:first-child {{
-        width: 100%; 
-        height: 3.5em; /* Mobil için ideal yükseklik */
-        border-radius: 8px; 
-        border: 1px solid {btn_border}; 
-        font-weight: 700; 
-        background: {card_bg}; 
-        color: {text_color} !important; 
+        width: 100%; border-radius: 8px; border: 1px solid {btn_border}; 
+        font-weight: 600; background: {card_bg}; color: {text_color} !important; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }}
     
-    /* 7. SONUÇ RAKAMLARI */
+    /* 7. METRİK RAKAMLARI */
     div[data-testid="stMetricValue"] {{
         color: {metric_color} !important; font-weight: 800 !important;
     }}
@@ -165,52 +171,22 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 7. HEADER (ÜST MENÜ - MOBİL DOSTU) ---
-# Burası her sayfanın tepesinde sabit kalır
-
-top_c1, top_c2, top_c3 = st.columns([6, 3, 2])
-
-with top_c1:
-    # Logo ve Başlık
-    st.markdown(f"### {T('app_name')}")
-    st.caption(T("subheader"))
-
-with top_c2:
-    # Dil Seçimi
-    st.selectbox(T("lang_sel"), ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang, label_visibility="collapsed")
-
-with top_c3:
-    # Gece Modu (Toggle)
-    st.session_state.dark_mode = st.toggle(T("mode_dark"), value=st.session_state.dark_mode)
-
-# Eğer Ana Sayfada değilsek, bir "Geri Dön" butonu koyalım
-if st.session_state.page != "home":
-    if st.button(f"⬅️ {T('home')}", type="secondary"):
-        go("home")
-
-st.divider()
-
-# --- 8. SAYFALAR VE MODÜLLER ---
+# --- 6. SAYFALAR ---
 
 if st.session_state.page == "home":
-    st.info(T("info_sel"))
-    
-    # 2 Sütunlu Izgara (Mobil Uyumlu)
+    # 2 Sütunlu Kompakt Menü
     c1, c2 = st.columns(2)
     
     with c1:
-        if st.button(T("m_invest"), use_container_width=True): go("invest")
-        if st.button(T("m_comp"), use_container_width=True): go("comp")
-        if st.button(T("m_single"), use_container_width=True): go("single")
-        if st.button(T("m_deposit"), use_container_width=True): go("deposit")
-        
+        if st.button(f"📈 {T('m_invest')}", use_container_width=True): go("invest")
+        if st.button(f"💰 {T('m_comp')}", use_container_width=True): go("comp")
+        if st.button(f"📅 {T('m_single')}", use_container_width=True): go("single")
+        if st.button(f"🏦 {T('m_deposit')}", use_container_width=True): go("deposit")
     with c2:
-        if st.button(T("m_rates"), use_container_width=True): go("rates")
-        if st.button(T("m_install"), use_container_width=True): go("install")
-        if st.button(T("m_table"), use_container_width=True): go("table")
-        if st.button(T("m_disc"), use_container_width=True): go("disc")
-
-# --- HESAPLAMA EKRANLARI ---
+        if st.button(f"🔄 {T('m_rates')}", use_container_width=True): go("rates")
+        if st.button(f"💳 {T('m_install')}", use_container_width=True): go("install")
+        if st.button(f"📋 {T('m_table')}", use_container_width=True): go("table")
+        if st.button(f"⚡ {T('m_disc')}", use_container_width=True): go("disc")
 
 elif st.session_state.page == "invest":
     st.subheader(T("m_invest"))
