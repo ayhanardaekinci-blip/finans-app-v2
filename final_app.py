@@ -337,7 +337,6 @@ LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 # 3) HELPERS
 # =========================================================
 def fmt(value):
-S=None:
     if value is None or (isinstance(value, float) and (math.isnan(value) or math.isinf(value))):
         return "0,00"
     try:
@@ -1062,3 +1061,4 @@ elif st.session_state.page == "disc":
                 m1, m2 = st.columns(2)
                 m1.metric(T("dc_r1"), f"{fmt(pv)} ₺")
                 m2.metric(T("dc_r2"), f"{fmt(disc_amt)} ₺")
+
