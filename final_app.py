@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 # =========================================================
 # 1) AYARLAR
@@ -28,7 +31,7 @@ TR = {
     "m_table": "Ödeme Tablosu Oluştur",
     "m_disc": "⚡ İskontolu Alacak Hesapla",
     "m_deposit": "🏦 Mevduat Getirisi (Stopajlı)",
-    "m_npv": "📉 NPV (Net Bugünkü Değer)",
+    "m_npv": "📉 Yatırım Değerlendirme (NPV / IRR / Geri Ödeme)",
 
     "calc": "HESAPLA",
     "days_365": "Baz Gün (365/360)",
@@ -49,7 +52,6 @@ TR = {
     "rt_base": "Baz Oran (%)",
     "opt_comp_rate": "Yıllık Bileşik Faiz (%)",
     "opt_simp_rate": "Yıllık Basit Faiz (%)",
-
     "rt_res": "Hesaplanan Oran",
 
     "s_p": "Anapara",
@@ -93,13 +95,63 @@ TR = {
 
     "tbl_cols": ["Dönem", "Taksit", "Anapara", "Faiz", "KKDF", "BSMV", "Kalan Borç"],
 
-    "npv_c0": "Başlangıç Yatırımı (CF0)",
-    "npv_rate": "İskonto Oranı (%)",
-    "npv_n": "Dönem Sayısı (N)",
-    "npv_cf": "Nakit Akışı (CF)",
-    "npv_res": "NPV (Net Bugünkü Değer)",
-    "npv_pv_sum": "Gelecek Akışlar PV Toplamı",
-    "npv_hint": "ℹ️ CF0 genelde negatiftir (yatırım). CF1..CFN nakit giriş/çıkışlarıdır.",
+    # ---- NPV / IRR / PAYBACK (PRO) ----
+    "inv_eval_title": "Yatırım Değerlendirme",
+    "proj_name": "Proje Adı",
+    "currency": "Para Birimi",
+    "wacc": "İskonto Oranı (WACC / Required Return) (%)",
+    "periods": "Dönem Sayısı (Yıl)",
+    "cf0": "Başlangıç Yatırımı (CF0)",
+    "cf": "Nakit Akışı (CF)",
+    "tab_npv": "NPV",
+    "tab_irr": "IRR",
+    "tab_payback": "Payback",
+    "npv": "NPV (Net Bugünkü Değer)",
+    "pv_sum": "Gelecek Akışlar PV Toplamı",
+    "irr": "IRR (İç Verim Oranı)",
+    "payback": "Geri Ödeme Süresi",
+    "payback_disc": "İskontolu Geri Ödeme",
+    "payback_never": "Dönem içinde geri ödeme oluşmuyor",
+    "breakeven": "Break-even WACC (NPV=0)",
+    "scenario": "Senaryo Analizi",
+    "base": "Base",
+    "best": "Best",
+    "worst": "Worst",
+    "cf_mult": "Nakit akışı çarpanı",
+    "wacc_shift": "WACC kaydırma (puan)",
+    "sensitivity": "WACC Duyarlılık (±5 puan)",
+    "sens_note": "WACC ±5 puan aralığında NPV'nin nasıl değiştiğini gösterir.",
+    "chart": "NPV - WACC Eğrisi",
+    "details": "Detaylı Notlar (CFO Seviyesi)",
+    "npv_details": (
+        "NPV, gelecekte beklenen nakit akışlarının bugünkü değerleri toplamından başlangıç yatırımının çıkarılmasıdır. "
+        "NPV>0 ise proje, belirlenen iskonto oranında değer yaratır.\n\n"
+        "WACC / Required Return, projenin riskine göre talep edilen minimum getiriyi temsil eder. "
+        "Kurumsal karar setlerinde NPV, IRR ve Payback birlikte değerlendirilir."
+    ),
+    "irr_details": (
+        "IRR, NPV'yi sıfıra eşitleyen iskonto oranıdır. IRR, proje getirisini tek bir oranla özetler.\n\n"
+        "Dikkat: Nakit akışlarında birden fazla işaret değişimi varsa birden fazla IRR oluşabilir. "
+        "Bu uygulama, ekonomik olarak anlamlı kökü arar; raporlama için NPV profili (NPV-WACC eğrisi) ile birlikte yorumlanması önerilir."
+    ),
+    "payback_details": (
+        "Payback, kümülatif nakit akışlarının başlangıç yatırımını hangi dönemde karşıladığını gösterir. "
+        "İskontolu Payback ise aynı hesabı WACC ile bugünkü değere indirgenmiş akışlarla yapar.\n\n"
+        "Payback likidite riskini özetler; ancak değer yaratmayı NPV kadar iyi temsil etmez. "
+        "Bu nedenle CFO seviyesinde Payback mutlaka NPV/IRR ile birlikte değerlendirilmelidir."
+    ),
+    "scenario_details": (
+        "Senaryo analizi, belirsizlik altında karar kalitesini artırır. Tipik kullanım: "
+        "Base (en olası), Best (yüksek satış/marj), Worst (talep düşüşü/maliyet artışı).\n\n"
+        "Bu modelde senaryolar iki eksen üzerinden yönetilir:\n"
+        "1) Nakit akışı çarpanı (operasyonel performans etkisi)\n"
+        "2) WACC kaydırma (risk primi / finansman koşulları etkisi)"
+    ),
+    "sens_details": (
+        "WACC duyarlılığı, sermaye maliyeti veya risk primi değiştiğinde yatırımın değerinin ne kadar oynadığını gösterir. "
+        "Özellikle volatil piyasalarda (faiz, CDS, ülke risk primi) CFO kararlarında kritik bir göstergedir.\n\n"
+        "Break-even WACC, NPV'nin sıfırlandığı eşiği verir: bu oran aşıldığında yatırım değer yaratmaz."
+    ),
 }
 
 EN = {
@@ -111,12 +163,12 @@ EN = {
     "m_invest": "Investment ROI",
     "m_rates": "Simple - Compound",
     "m_single": "Single Period Interest",
-    "m_comp": "TVM Calculations",
+    "m_comp": "Time Value of Money (PV/FV)",
     "m_install": "Loan / Installment",
     "m_table": "Amortization Schedule",
     "m_disc": "⚡ Discounted Receivables",
     "m_deposit": "🏦 Deposit Return (Withholding)",
-    "m_npv": "📉 NPV (Net Present Value)",
+    "m_npv": "📉 Investment Appraisal (NPV / IRR / Payback)",
 
     "calc": "CALCULATE",
     "days_365": "Day Count (365/360)",
@@ -180,13 +232,62 @@ EN = {
 
     "tbl_cols": ["Period", "Payment", "Principal", "Interest", "Tax 1", "Tax 2", "Balance"],
 
-    "npv_c0": "Initial Investment (CF0)",
-    "npv_rate": "Discount Rate (%)",
-    "npv_n": "Number of Periods (N)",
-    "npv_cf": "Cash Flow (CF)",
-    "npv_res": "NPV (Net Present Value)",
-    "npv_pv_sum": "PV Sum of Future Flows",
-    "npv_hint": "ℹ️ CF0 is usually negative. CF1..CFN are inflows/outflows.",
+    # ---- NPV / IRR / PAYBACK (PRO) ----
+    "inv_eval_title": "Investment Appraisal",
+    "proj_name": "Project Name",
+    "currency": "Currency",
+    "wacc": "Discount Rate (WACC / Required Return) (%)",
+    "periods": "Number of Periods (Years)",
+    "cf0": "Initial Investment (CF0)",
+    "cf": "Cash Flow (CF)",
+    "tab_npv": "NPV",
+    "tab_irr": "IRR",
+    "tab_payback": "Payback",
+    "npv": "NPV (Net Present Value)",
+    "pv_sum": "PV Sum of Future Flows",
+    "irr": "IRR (Internal Rate of Return)",
+    "payback": "Payback Period",
+    "payback_disc": "Discounted Payback",
+    "payback_never": "No payback within the horizon",
+    "breakeven": "Break-even WACC (NPV=0)",
+    "scenario": "Scenario Analysis",
+    "base": "Base",
+    "best": "Best",
+    "worst": "Worst",
+    "cf_mult": "Cash flow multiplier",
+    "wacc_shift": "WACC shift (pp)",
+    "sensitivity": "WACC Sensitivity (±5pp)",
+    "sens_note": "Shows how NPV changes as WACC moves ±5 percentage points.",
+    "chart": "NPV vs WACC Curve",
+    "details": "Detailed Notes (CFO Level)",
+    "npv_details": (
+        "NPV equals the present value of expected future cash flows minus the initial investment. "
+        "If NPV>0, the project creates value at the stated discount rate.\n\n"
+        "WACC / Required Return represents the minimum return demanded given the project risk. "
+        "In corporate decision-making, NPV is typically interpreted together with IRR and Payback."
+    ),
+    "irr_details": (
+        "IRR is the discount rate that sets NPV to zero. It compresses the project economics into a single rate.\n\n"
+        "Note: If cash flows change sign more than once, multiple IRRs may exist. "
+        "This tool searches for an economically meaningful root; best practice is to interpret IRR alongside the NPV profile (NPV vs WACC)."
+    ),
+    "payback_details": (
+        "Payback indicates when cumulative cash flows recover the initial investment. "
+        "Discounted Payback performs the same calculation using cash flows discounted at WACC.\n\n"
+        "Payback is useful for liquidity/risk discussions, but it is not a value metric like NPV. "
+        "For CFO-level decisions, always evaluate Payback together with NPV/IRR."
+    ),
+    "scenario_details": (
+        "Scenario analysis improves decision quality under uncertainty: Base (most likely), Best (upside), Worst (downside).\n\n"
+        "This model manages scenarios across two drivers:\n"
+        "1) Cash flow multiplier (operational performance)\n"
+        "2) WACC shift (risk premium / funding conditions)"
+    ),
+    "sens_details": (
+        "WACC sensitivity quantifies how valuation changes with capital cost/risk premium movements. "
+        "It is critical in volatile markets (rates, spreads, country risk).\n\n"
+        "Break-even WACC is the threshold where NPV hits zero: above it, the project stops creating value."
+    ),
 }
 
 FR = {
@@ -203,7 +304,7 @@ FR = {
     "m_table": "Tableau d’Amortissement",
     "m_disc": "⚡ Actualisation des Créances",
     "m_deposit": "🏦 Rendement du Dépôt (Net)",
-    "m_npv": "📉 VAN – Valeur Actuelle Nette",
+    "m_npv": "📉 Analyse d’Investissement (VAN / TRI / Payback)",
 
     "calc": "CALCULER",
     "days_365": "Base de Calcul (365 / 360)",
@@ -224,7 +325,6 @@ FR = {
     "rt_base": "Taux de Référence (%)",
     "opt_comp_rate": "Taux Annuel Composé (%)",
     "opt_simp_rate": "Taux Annuel Simple (%)",
-
     "rt_res": "Taux Calculé",
 
     "s_p": "Capital Initial",
@@ -268,13 +368,58 @@ FR = {
 
     "tbl_cols": ["Période", "Échéance", "Principal", "Intérêts", "KKDF", "BSMV", "Solde Restant"],
 
-    "npv_c0": "Investissement Initial (CF0)",
-    "npv_rate": "Taux d’Actualisation (%)",
-    "npv_n": "Nombre de Périodes",
-    "npv_cf": "Flux de Trésorerie",
-    "npv_res": "Valeur Actuelle Nette (VAN)",
-    "npv_pv_sum": "Somme Actualisée des Flux",
-    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1…CFN représentent les flux futurs.",
+    # ---- NPV / IRR / PAYBACK (PRO) ----
+    "inv_eval_title": "Analyse d’Investissement",
+    "proj_name": "Nom du Projet",
+    "currency": "Devise",
+    "wacc": "Taux d’Actualisation (CMPC / Rendement Exigé) (%)",
+    "periods": "Nombre de Périodes (Années)",
+    "cf0": "Investissement Initial (CF0)",
+    "cf": "Flux de Trésorerie (CF)",
+    "tab_npv": "VAN",
+    "tab_irr": "TRI",
+    "tab_payback": "Payback",
+    "npv": "VAN (Valeur Actuelle Nette)",
+    "pv_sum": "Somme Actualisée des Flux",
+    "irr": "TRI (Taux de Rendement Interne)",
+    "payback": "Délai de Récupération",
+    "payback_disc": "Payback Actualisé",
+    "payback_never": "Pas de récupération sur l’horizon",
+    "breakeven": "CMPC Seuil (VAN=0)",
+    "scenario": "Analyse de Scénarios",
+    "base": "Base",
+    "best": "Optimiste",
+    "worst": "Pessimiste",
+    "cf_mult": "Multiplicateur des flux",
+    "wacc_shift": "Décalage du CMPC (pts)",
+    "sensitivity": "Sensibilité du CMPC (±5 pts)",
+    "sens_note": "Montre l’évolution de la VAN lorsque le CMPC varie de ±5 points.",
+    "chart": "Courbe VAN vs CMPC",
+    "details": "Notes Détaillées (Niveau CFO)",
+    "npv_details": (
+        "La VAN correspond à la somme des valeurs actuelles des flux futurs moins l’investissement initial. "
+        "Si VAN>0, le projet crée de la valeur au taux d’actualisation retenu.\n\n"
+        "Le CMPC / rendement exigé représente le minimum attendu compte tenu du risque. "
+        "En pratique, VAN, TRI et Payback se lisent ensemble."
+    ),
+    "irr_details": (
+        "Le TRI est le taux qui annule la VAN (VAN=0). Il résume l’économie du projet en un seul taux.\n\n"
+        "Attention : plusieurs TRI peuvent exister si les flux changent de signe plusieurs fois. "
+        "La lecture recommandée est de compléter avec le profil VAN (VAN vs taux)."
+    ),
+    "payback_details": (
+        "Le Payback indique quand les flux cumulés couvrent l’investissement initial. "
+        "Le Payback actualisé applique le CMPC aux flux.\n\n"
+        "Le Payback est utile pour la liquidité/risque, mais ce n’est pas une mesure de valeur comme la VAN."
+    ),
+    "scenario_details": (
+        "Les scénarios renforcent la décision sous incertitude : Base, Optimiste, Pessimiste.\n\n"
+        "Ici, deux leviers : (1) multiplicateur de flux (performance) (2) décalage du CMPC (prime de risque)."
+    ),
+    "sens_details": (
+        "La sensibilité au CMPC mesure l’impact des mouvements de taux/spreads sur la valeur. "
+        "Le CMPC seuil (VAN=0) indique le point à partir duquel le projet ne crée plus de valeur."
+    ),
 }
 
 DE = {
@@ -291,7 +436,7 @@ DE = {
     "m_table": "Tilgungsplan",
     "m_disc": "⚡ Forderungsabzinsung",
     "m_deposit": "🏦 Einlagenrendite (Netto)",
-    "m_npv": "📉 Kapitalwert (NPV)",
+    "m_npv": "📉 Investitionsbewertung (NPV / IRR / Payback)",
 
     "calc": "BERECHNEN",
     "days_365": "Zinstage (365 / 360)",
@@ -312,7 +457,6 @@ DE = {
     "rt_base": "Referenzzinssatz (%)",
     "opt_comp_rate": "Effektiver Jahreszins (%)",
     "opt_simp_rate": "Nominaler Jahreszins (%)",
-
     "rt_res": "Berechneter Zinssatz",
 
     "s_p": "Anfangskapital",
@@ -356,15 +500,59 @@ DE = {
 
     "tbl_cols": ["Periode", "Rate", "Tilgung", "Zinsen", "KKDF", "BSMV", "Restschuld"],
 
-    "npv_c0": "Anfangsinvestition (CF0)",
-    "npv_rate": "Diskontierungszinssatz (%)",
-    "npv_n": "Anzahl der Perioden",
-    "npv_cf": "Cashflow",
-    "npv_res": "Kapitalwert (NPV)",
-    "npv_pv_sum": "Barwert der Zahlungsströme",
-    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1…CFN sind zukünftige Zahlungsströme.",
+    # ---- NPV / IRR / PAYBACK (PRO) ----
+    "inv_eval_title": "Investitionsbewertung",
+    "proj_name": "Projektname",
+    "currency": "Währung",
+    "wacc": "Diskontsatz (WACC / Mindestrendite) (%)",
+    "periods": "Anzahl der Perioden (Jahre)",
+    "cf0": "Anfangsinvestition (CF0)",
+    "cf": "Cashflow (CF)",
+    "tab_npv": "NPV",
+    "tab_irr": "IRR",
+    "tab_payback": "Payback",
+    "npv": "Kapitalwert (NPV)",
+    "pv_sum": "Barwertsumme der Zahlungsströme",
+    "irr": "IRR (Interner Zinsfuß)",
+    "payback": "Amortisationsdauer",
+    "payback_disc": "Abgezinste Amortisation",
+    "payback_never": "Keine Amortisation im Horizont",
+    "breakeven": "Break-even WACC (NPV=0)",
+    "scenario": "Szenarioanalyse",
+    "base": "Base",
+    "best": "Optimistisch",
+    "worst": "Pessimistisch",
+    "cf_mult": "Cashflow-Multiplikator",
+    "wacc_shift": "WACC-Verschiebung (pp)",
+    "sensitivity": "WACC-Sensitivität (±5pp)",
+    "sens_note": "Zeigt, wie sich der NPV bei ±5 Prozentpunkten WACC verändert.",
+    "chart": "NPV-WACC-Kurve",
+    "details": "Detaillierte Hinweise (CFO-Niveau)",
+    "npv_details": (
+        "Der NPV ist die Summe der Barwerte zukünftiger Cashflows abzüglich der Anfangsinvestition. "
+        "NPV>0 bedeutet Wertschaffung beim angegebenen Diskontsatz.\n\n"
+        "WACC/Mindestrendite spiegelt die geforderte Rendite gemäß Projektrisiko wider. "
+        "In der Praxis werden NPV, IRR und Payback gemeinsam bewertet."
+    ),
+    "irr_details": (
+        "IRR ist der Diskontsatz, bei dem NPV=0. Er fasst die Projektrendite als einen Zinssatz zusammen.\n\n"
+        "Hinweis: Bei mehreren Vorzeichenwechseln können mehrere IRRs existieren. "
+        "Empfehlung: IRR immer zusammen mit der NPV-WACC-Kurve interpretieren."
+    ),
+    "payback_details": (
+        "Payback zeigt, wann kumulierte Cashflows die Anfangsinvestition decken. "
+        "Abgezinster Payback nutzt dazu diskontierte Cashflows (WACC).\n\n"
+        "Payback ist ein Liquiditäts-/Risikomaß, aber kein Wertmaß wie NPV."
+    ),
+    "scenario_details": (
+        "Szenarien erhöhen die Entscheidungsqualität unter Unsicherheit: Base, Optimistisch, Pessimistisch.\n\n"
+        "Hier gesteuert über: (1) Cashflow-Multiplikator (Performance) (2) WACC-Verschiebung (Risikoprämie)."
+    ),
+    "sens_details": (
+        "WACC-Sensitivität zeigt, wie stark die Bewertung auf Kapitalmarkt-/Risikoprämienänderungen reagiert. "
+        "Break-even WACC ist die Schwelle, ab der kein Wert mehr geschaffen wird (NPV=0)."
+    ),
 }
-
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
@@ -382,6 +570,97 @@ def fmt(value):
 
 def T(key: str) -> str:
     return LANGS[st.session_state.lang].get(key, key)
+
+def _safe_float(x, default=0.0):
+    try:
+        if x is None:
+            return default
+        v = float(x)
+        if math.isnan(v) or math.isinf(v):
+            return default
+        return v
+    except Exception:
+        return default
+
+def npv_from_flows(cf0: float, cfs: list[float], r: float) -> float:
+    # r decimal (0.30 = 30%)
+    pv_sum = 0.0
+    for t, cf in enumerate(cfs, start=1):
+        pv_sum += cf / ((1.0 + r) ** t)
+    return cf0 + pv_sum
+
+def pv_sum_from_flows(cfs: list[float], r: float) -> float:
+    pv_sum = 0.0
+    for t, cf in enumerate(cfs, start=1):
+        pv_sum += cf / ((1.0 + r) ** t)
+    return pv_sum
+
+def find_breakeven_rate(cf0: float, cfs: list[float], lo: float, hi: float, iters: int = 80):
+    # bisection on NPV, returns decimal rate or None
+    f_lo = npv_from_flows(cf0, cfs, lo)
+    f_hi = npv_from_flows(cf0, cfs, hi)
+    if f_lo == 0:
+        return lo
+    if f_hi == 0:
+        return hi
+    if f_lo * f_hi > 0:
+        return None
+    a, b = lo, hi
+    fa, fb = f_lo, f_hi
+    for _ in range(iters):
+        m = (a + b) / 2.0
+        fm = npv_from_flows(cf0, cfs, m)
+        if abs(fm) < 1e-8:
+            return m
+        if fa * fm <= 0:
+            b, fb = m, fm
+        else:
+            a, fa = m, fm
+    return (a + b) / 2.0
+
+def irr_from_flows(cf0: float, cfs: list[float]):
+    # robust-ish IRR search on [-0.9, 5.0] (i.e., -90% to 500%)
+    # If multiple sign changes, returns one economically meaningful root (if found).
+    rates = np.linspace(-0.9, 5.0, 600)
+    vals = np.array([npv_from_flows(cf0, cfs, r) for r in rates])
+    signs = np.sign(vals)
+    idx = np.where(np.diff(signs) != 0)[0]
+    if len(idx) == 0:
+        return None
+    # pick the first crossing close to typical ranges
+    i = int(idx[0])
+    lo, hi = float(rates[i]), float(rates[i + 1])
+    return find_breakeven_rate(cf0, cfs, lo, hi)
+
+def payback_period(cf0: float, cfs: list[float]):
+    # simple payback with linear interpolation within the period
+    cum = cf0
+    if cum >= 0:
+        return 0.0
+    for i, cf in enumerate(cfs, start=1):
+        prev = cum
+        cum += cf
+        if cum >= 0:
+            if cf == 0:
+                return float(i)
+            frac = (0 - prev) / cf
+            return (i - 1) + frac
+    return None
+
+def discounted_payback_period(cf0: float, cfs: list[float], r: float):
+    cum = cf0
+    if cum >= 0:
+        return 0.0
+    for i, cf in enumerate(cfs, start=1):
+        disc_cf = cf / ((1.0 + r) ** i)
+        prev = cum
+        cum += disc_cf
+        if cum >= 0:
+            if disc_cf == 0:
+                return float(i)
+            frac = (0 - prev) / disc_cf
+            return (i - 1) + frac
+    return None
 
 # =========================================================
 # 4) QUERY PARAM (LANG/DARK/PAGE KALICI)
@@ -814,153 +1093,4 @@ elif st.session_state.page == "comp":
         tax = st.number_input(T("tax"), value=0.0, format="%.2f", key="cm_tax")
 
         if st.button(T("calc"), type="primary"):
-            net_r = (r / 100) * (1 - tax / 100)
-            if target == T("opt_pv"):
-                res = val / ((1 + net_r) ** n)
-            else:
-                res = val * ((1 + net_r) ** n)
-
-            m1, m2 = st.columns(2)
-            m1.metric(T("cm_res"), f"{fmt(res)} ₺")
-            m2.metric(T("cm_res_diff"), f"{fmt(abs(val - res))} ₺")
-
-elif st.session_state.page == "deposit":
-    st.title(T("m_deposit"))
-    st.divider()
-    st.info(T("dep_info_desc"))
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1: amount = st.number_input(T("dep_amt"), value=100000.0, step=1000.0, format="%.2f", key="dep_amt")
-        with c2: rate = st.number_input(T("dep_rate"), value=45.0, format="%.2f", key="dep_rate")
-
-        days = st.number_input(T("dep_days"), value=32, step=1, key="dep_days")
-
-        if st.button(T("calc"), type="primary"):
-            if days <= 182: stopaj_rate = 17.5
-            elif days <= 365: stopaj_rate = 15.0
-            else: stopaj_rate = 10.0
-
-            gross_int = (amount * rate * days) / 36500
-            net_int = gross_int * (1 - stopaj_rate / 100)
-            total_bal = amount + net_int
-
-            c1, c2, c3 = st.columns(3)
-            c1.metric(T("dep_info_stopaj"), f"%{stopaj_rate}")
-            c2.metric(T("dep_res_net"), f"{fmt(net_int)} ₺")
-            c3.metric(T("dep_res_total"), f"{fmt(total_bal)} ₺")
-
-elif st.session_state.page in ["install", "table"]:
-    st.title(T("m_install") if st.session_state.page == "install" else T("m_table"))
-    st.divider()
-    with st.container(border=True):
-        plan_type = st.radio(T("cr_type"), [T("cr_opt1"), T("cr_opt2")], horizontal=True, key="cr_plan")
-
-        c1, c2 = st.columns(2)
-        with c1: loan = st.number_input(T("pmt_loan"), value=100000.0, step=1000.0, format="%.2f", key="pmt_loan")
-        with c2: rate = st.number_input(T("pmt_r"), value=1.20, format="%.2f", key="pmt_rate")
-
-        c3, c4, c5 = st.columns(3)
-        with c3: n = st.number_input(T("pmt_n"), value=12, key="pmt_n")
-        with c4: kkdf = st.number_input(T("kkdf"), value=15.0, format="%.2f", key="pmt_kkdf")
-        with c5: bsmv = st.number_input(T("bsmv"), value=5.0, format="%.2f", key="pmt_bsmv")
-
-        if st.button(T("calc"), type="primary"):
-            if n > 0:
-                sch = []
-                bal = loan
-                total_pay = 0
-                first_pmt_display = 0
-
-                gross_rate = (rate / 100) * (1 + (kkdf + bsmv) / 100)
-
-                if plan_type == T("cr_opt1"):
-                    if gross_rate > 0:
-                        pmt = loan * (gross_rate * (1 + gross_rate) ** n) / ((1 + gross_rate) ** n - 1)
-                    else:
-                        pmt = loan / n
-
-                    first_pmt_display = pmt
-                    for i in range(1, int(n) + 1):
-                        raw_int = bal * (rate / 100)
-                        tax_k = raw_int * (kkdf / 100)
-                        tax_b = raw_int * (bsmv / 100)
-                        princ = pmt - (raw_int + tax_k + tax_b)
-                        bal -= princ
-                        total_pay += pmt
-                        sch.append([i, fmt(pmt), fmt(princ), fmt(raw_int), fmt(tax_k), fmt(tax_b), fmt(max(0, bal))])
-                else:
-                    fixed_princ = loan / n
-                    for i in range(1, int(n) + 1):
-                        raw_int = bal * (rate / 100)
-                        tax_k = raw_int * (kkdf / 100)
-                        tax_b = raw_int * (bsmv / 100)
-                        curr_pmt = fixed_princ + raw_int + tax_k + tax_b
-                        if i == 1:
-                            first_pmt_display = curr_pmt
-                        bal -= fixed_princ
-                        total_pay += curr_pmt
-                        sch.append([i, fmt(curr_pmt), fmt(fixed_princ), fmt(raw_int), fmt(tax_k), fmt(tax_b), fmt(max(0, bal))])
-
-                m1, m2 = st.columns(2)
-                m1.metric(T("pmt_res"), f"{fmt(first_pmt_display)} ₺")
-                m2.metric(T("pmt_res_total"), f"{fmt(total_pay)} ₺")
-
-                if st.session_state.page == "table":
-                    st.write("---")
-                    st.dataframe(pd.DataFrame(sch, columns=T("tbl_cols")), use_container_width=True, hide_index=True)
-
-elif st.session_state.page == "disc":
-    st.title(T("m_disc"))
-    st.divider()
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1: receiv = st.number_input(T("dc_rec"), value=0.0, step=1000.0, format="%.2f", key="dc_rec")
-        with c2: days = st.number_input(T("dc_day"), value=0, key="dc_days")
-
-        r_alt = st.number_input(T("dc_rate"), value=0.0, format="%.2f", key="dc_rate")
-
-        if st.button(T("calc"), type="primary"):
-            r = r_alt / 100
-            if days > 0:
-                pv = receiv / ((1 + r) ** (days / 365))
-                disc_amt = receiv - pv
-                m1, m2 = st.columns(2)
-                m1.metric(T("dc_r1"), f"{fmt(pv)} ₺")
-                m2.metric(T("dc_r2"), f"{fmt(disc_amt)} ₺")
-
-elif st.session_state.page == "npv":
-    st.title(T("m_npv"))
-    st.divider()
-    st.info(T("npv_hint"))
-    with st.container(border=True):
-        c1, c2 = st.columns(2)
-        with c1:
-            c0 = st.number_input(T("npv_c0"), value=-100000.0, step=1000.0, format="%.2f", key="npv_c0")
-        with c2:
-            rate = st.number_input(T("npv_rate"), value=30.0, format="%.2f", key="npv_rate")
-
-        n = st.number_input(T("npv_n"), value=5, min_value=1, step=1, key="npv_n")
-
-        cols = st.columns(3)
-        cash_flows = []
-        for i in range(1, int(n) + 1):
-            with cols[(i - 1) % 3]:
-                cf = st.number_input(
-                    f"{T('npv_cf')} {i}",
-                    value=30000.0,
-                    step=1000.0,
-                    format="%.2f",
-                    key=f"npv_cf_{i}",
-                )
-                cash_flows.append(cf)
-
-        if st.button(T("calc"), type="primary"):
-            r = rate / 100.0
-            pv_sum = 0.0
-            for t, cf in enumerate(cash_flows, start=1):
-                pv_sum += cf / ((1 + r) ** t)
-            npv = c0 + pv_sum
-
-            m1, m2 = st.columns(2)
-            m1.metric(T("npv_res"), f"{fmt(npv)} ₺")
-            m2.metric(T("npv_pv_sum"), f"{fmt(pv_sum)} ₺")
+            net_r = (r / 100) * (1 - tax /
