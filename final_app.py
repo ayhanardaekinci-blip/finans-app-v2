@@ -306,13 +306,12 @@ else:
     metric_color = "#0d25cf"
     shadow = "0.10"
 
-# Streamlit Cloud üst siyah header her zaman görünüyorsa:
-STREAMLIT_TOPBAR_PX = 64  # sabit
-TOPBAR_THIN_PADDING_Y = "0.20rem"  # ince bar
+STREAMLIT_TOPBAR_PX = 64
+TOPBAR_THIN_PADDING_Y = "0.20rem"
 TOPBAR_THIN_PADDING_X = "0.55rem"
 
 # =========================================================
-# 7) CSS (sticky + ince + BaseWeb text fix + başlık kapanma azaltma)
+# 7) CSS (GÜNCELLENDİ: TİK/SWITCH ÇAKIŞMASI ÇÖZÜLDÜ)
 # =========================================================
 st.markdown(
     f"""
@@ -327,7 +326,7 @@ st.markdown(
   max-width: 1240px;
 }}
 
-/* genel metinler */
+/* metinler */
 h1,h2,h3,h4,h5,h6,p,label,span,div {{
   color: inherit;
 }}
@@ -347,7 +346,7 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
   border-radius: 14px !important;
 }}
 
-/* Input label + radio text */
+/* Input label + radio */
 div[data-testid="stNumberInput"] label,
 div[data-testid="stSelectbox"] label,
 div[data-testid="stRadio"] label,
@@ -370,7 +369,7 @@ div[data-testid="stRadio"] * {{
   font-weight: 900 !important;
 }}
 
-/* ===== BaseWeb SELECTBOX (koyu arka planda koyu yazı/ikon kesin fix) ===== */
+/* Selectbox */
 div[data-testid="stSelectbox"] div[data-baseweb="select"] {{
   background: {input_bg} !important;
   border: 1px solid {border_color} !important;
@@ -420,9 +419,7 @@ div[data-testid="stMetricLabel"] {{
   opacity: 1 !important;
 }}
 
-/* ===== Sticky TOPBAR (ince) =====
-   Marker koyup, o marker'ı içeren bloğu sticky yapıyoruz.
-*/
+/* Topbar Sticky */
 div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
   position: sticky;
   top: {STREAMLIT_TOPBAR_PX}px;
@@ -432,23 +429,17 @@ div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) {{
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,{shadow});
   padding: {TOPBAR_THIN_PADDING_Y} {TOPBAR_THIN_PADDING_X};
-  margin-bottom: 0.55rem; /* başlıkla arasına küçük nefes */
+  margin-bottom: 0.55rem;
 }}
-
-/* topbar içindeki her şey okunur olsun */
 div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) * {{
   color: {text_color} !important;
   opacity: 1 !important;
 }}
-
-/* topbar title */
 .topbar-title {{
   font-weight: 950;
   font-size: 1.02rem;
   padding-left: 0.25rem;
 }}
-
-/* icon button */
 .icon-btn div.stButton > button:first-child {{
   height: 2.35em !important;
   width: 2.90em !important;
@@ -456,62 +447,73 @@ div[data-testid="stVerticalBlock"] > div:has(.topbar-marker) * {{
   border-radius: 12px !important;
   font-size: 1.05rem !important;
 }}
-
-/* Başlıkların sticky altında kalmasını azaltmak için:
-   - scroll-margin-top: link/odak durumlarında başlığı sticky altına iter
-*/
 h1, h2, h3 {{
   scroll-margin-top: calc({STREAMLIT_TOPBAR_PX}px + 72px);
 }}
-
-/* Home başlığı biraz sıkı */
 .home-title h1 {{
   margin-top: 0.15rem !important;
   margin-bottom: 0.35rem !important;
   line-height: 1.03 !important;
 }}
 
-/* Checkbox'ı switch gibi çiz (tik görünmezliği bitir) */
-div[data-testid="stCheckbox"] input[type="checkbox"] {{
-  appearance: none;
-  -webkit-appearance: none;
-  width: 44px;
-  height: 24px;
-  border-radius: 999px;
-  background: {"#2b2f36" if is_dark else "#e5e7eb"};
-  border: 1px solid {border_color};
-  position: relative;
-  outline: none;
-  cursor: pointer;
+/* ===== 8) CHECKBOX -> SWITCH DÖNÜŞÜMÜ (GÜNCELLENMİŞ) ===== */
+
+/* 1. Adım: Streamlit'in kendi SVG ikonunu (tik işaretini) tamamen gizle */
+div[data-testid="stCheckbox"] svg {{
+    display: none !important;
+    visibility: hidden !important;
 }}
+
+/* 2. Adım: Orijinal input kutusunu gizle ama yer kaplamasını sağla (tıklanabilsin) */
+div[data-testid="stCheckbox"] input[type="checkbox"] {{
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  width: 44px !important;
+  height: 24px !important;
+  border-radius: 999px !important;
+  background: {"#2b2f36" if is_dark else "#e5e7eb"} !important;
+  border: 1px solid {border_color} !important;
+  outline: none !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 1 !important;
+}}
+
+/* 3. Adım: Yuvarlak düğmeyi (knob) çiz */
 div[data-testid="stCheckbox"] input[type="checkbox"]::after {{
   content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: {"#ffffff" if is_dark else "#111827"};
-  border: 1px solid {"#a3a3a3" if is_dark else "#111827"};
-  transition: 0.15s;
+  position: absolute !important;
+  top: 2px !important;
+  left: 2px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: {"#ffffff" if is_dark else "#111827"} !important;
+  border: 1px solid {"#a3a3a3" if is_dark else "#111827"} !important;
+  transition: all 0.2s ease !important;
+  display: block !important;
 }}
+
+/* 4. Adım: Seçili (Checked) Durumu */
 div[data-testid="stCheckbox"] input[type="checkbox"]:checked {{
-  background: #ef4444;
-  border-color: #ef4444;
+  background: #ef4444 !important; /* Aktif renk (Kırmızımsı) */
+  border-color: #ef4444 !important;
 }}
+
 div[data-testid="stCheckbox"] input[type="checkbox"]:checked::after {{
-  left: 22px;
-  background: #ffffff;
-  border-color: #ffffff;
+  left: 22px !important; /* Sağa kaydır */
+  background: #ffffff !important;
+  border-color: #ffffff !important;
 }}
+
 </style>
 """,
     unsafe_allow_html=True,
 )
 
 # =========================================================
-# 8) TOPBAR (STICKY BLOK)
+# 8) TOPBAR
 # =========================================================
 with st.container():
     st.markdown('<div class="topbar-marker"></div>', unsafe_allow_html=True)
@@ -528,6 +530,7 @@ with st.container():
         st.markdown(f"<div class='topbar-title'>{T('subheader')}</div>", unsafe_allow_html=True)
 
     with c_switch:
+        # Checkbox, CSS ile Switch'e çevrildi
         st.checkbox(
             T("mode_toggle"),
             value=st.session_state.dark_mode,
