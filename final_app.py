@@ -1093,4 +1093,5 @@ elif st.session_state.page == "comp":
         tax = st.number_input(T("tax"), value=0.0, format="%.2f", key="cm_tax")
 
         if st.button(T("calc"), type="primary"):
-            net_r = (r / 100) * (1 - tax /
+            net_r = (r / 100) * (1 - tax / 100)
+
