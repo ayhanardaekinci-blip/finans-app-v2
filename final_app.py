@@ -190,19 +190,181 @@ EN = {
 }
 
 FR = {
-    "app_name": "Calculatrice Financière",
-    "subheader": "Dépt. Trésorerie Santé Eczacıbaşı",
+    "app_name": "Calculateur Financier",
+    "subheader": "Département Trésorerie – Eczacıbaşı Santé",
     "home": "🏠 Menu Principal",
     "mode_toggle": "🌙 Mode Sombre",
-    **{k: v for k, v in EN.items() if k not in ["app_name", "subheader", "home", "mode_toggle"]},
+
+    "m_invest": "Rendement de l’Investissement",
+    "m_rates": "Intérêts Simples et Composés",
+    "m_single": "Intérêt sur Période Unique",
+    "m_comp": "Valeur Temps de l’Argent (VA / VF)",
+    "m_install": "Calcul de Crédit / Échéances",
+    "m_table": "Tableau d’Amortissement",
+    "m_disc": "⚡ Actualisation des Créances",
+    "m_deposit": "🏦 Rendement du Dépôt (Net)",
+    "m_npv": "📉 VAN – Valeur Actuelle Nette",
+
+    "calc": "CALCULER",
+    "days_365": "Base de Calcul (365 / 360)",
+    "tax": "Taux d’Imposition (%)",
+
+    "cr_type": "Type de Plan de Remboursement",
+    "cr_opt1": "Annuités Constantes",
+    "cr_opt2": "Amortissement Constant",
+    "kkdf": "Taxe KKDF (%)",
+    "bsmv": "Taxe BSMV (%)",
+
+    "inv_buy": "Montant d’Achat",
+    "inv_sell": "Montant de Vente",
+    "inv_day": "Durée (Jours)",
+
+    "rt_what": "Type de Calcul",
+    "rt_days": "Nombre de Jours",
+    "rt_base": "Taux de Référence (%)",
+    "opt_comp_rate": "Taux Annuel Composé (%)",
+    "opt_simp_rate": "Taux Annuel Simple (%)",
+
+    "rt_res": "Taux Calculé",
+
+    "s_p": "Capital Initial",
+    "s_r": "Taux Annuel (%)",
+    "s_d": "Durée (Jours)",
+    "s_note": "Dépôt (-), Crédit (+)",
+    "s_r1": "Montant des Intérêts",
+    "s_r2": "Valeur Totale à Échéance",
+
+    "cm_what": "Valeur à Calculer",
+    "cm_r": "Taux Périodique (%)",
+    "cm_n": "Nombre de Périodes",
+    "opt_pv": "Valeur Actuelle (VA)",
+    "opt_fv": "Valeur Future (VF)",
+    "cm_res": "Valeur Calculée",
+    "cm_res_diff": "Part des Intérêts",
+
+    "pmt_loan": "Montant du Crédit",
+    "pmt_r": "Taux Mensuel (%)",
+    "pmt_n": "Nombre d’Échéances",
+    "pmt_res": "Première Échéance",
+    "pmt_res_total": "Remboursement Total",
+
+    "dc_rec": "Montant de la Créance",
+    "dc_day": "Paiement Anticipé (Jours)",
+    "dc_rate": "Taux de Rendement Alternatif (%)",
+    "dc_r1": "Montant Actualisé",
+    "dc_r2": "Montant de l’Escompte",
+
+    "dep_amt": "Montant du Dépôt",
+    "dep_days": "Durée (Jours)",
+    "dep_rate": "Taux Annuel (%)",
+    "dep_res_net": "Intérêts Nets",
+    "dep_res_total": "Solde Final",
+    "dep_info_stopaj": "Taux de Retenue",
+    "dep_info_desc": "ℹ️ Retenue appliquée automatiquement selon la réglementation 2025.",
+
+    "inv_r1": "Rendement de la Période",
+    "inv_r2": "Rendement Annuel Simple",
+    "inv_r3": "Rendement Annuel Composé",
+
+    "tbl_cols": ["Période", "Échéance", "Principal", "Intérêts", "KKDF", "BSMV", "Solde Restant"],
+
+    "npv_c0": "Investissement Initial (CF0)",
+    "npv_rate": "Taux d’Actualisation (%)",
+    "npv_n": "Nombre de Périodes",
+    "npv_cf": "Flux de Trésorerie",
+    "npv_res": "Valeur Actuelle Nette (VAN)",
+    "npv_pv_sum": "Somme Actualisée des Flux",
+    "npv_hint": "ℹ️ CF0 est généralement négatif. CF1…CFN représentent les flux futurs.",
 }
+
 DE = {
     "app_name": "Finanzrechner",
-    "subheader": "Eczacıbaşı Gesundheits-Schatzamt",
+    "subheader": "Treasury-Abteilung – Eczacıbaşı Gesundheit",
     "home": "🏠 Hauptmenü",
     "mode_toggle": "🌙 Dunkelmodus",
-    **{k: v for k, v in EN.items() if k not in ["app_name", "subheader", "home", "mode_toggle"]},
+
+    "m_invest": "Investitionsrendite",
+    "m_rates": "Einfache und Zusammengesetzte Zinsen",
+    "m_single": "Einperiodige Verzinsung",
+    "m_comp": "Zeitwert des Geldes (BW / EW)",
+    "m_install": "Kredit- / Ratenberechnung",
+    "m_table": "Tilgungsplan",
+    "m_disc": "⚡ Forderungsabzinsung",
+    "m_deposit": "🏦 Einlagenrendite (Netto)",
+    "m_npv": "📉 Kapitalwert (NPV)",
+
+    "calc": "BERECHNEN",
+    "days_365": "Zinstage (365 / 360)",
+    "tax": "Steuersatz (%)",
+
+    "cr_type": "Rückzahlungsart",
+    "cr_opt1": "Annuitätendarlehen",
+    "cr_opt2": "Lineare Tilgung",
+    "kkdf": "KKDF-Steuer (%)",
+    "bsmv": "BSMV-Steuer (%)",
+
+    "inv_buy": "Kaufbetrag",
+    "inv_sell": "Verkaufsbetrag",
+    "inv_day": "Laufzeit (Tage)",
+
+    "rt_what": "Berechnungsart",
+    "rt_days": "Anzahl der Tage",
+    "rt_base": "Referenzzinssatz (%)",
+    "opt_comp_rate": "Effektiver Jahreszins (%)",
+    "opt_simp_rate": "Nominaler Jahreszins (%)",
+
+    "rt_res": "Berechneter Zinssatz",
+
+    "s_p": "Anfangskapital",
+    "s_r": "Jahreszins (%)",
+    "s_d": "Laufzeit (Tage)",
+    "s_note": "Einlage (-), Kredit (+)",
+    "s_r1": "Zinsbetrag",
+    "s_r2": "Endbetrag",
+
+    "cm_what": "Zu Berechnender Wert",
+    "cm_r": "Periodischer Zinssatz (%)",
+    "cm_n": "Anzahl der Perioden",
+    "opt_pv": "Barwert (BW)",
+    "opt_fv": "Endwert (EW)",
+    "cm_res": "Berechneter Betrag",
+    "cm_res_diff": "Zinsanteil",
+
+    "pmt_loan": "Kreditbetrag",
+    "pmt_r": "Monatlicher Zinssatz (%)",
+    "pmt_n": "Anzahl der Raten",
+    "pmt_res": "Erste Rate",
+    "pmt_res_total": "Gesamtrückzahlung",
+
+    "dc_rec": "Forderungsbetrag",
+    "dc_day": "Vorzeitige Zahlung (Tage)",
+    "dc_rate": "Alternativer Zinssatz (%)",
+    "dc_r1": "Abgezinster Betrag",
+    "dc_r2": "Abzinsungsbetrag",
+
+    "dep_amt": "Einlagebetrag",
+    "dep_days": "Laufzeit (Tage)",
+    "dep_rate": "Jahreszinssatz (%)",
+    "dep_res_net": "Nettozinsertrag",
+    "dep_res_total": "Endsaldo",
+    "dep_info_stopaj": "Quellensteuersatz",
+    "dep_info_desc": "ℹ️ Automatische Besteuerung gemäß Regelung 2025.",
+
+    "inv_r1": "Periodenrendite",
+    "inv_r2": "Einfache Jahresrendite",
+    "inv_r3": "Effektive Jahresrendite",
+
+    "tbl_cols": ["Periode", "Rate", "Tilgung", "Zinsen", "KKDF", "BSMV", "Restschuld"],
+
+    "npv_c0": "Anfangsinvestition (CF0)",
+    "npv_rate": "Diskontierungszinssatz (%)",
+    "npv_n": "Anzahl der Perioden",
+    "npv_cf": "Cashflow",
+    "npv_res": "Kapitalwert (NPV)",
+    "npv_pv_sum": "Barwert der Zahlungsströme",
+    "npv_hint": "ℹ️ CF0 ist meist negativ. CF1…CFN sind zukünftige Zahlungsströme.",
 }
+
 
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
@@ -802,3 +964,4 @@ elif st.session_state.page == "npv":
             m1, m2 = st.columns(2)
             m1.metric(T("npv_res"), f"{fmt(npv)} ₺")
             m2.metric(T("npv_pv_sum"), f"{fmt(pv_sum)} ₺")
+
