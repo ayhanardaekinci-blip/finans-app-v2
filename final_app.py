@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# --- 1. AYARLAR (EN BAŞTA) ---
+# --- 1. AYARLAR ---
 st.set_page_config(
     page_title="Finansal Hesap Makinesi",
     page_icon="E",
@@ -10,7 +10,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- 2. DİL SÖZLÜKLERİ (HATAYI ÖNLEMEK İÇİN İLK SIRADA) ---
+# --- 2. GÜVENLİK İÇİN VARSAYILAN DEĞERLER (HATA ÖNLEYİCİ) ---
+# Kodun patlamaması için renkleri en başta tanımlıyoruz.
+bg_color = "#ffffff"
+card_bg = "#f8f9fa"
+text_color = "#000000"
+metric_color = "#0d25cf"
+input_bg = "#ffffff"
+input_text = "#000000"
+btn_border = "#dee2e6"
+
+# --- 3. DİL SÖZLÜKLERİ ---
 TR = {
     "app_name": "Finansal Hesap Makinesi",
     "subheader": "Eczacıbaşı Sağlık Hazine",
@@ -46,7 +56,7 @@ EN = TR.copy(); FR = TR.copy(); DE = TR.copy()
 EN["mode_toggle"] = "Mode"; FR["mode_toggle"] = "Mode"; DE["mode_toggle"] = "Modus"
 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
-# --- 3. SİSTEM HAFIZASI VE FONKSİYONLAR ---
+# --- 4. SİSTEM HAFIZASI ---
 if 'lang' not in st.session_state: st.session_state.lang = "TR"
 if 'page' not in st.session_state: st.session_state.page = "home"
 if 'dark_mode' not in st.session_state: st.session_state.dark_mode = False
@@ -62,30 +72,24 @@ def fmt(value):
     except:
         return "0,00"
 
-# --- 4. HEADER (ÜST MENÜ - MOBİL UYUMLU) ---
+# --- 5. HEADER VE TEMA KONTROLÜ ---
+# Header
 h1, h2, h3, h4 = st.columns([5, 2, 2, 1])
-
 with h1:
     st.markdown(f"### {T('app_name')}")
     st.caption(T("subheader"))
-
 with h2:
     st.selectbox("Dil", ["🇹🇷 TR", "🇬🇧 EN", "🇫🇷 FR", "🇩🇪 DE"], key="l_sel", on_change=update_lang, label_visibility="collapsed")
-
 with h3:
-    # Gece Modu Anahtarı
     st.session_state.dark_mode = st.toggle(f"🌙 {T('mode_toggle')}", value=st.session_state.dark_mode)
-
 with h4:
     if st.button("🏠"): go("home")
 
 st.divider()
 
-# --- 5. RENKLERİN TANIMLANMASI (CSS'DEN ÖNCE YAPILMALI!) ---
-is_dark = st.session_state.dark_mode
-
-if is_dark:
-    # --- GECE MODU RENKLERİ ---
+# --- 6. RENK ATAMALARI (HEADER'DAN SONRA) ---
+if st.session_state.dark_mode:
+    # GECE MODU
     bg_color = "#0e1117"
     card_bg = "#262730"
     text_color = "#ffffff"
@@ -94,7 +98,7 @@ if is_dark:
     input_text = "#ffffff"
     btn_border = "#495057"
 else:
-    # --- GÜNDÜZ MODU RENKLERİ ---
+    # GÜNDÜZ MODU
     bg_color = "#ffffff"
     card_bg = "#f8f9fa"
     text_color = "#000000"
@@ -103,50 +107,68 @@ else:
     input_text = "#000000"
     btn_border = "#dee2e6"
 
-# --- 6. CSS İLE BOYAMA (RENKLER TANIMLANDIKTAN SONRA) ---
+# --- 7. CSS (TASARIM MOTORU) ---
 st.markdown(f"""
 <style>
-    /* Ana Arka Plan */
-    .stApp {{background-color: {bg_color}; color: {text_color};}}
+    /* 1. GENEL SAYFA RENGİ */
+    .stApp {{
+        background-color: {bg_color};
+        color: {text_color};
+    }}
     .block-container {{padding-top: 1rem; padding-bottom: 3rem;}}
     
-    /* Yan Menüyü Gizle */
+    /* 2. YAN MENÜYÜ GİZLE */
     [data-testid="stSidebar"] {{display: none;}}
     
-    /* Tüm Yazıları Zorla Renklendir */
-    h1, h2, h3, h4, h5, h6, p, label, span, div {{
+    /* 3. TÜM YAZILARI ZORLA RENKLENDİR (Görünmezlik Önlemi) */
+    h1, h2, h3, h4, h5, h6, p, label, span, div, li {{
         color: {text_color} !important;
     }}
     
-    /* Gece Modu Yazısı */
-    div[data-testid="stMarkdownContainer"] p {{
-        color: {text_color} !important;
+    /* 4. SEÇİM KUTUSU (SELECTBOX) DÜZELTMESİ */
+    /* Kutunun kendisi */
+    div[data-baseweb="select"] > div {{
+        background-color: {input_bg} !important;
+        border-color: {btn_border} !important;
+        color: {input_text} !important;
     }}
-
-    /* Butonlar */
+    /* Kutunun içindeki yazı */
+    div[data-baseweb="select"] span {{
+        color: {input_text} !important;
+    }}
+    /* Açılır menü listesi */
+    ul[data-baseweb="menu"] {{
+        background-color: {input_bg} !important;
+    }}
+    
+    /* 5. INPUT KUTULARI */
+    .stNumberInput input {{
+        color: {input_text} !important;
+        font-weight: 700 !important;
+        background-color: {input_bg} !important;
+        border: 1px solid {btn_border} !important;
+    }}
+    
+    /* 6. BUTONLAR */
     div.stButton > button:first-child {{
         width: 100%; border-radius: 8px; border: 1px solid {btn_border}; 
         font-weight: 700; background: {card_bg}; color: {text_color} !important; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }}
     
-    /* Girdi Kutuları */
-    .stNumberInput input, .stSelectbox div[data-baseweb="select"] {{
-        color: {input_text} !important; font-weight: 700 !important;
-        background-color: {input_bg} !important; border: 1px solid {border_color} !important;
-    }}
-    
-    /* Sonuç Rakamları */
+    /* 7. SONUÇ RAKAMLARI */
     div[data-testid="stMetricValue"] {{
         color: {metric_color} !important; font-weight: 800 !important;
     }}
     
-    /* Selectbox Oku */
-    svg {{ fill: {text_color} !important; }}
+    /* 8. OK İŞARETLERİ VE İKONLAR */
+    svg {{
+        fill: {text_color} !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
-# --- 7. SAYFALAR VE MODÜLLER ---
+# --- 8. SAYFALAR ---
 
 if st.session_state.page == "home":
     st.info(T("info_sel"))
