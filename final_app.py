@@ -32,6 +32,18 @@ div[data-testid="stSelectbox"] div[role="combobox"] {
 }
 /* Tighten spacing */
 div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stExpander"]) {margin-top: 0.25rem;}
+/* Make top menu sticky */
+div.block-container > div:first-child {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  backdrop-filter: blur(6px);
+}
+div.block-container > div:first-child > div {
+  background: rgba(0,0,0,0.35);
+  border-radius: 16px;
+  padding: 0.25rem 0.75rem;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1440,9 +1452,10 @@ elif st.session_state.page == "npv":
             df = pd.DataFrame(rows)
             df["WACC (%)"] = df["WACC (%)"].apply(lambda x: float(f"{x:.2f}"))
             df["NPV"] = df["NPV"].apply(lambda x: f"{fmt(x)} {ccy}")
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            with st.expander('📈 WACC Sensitivity (Table + Chart)', expanded=False):
+                st.dataframe(df, use_container_width=True, hide_index=True)
 
-            # 2D Duyarlılık: WACC x Nakit Akışı (Expander)
+                # 2D Duyarlılık: WACC x Nakit Akışı (Expander)
             with st.expander('📊 2D Sensitivity (WACC x Cashflow)', expanded=False):
                 sA, sB, sC = st.columns([2, 2, 2])
                 with sA:
