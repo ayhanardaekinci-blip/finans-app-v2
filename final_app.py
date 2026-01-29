@@ -1314,6 +1314,20 @@ elif st.session_state.page == "npv":
             # =========================
             # Export (Excel / CSV)
             # =========================
+            st.markdown("""
+            <style>
+              /* Fix download button visibility in dark mode */
+              .stDownloadButton > button {
+                color: #111827 !important;
+                background: #F9FAFB !important;
+                border: 1px solid rgba(255,255,255,0.25) !important;
+              }
+              .stDownloadButton > button:hover {
+                filter: brightness(0.95);
+              }
+            </style>
+            """, unsafe_allow_html=True)
+
             exp1, exp2 = st.columns(2, vertical_alignment="center")
 
             # Summary tables
