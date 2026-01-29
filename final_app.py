@@ -597,7 +597,7 @@ DE = {
                 "Break-even WACC ist die Schwelle, ab der kein Wert mehr geschaffen wird (NPV=0)."
                 ),
 }
-                LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
+LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
                 # =========================================================
                 # 3) HELPERS
@@ -817,9 +817,9 @@ DE = {
                 metric_color = "#0d25cf"
                 shadow = "0.10"
 
-                STREAMLIT_TOPBAR_PX = 64
-                TOPBAR_THIN_PADDING_Y = "0.20rem"
-                TOPBAR_THIN_PADDING_X = "0.55rem"
+STREAMLIT_TOPBAR_PX = 64
+TOPBAR_THIN_PADDING_Y = "0.20rem"
+TOPBAR_THIN_PADDING_X = "0.55rem"
 
                 # =========================================================
                 # 7) CSS
