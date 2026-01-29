@@ -3,6 +3,7 @@ import pandas as pd
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import io
 
 # =========================================================
 # 1) AYARLAR
@@ -1282,6 +1283,56 @@ elif st.session_state.page == "npv":
             sig2 = "✅" if (irr_val is not None and irr_val > r_used) else "⚠️"
             st.caption(f"{sig1} NPV {'pozitif' if npv_val > 0 else 'negatif'} | "
                        f"{sig2} IRR {'WACC üzerinde' if (irr_val is not None and irr_val > r_used) else 'WACC altında / hesaplanamadı'}")
+
+            # =========================
+            # Export (Excel / CSV)
+            # =========================
+            exp1, exp2 = st.columns(2, vertical_alignment="center")
+
+            # Summary tables
+            _assumptions = {
+                "Project": proj,
+                "Currency": ccy,
+                "WACC (base %)": float(wacc_pct),
+                "Scenario": scenario,
+                "CF multiplier": float(scen_mult),
+                "WACC shift (pp)": float(wacc_shift_pp),
+                "WACC used (%)": float(r_used * 100),
+                "Initial investment (C0)": float(_safe_float(c0, 0.0)),
+                "Cashflows": ", ".join([str(_safe_float(x, 0.0)) for x in cfs]),
+            }
+            _results = {
+                "NPV": float(npv_val),
+                "IRR": (None if irr_val is None else float(irr_val)),
+                "Payback (years)": (None if pb is None else float(pb)),
+                "Discounted Payback (years)": (None if dpb is None else float(dpb)),
+                "Break-even WACC": (None if be is None else float(be)),
+            }
+
+            df_assum = pd.DataFrame(list(_assumptions.items()), columns=["Field", "Value"])
+            df_res = pd.DataFrame(list(_results.items()), columns=["Metric", "Value"])
+
+            # Excel bytes
+            excel_buf = io.BytesIO()
+            with pd.ExcelWriter(excel_buf, engine="openpyxl") as writer:
+                df_res.to_excel(writer, index=False, sheet_name="Summary")
+                df_assum.to_excel(writer, index=False, sheet_name="Assumptions")
+            excel_bytes = excel_buf.getvalue()
+
+            with exp1:
+                st.download_button(
+                    "Download Excel",
+                    data=excel_bytes,
+                    file_name="investment_summary.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
+            with exp2:
+                st.download_button(
+                    "Download Summary CSV",
+                    data=df_res.to_csv(index=False).encode("utf-8"),
+                    file_name="investment_summary.csv",
+                    mime="text/csv",
+                )
 
         st.write("")
 
