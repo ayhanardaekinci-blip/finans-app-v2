@@ -1094,7 +1094,16 @@ elif st.session_state.page == "comp":
 
         if st.button(T("calc"), type="primary"):
             net_r = (r / 100) * (1 - tax / 100)
-            
+
+# === PATCH:fallback-page:v1 START ===
+else:
+    st.title("Modül bulunamadı")
+    st.info(
+        f"Seçilen sayfa: **{st.session_state.get('page', 'home')}**\n\n"
+        "Bu sayfa için henüz bir ekran tanımı yok (elif bloğu eksik)."
+    )
+# === PATCH:fallback-page:v1 END ===
+
 # ====== APP END ANCHOR ======
 elif st.session_state.page == "npv":
     st.title(T("m_npv"))
@@ -1274,5 +1283,24 @@ elif st.session_state.page == "npv":
                     st.warning(T("payback_never"))
                 else:
                     st.metric(T("payback_disc"), f"{fmt(dpb)}")
+                    
+# === PATCH:placeholders-right-menu:v1 START ===
+elif st.session_state.page == "install":
+    st.title(T("m_install"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "table":
+    st.title(T("m_table"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "deposit":
+    st.title(T("m_deposit"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "disc":
+    st.title(T("m_disc"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+# === PATCH:placeholders-right-menu:v1 END ===
+
 
 
