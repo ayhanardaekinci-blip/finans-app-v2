@@ -583,6 +583,33 @@ def _safe_float(x, default=0.0):
     except Exception:
         return default
 
+
+def _build_excel_bytes(sheets: dict):
+    """Return XLSX bytes for given {sheet_name: dataframe}.
+    Tries openpyxl first, then xlsxwriter. Returns None if no engine available."""
+    excel_buf = io.BytesIO()
+
+    engine = None
+    try:
+        import openpyxl  # noqa: F401
+        engine = "openpyxl"
+    except Exception:
+        try:
+            import xlsxwriter  # noqa: F401
+            engine = "xlsxwriter"
+        except Exception:
+            engine = None
+
+    if engine is None:
+        return None
+
+    with pd.ExcelWriter(excel_buf, engine=engine) as writer:
+        for name, df in sheets.items():
+            df.to_excel(writer, sheet_name=str(name)[:31], index=False)
+    excel_buf.seek(0)
+    return excel_buf.getvalue()
+
+
 def npv_from_flows(cf0: float, cfs: list[float], r: float) -> float:
     # r decimal (0.30 = 30%)
     pv_sum = 0.0
@@ -1313,19 +1340,24 @@ elif st.session_state.page == "npv":
             df_res = pd.DataFrame(list(_results.items()), columns=["Metric", "Value"])
 
             # Excel bytes
-            excel_buf = io.BytesIO()
-            with pd.ExcelWriter(excel_buf, engine="openpyxl") as writer:
-                df_res.to_excel(writer, index=False, sheet_name="Summary")
-                df_assum.to_excel(writer, index=False, sheet_name="Assumptions")
-            excel_bytes = excel_buf.getvalue()
+            # Excel bytes (robust)
+            excel_bytes = _build_excel_bytes({
+                "Summary": df_res,
+                "Assumptions": df_assum,
+            })
+            if excel_bytes is None:
+                st.warning("Excel export için gerekli kütüphane bulunamadı (openpyxl / xlsxwriter). CSV export çalışır durumda.")
 
             with exp1:
-                st.download_button(
-                    "Download Excel",
-                    data=excel_bytes,
-                    file_name="investment_summary.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                )
+                if excel_bytes is None:
+                    st.caption("Excel export devre dışı (openpyxl / xlsxwriter yok).")
+                else:
+                    st.download_button(
+                        "Download Excel",
+                        data=excel_bytes,
+                        file_name="investment_summary.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    )
             with exp2:
                 st.download_button(
                     "Download Summary CSV",
