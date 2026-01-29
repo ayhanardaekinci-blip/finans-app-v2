@@ -1156,30 +1156,67 @@ elif st.session_state.page == "npv":
         st.markdown(f"**Duyarlılık:** {T('sens_details')}")
 
     # ---------------------------
-    # 3) Senaryo Ayarları
+   # ---------------------------
+# 3) Senaryo Ayarları (CFO Preset + Custom)
+# ---------------------------
+with st.container(border=True):
+    s1, s2, s3 = st.columns([2, 2, 3], vertical_alignment="center")
+
+    with s1:
+        scenario = st.radio(
+            T("scenario"),
+            [T("base"), T("best"), T("worst")],
+            horizontal=True,
+            key="inv_eval_scenario",
+        )
+
+    # CFO preset mantığı:
+    # - Base: çarpan 1.00, WACC kayması 0.00pp
+    # - Best: nakit akışı +10%, WACC -1.00pp
+    # - Worst: nakit akışı -10%, WACC +1.00pp
+    if scenario == T("base"):
+        preset_mult = 1.00
+        preset_shift_pp = 0.00
+    elif scenario == T("best"):
+        preset_mult = 1.10
+        preset_shift_pp = -1.00
+    else:
+        preset_mult = 0.90
+        preset_shift_pp = 1.00
+
+    with s2:
+        use_custom = st.checkbox("Custom", value=False, key="inv_eval_custom")
+
+    with s3:
+        if use_custom:
+            cA, cB = st.columns(2)
+            with cA:
+                cf_mult = st.number_input(
+                    T("cf_mult"),
+                    value=float(preset_mult),
+                    format="%.2f",
+                    key="inv_eval_cf_mult",
+                )
+            with cB:
+                wacc_shift_pp = st.number_input(
+                    T("wacc_shift"),
+                    value=float(preset_shift_pp),
+                    format="%.2f",
+                    key="inv_eval_wacc_shift",
+                )
+        else:
+            # Custom kapalıyken presetleri kilitle
+            st.caption("Preset senaryo aktif. Detay değiştirmek için **Custom** aç.")
+            cf_mult = preset_mult
+            wacc_shift_pp = preset_shift_pp
+
+# Senaryo parametreleri
+scen_mult = _safe_float(cf_mult, 1.0)
+scen_shift = _safe_float(wacc_shift_pp, 0.0) / 100.0
+r_scen = max(-0.999, r + scen_shift)  # güvenlik
+
     # ---------------------------
-    with st.container(border=True):
-        s1, s2, s3 = st.columns([2, 2, 2], vertical_alignment="center")
-
-        with s1:
-            scenario = st.radio(
-                T("scenario"),
-                [T("base"), T("best"), T("worst")],
-                horizontal=True,
-                key="inv_eval_scenario",
-            )
-        with s2:
-            cf_mult = st.number_input(T("cf_mult"), value=1.00, format="%.2f", key="inv_eval_cf_mult")
-        with s3:
-            wacc_shift_pp = st.number_input(T("wacc_shift"), value=0.0, format="%.2f", key="inv_eval_wacc_shift")
-
-    # Senaryo mantığı:
-    # - Base: multiplier=1, shift=0 varsayılan
-    # - Best/Worst: kullanıcı multiplier ve WACC shift ile oynar (esnek)
-    scen_mult = _safe_float(cf_mult, 1.0)
-    scen_shift = _safe_float(wacc_shift_pp, 0.0) / 100.0
-    r_scen = max(-0.999, r + scen_shift)  # güvenlik
-
+   
     # ---------------------------
     # 4) Nakit Akışları
     # ---------------------------
@@ -1332,3 +1369,4 @@ else:
         f"Seçilen sayfa: **{st.session_state.get('page', 'home')}**\n\n"
         "Bu sayfa için henüz bir ekran tanımı yok."
     )
+
