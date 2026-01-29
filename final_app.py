@@ -23,7 +23,7 @@ st.markdown("""
 header {visibility: hidden;}
 footer {visibility: hidden;}
 /* Reduce top padding/margins */
-.block-container {padding-top: 1.2rem; padding-bottom: 2rem;}
+.block-container {padding-top: 0.6rem; padding-bottom: 2rem;}
 /* Make widget heights more consistent */
 div[data-testid="stTextInput"] input,
 div[data-testid="stNumberInput"] input,
@@ -37,10 +37,9 @@ div.block-container > div:first-child {
   position: sticky;
   top: 0;
   z-index: 999;
-  backdrop-filter: blur(6px);
 }
 div.block-container > div:first-child > div {
-  background: rgba(0,0,0,0.35);
+  background: #0B1220;
   border-radius: 16px;
   padding: 0.25rem 0.75rem;
 }
@@ -1455,6 +1454,26 @@ elif st.session_state.page == "npv":
             with st.expander('📈 WACC Sensitivity (Table + Chart)', expanded=False):
                 st.dataframe(df, use_container_width=True, hide_index=True)
 
+                st.write("---")
+                st.subheader(T("chart"))
+                
+                # Grafik: NPV vs WACC (0..max(50, wacc+10))
+                max_r_pct = int(max(50, round((r_used * 100) + 10)))
+                xs = list(range(0, max_r_pct + 1))
+                ys = [npv_from_flows(_safe_float(c0, 0.0), cfs, x / 100.0) for x in xs]
+                
+                fig = plt.figure()
+                plt.plot(xs, ys)
+                plt.axhline(0)
+                plt.xlabel("WACC (%)")
+                plt.ylabel(f"NPV ({ccy})")
+                st.pyplot(fig, clear_figure=True)
+                
+                # =========================
+                # TAB 2: IRR
+                # =========================
+
+
                 # 2D Duyarlılık: WACC x Nakit Akışı (Expander)
             with st.expander('📊 2D Sensitivity (WACC x Cashflow)', expanded=False):
                 sA, sB, sC = st.columns([2, 2, 2])
@@ -1489,24 +1508,6 @@ elif st.session_state.page == "npv":
                 st.dataframe(df2, use_container_width=True, hide_index=True)
 
 
-            st.write("---")
-            st.subheader(T("chart"))
-
-            # Grafik: NPV vs WACC (0..max(50, wacc+10))
-            max_r_pct = int(max(50, round((r_used * 100) + 10)))
-            xs = list(range(0, max_r_pct + 1))
-            ys = [npv_from_flows(_safe_float(c0, 0.0), cfs, x / 100.0) for x in xs]
-
-            fig = plt.figure()
-            plt.plot(xs, ys)
-            plt.axhline(0)
-            plt.xlabel("WACC (%)")
-            plt.ylabel(f"NPV ({ccy})")
-            st.pyplot(fig, clear_figure=True)
-
-        # =========================
-        # TAB 2: IRR
-        # =========================
         with tab2:
             if irr_val is None:
                 st.warning("IRR hesaplanamadı (yakınsamama / çoklu IRR olabilir). NPV-WACC eğrisini referans alın.")
