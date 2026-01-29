@@ -1316,14 +1316,22 @@ elif st.session_state.page == "npv":
             # =========================
             st.markdown("""
             <style>
-              /* Fix download button visibility in dark mode */
-              .stDownloadButton > button {
-                color: #111827 !important;
-                background: #F9FAFB !important;
-                border: 1px solid rgba(255,255,255,0.25) !important;
+              /* Download buttons: force readable styling (dark mode safe) */
+              div[data-testid="stDownloadButton"] > button,
+              .stDownloadButton > button,
+              button[kind="secondary"] {
+                background: rgba(255,255,255,0.10) !important;
+                color: #F9FAFB !important;
+                border: 1px solid rgba(255,255,255,0.35) !important;
+                box-shadow: none !important;
               }
+              div[data-testid="stDownloadButton"] > button:hover,
               .stDownloadButton > button:hover {
-                filter: brightness(0.95);
+                background: rgba(255,255,255,0.16) !important;
+              }
+              div[data-testid="stDownloadButton"] > button:disabled,
+              .stDownloadButton > button:disabled {
+                opacity: 0.5 !important;
               }
             </style>
             """, unsafe_allow_html=True)
