@@ -199,9 +199,8 @@ TR = {
                 "Özellikle volatil piyasalarda (faiz, CDS, ülke risk primi) CFO kararlarında kritik bir göstergedir.\n\n"
                 "Break-even WACC, NPV'nin sıfırlandığı eşiği verir: bu oran aşıldığında yatırım değer yaratmaz."
                 ),
-                }
-
-                EN = {
+}
+EN = {
                 "app_name": "Financial Calculator",
                 "subheader": "Eczacıbaşı Healthcare Treasury Dept.",
                 "home": "🏠 Home",
@@ -335,8 +334,7 @@ TR = {
                 "It is critical in volatile markets (rates, spreads, country risk).\n\n"
                 "Break-even WACC is the threshold where NPV hits zero: above it, the project stops creating value."
                 ),
-                }
-
+}
                 FR = {
                 "app_name": "Calculateur Financier",
                 "subheader": "Département Trésorerie – Eczacıbaşı Santé",
@@ -467,8 +465,7 @@ TR = {
                 "La sensibilité au CMPC mesure l’impact des mouvements de taux/spreads sur la valeur. "
                 "Le CMPC seuil (VAN=0) indique le point à partir duquel le projet ne crée plus de valeur."
                 ),
-                }
-
+}
                 DE = {
                 "app_name": "Finanzrechner",
                 "subheader": "Treasury-Abteilung – Eczacıbaşı Gesundheit",
@@ -599,8 +596,7 @@ TR = {
                 "WACC-Sensitivität zeigt, wie stark die Bewertung auf Kapitalmarkt-/Risikoprämienänderungen reagiert. "
                 "Break-even WACC ist die Schwelle, ab der kein Wert mehr geschaffen wird (NPV=0)."
                 ),
-                }
-
+}
                 LANGS = {"TR": TR, "EN": EN, "FR": FR, "DE": DE}
 
                 # =========================================================
@@ -1373,15 +1369,15 @@ TR = {
                 color: #F9FAFB !important;
                 border: 1px solid rgba(255,255,255,0.35) !important;
                 box-shadow: none !important;
-                }
+}
                 div[data-testid="stDownloadButton"] > button:hover,
                 .stDownloadButton > button:hover {
                 background: rgba(255,255,255,0.16) !important;
-                }
+}
                 div[data-testid="stDownloadButton"] > button:disabled,
                 .stDownloadButton > button:disabled {
                 opacity: 0.5 !important;
-                }
+}
                 </style>
                 """, unsafe_allow_html=True)
 
@@ -1398,15 +1394,14 @@ TR = {
                 "WACC used (%)": float(r_used * 100),
                 "Initial investment (C0)": float(_safe_float(c0, 0.0)),
                 "Cashflows": ", ".join([str(_safe_float(x, 0.0)) for x in cfs]),
-                }
+}
                 _results = {
                 "NPV": float(npv_val),
                 "IRR": (None if irr_val is None else float(irr_val)),
                 "Payback (years)": (None if pb is None else float(pb)),
                 "Discounted Payback (years)": (None if dpb is None else float(dpb)),
                 "Break-even WACC": (None if be is None else float(be)),
-                }
-
+}
                 df_assum = pd.DataFrame(list(_assumptions.items()), columns=["Field", "Value"])
                 df_res = pd.DataFrame(list(_results.items()), columns=["Metric", "Value"])
 
@@ -1460,7 +1455,7 @@ TR = {
                     {
                         "WACC (%)": (rr * 100.0),
                         "NPV": npv_from_flows(_safe_float(c0, 0.0), cfs, rr),
-                    }
+}
                 )
 
             df = pd.DataFrame(rows)
