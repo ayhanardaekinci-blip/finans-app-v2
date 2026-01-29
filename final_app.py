@@ -16,14 +16,14 @@ st.set_page_config(
 )
 
 
-st.markdown("""
+st.markdown("""<
 <style>
 /* Hide Streamlit default UI */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
 /* Reduce top padding/margins */
-.block-container {padding-top: 0.6rem; padding-bottom: 2rem;}
+.block-container {padding-top: 1.2rem; padding-bottom: 2rem;}
 /* Make widget heights more consistent */
 div[data-testid="stTextInput"] input,
 div[data-testid="stNumberInput"] input,
@@ -37,9 +37,10 @@ div.block-container > div:first-child {
   position: sticky;
   top: 0;
   z-index: 999;
+  backdrop-filter: blur(6px);
 }
 div.block-container > div:first-child > div {
-  background: #0B1220;
+  background: rgba(0,0,0,0.35);
   border-radius: 16px;
   padding: 0.25rem 0.75rem;
 }
@@ -1451,63 +1452,10 @@ elif st.session_state.page == "npv":
             df = pd.DataFrame(rows)
             df["WACC (%)"] = df["WACC (%)"].apply(lambda x: float(f"{x:.2f}"))
             df["NPV"] = df["NPV"].apply(lambda x: f"{fmt(x)} {ccy}")
-            with st.expander('📈 WACC Sensitivity (Table + Chart)', expanded=False):
-                st.dataframe(df, use_container_width=True, hide_index=True)
 
-                st.write("---")
-                st.subheader(T("chart"))
-                
-                # Grafik: NPV vs WACC (0..max(50, wacc+10))
-                max_r_pct = int(max(50, round((r_used * 100) + 10)))
-                xs = list(range(0, max_r_pct + 1))
-                ys = [npv_from_flows(_safe_float(c0, 0.0), cfs, x / 100.0) for x in xs]
-                
-                fig = plt.figure()
-                plt.plot(xs, ys)
-                plt.axhline(0)
-                plt.xlabel("WACC (%)")
-                plt.ylabel(f"NPV ({ccy})")
-                st.pyplot(fig, clear_figure=True)
-                
-                # =========================
-                # TAB 2: IRR
-                # =========================
-
-
-                # 2D Duyarlılık: WACC x Nakit Akışı (Expander)
-            with st.expander('📊 2D Sensitivity (WACC x Cashflow)', expanded=False):
-                sA, sB, sC = st.columns([2, 2, 2])
-                with sA:
-                    cf_range = st.selectbox('CF değişimi aralığı', ['±10%', '±20%', '±30%'], index=1, key='sens2d_cf_range')
-                with sB:
-                    wacc_range = st.selectbox('WACC aralığı', ['±3pp', '±5pp', '±7pp'], index=1, key='sens2d_wacc_range')
-                with sC:
-                    step_pp = st.selectbox('WACC adım', [1, 2], index=0, key='sens2d_wacc_step')
-
-                cf_map = {'±10%': 10, '±20%': 20, '±30%': 30}
-                wr_map = {'±3pp': 3, '±5pp': 5, '±7pp': 7}
-                cf_lim = cf_map.get(cf_range, 20)
-                wr_lim = wr_map.get(wacc_range, 5)
-
-                cf_levels = list(range(-cf_lim, cf_lim + 1, 5))  # 5% adım
-                wacc_levels = list(range(-wr_lim, wr_lim + 1, int(step_pp)))  # pp adım
-
-                grid_rows = []
-                for cf_pct in cf_levels:
-                    row = {'CF %': cf_pct}
-                    cfs_adj = [cf * (1.0 + cf_pct / 100.0) for cf in cfs]
-                    for wpp in wacc_levels:
-                        rr = max(-0.999, r_used + (wpp / 100.0))
-                        row[f'WACC {wpp:+d}pp'] = npv_from_flows(_safe_float(c0, 0.0), cfs_adj, rr)
-                    grid_rows.append(row)
-
-                df2 = pd.DataFrame(grid_rows)
-                # format
-                for col in [c for c in df2.columns if c.startswith('WACC')]:
-                    df2[col] = df2[col].apply(lambda x: f"{fmt(x)} {ccy}")
-                st.dataframe(df2, use_container_width=True, hide_index=True)
-
-
+        # =========================
+        # TAB 2: IRR
+        # =========================
         with tab2:
             if irr_val is None:
                 st.warning("IRR hesaplanamadı (yakınsamama / çoklu IRR olabilir). NPV-WACC eğrisini referans alın.")
