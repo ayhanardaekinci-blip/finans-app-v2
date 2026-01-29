@@ -1087,24 +1087,39 @@ elif st.session_state.page == "comp":
             val = st.number_input(lbl, value=0.0, step=1000.0, format="%.2f", key="cm_val")
 
         c3, c4 = st.columns(2)
-        with c3: r = st.number_input(T("cm_r"), value=0.0, format="%.2f", key="cm_r")
-        with c4: n = st.number_input(T("cm_n"), value=1, key="cm_n")
+        with c3:
+            r = st.number_input(T("cm_r"), value=0.0, format="%.2f", key="cm_r")
+        with c4:
+            n = st.number_input(T("cm_n"), value=1, min_value=0, step=1, key="cm_n")
 
         tax = st.number_input(T("tax"), value=0.0, format="%.2f", key="cm_tax")
 
         if st.button(T("calc"), type="primary"):
-            net_r = (r / 100) * (1 - tax / 100)
+            # Net periodic rate after tax
+            net_r = (r / 100.0) * (1 - tax / 100.0)
 
-# === PATCH:fallback-page:v1 START ===
-else:
-    st.title("Modül bulunamadı")
-    st.info(
-        f"Seçilen sayfa: **{st.session_state.get('page', 'home')}**\n\n"
-        "Bu sayfa için henüz bir ekran tanımı yok (elif bloğu eksik)."
-    )
-# === PATCH:fallback-page:v1 END ===
+            if n < 0:
+                st.error("Dönem sayısı 0 veya pozitif olmalı.")
+            else:
+                if target == T("opt_pv"):
+                    # Given PV -> compute FV
+                    pv = _safe_float(val, 0.0)
+                    fv = pv * ((1 + net_r) ** n)
+                    diff = fv - pv
+                    st.metric(T("cm_res"), f"{fmt(fv)} ₺")
+                    st.caption(f"{T('cm_res_diff')}: {fmt(diff)} ₺")
+                else:
+                    # Given FV -> compute PV
+                    fv = _safe_float(val, 0.0)
+                    if (1 + net_r) == 0 and n > 0:
+                        st.error("Faiz oranı -100% iken indirgeme yapılamaz.")
+                    else:
+                        pv = fv / ((1 + net_r) ** n) if n > 0 else fv
+                        diff = fv - pv
+                        st.metric(T("cm_res"), f"{fmt(pv)} ₺")
+                        st.caption(f"{T('cm_res_diff')}: {fmt(diff)} ₺")
 
-# ====== APP END ANCHOR ======
+
 elif st.session_state.page == "npv":
     st.title(T("m_npv"))
     st.divider()
@@ -1289,3 +1304,31 @@ elif st.session_state.page == "npv":
 
 
 
+
+
+elif st.session_state.page == "install":
+    st.title(T("m_install"))
+    st.divider()
+    st.info("Bu modül (Kredi / Taksit) bu dosyada henüz ekli değil. Bir sonraki adımda birlikte ekleyebiliriz.")
+
+elif st.session_state.page == "table":
+    st.title(T("m_table"))
+    st.divider()
+    st.info("Bu modül (Ödeme Tablosu) bu dosyada henüz ekli değil. Bir sonraki adımda birlikte ekleyebiliriz.")
+
+elif st.session_state.page == "deposit":
+    st.title(T("m_deposit"))
+    st.divider()
+    st.info("Bu modül (Mevduat Getirisi) bu dosyada henüz ekli değil. Bir sonraki adımda birlikte ekleyebiliriz.")
+
+elif st.session_state.page == "disc":
+    st.title(T("m_disc"))
+    st.divider()
+    st.info("Bu modül (İskontolu Alacak) bu dosyada henüz ekli değil. Bir sonraki adımda birlikte ekleyebiliriz.")
+
+else:
+    st.title("Modül bulunamadı")
+    st.info(
+        f"Seçilen sayfa: **{st.session_state.get('page', 'home')}**\n\n"
+        "Bu sayfa için henüz bir ekran tanımı yok."
+    )
