@@ -1094,4 +1094,185 @@ elif st.session_state.page == "comp":
 
         if st.button(T("calc"), type="primary"):
             net_r = (r / 100) * (1 - tax / 100)
+            
+# ====== APP END ANCHOR ======
+elif st.session_state.page == "npv":
+    st.title(T("m_npv"))
+    st.divider()
+
+    # ---------------------------
+    # 1) Üst Parametreler
+    # ---------------------------
+    with st.container(border=True):
+        c1, c2, c3, c4 = st.columns([3, 2, 2, 2], vertical_alignment="center")
+
+        with c1:
+            proj = st.text_input(T("proj_name"), value="Project A", key="inv_eval_proj")
+        with c2:
+            ccy = st.selectbox(T("currency"), ["TRY", "USD", "EUR"], index=0, key="inv_eval_ccy")
+        with c3:
+            wacc_pct = st.number_input(T("wacc"), value=30.0, format="%.2f", key="inv_eval_wacc")
+        with c4:
+            n = st.number_input(T("periods"), value=5, min_value=1, step=1, key="inv_eval_n")
+
+    r = _safe_float(wacc_pct, 0.0) / 100.0
+
+    # ---------------------------
+    # 2) CFO Detayları (Açılır-Kapanır)
+    # ---------------------------
+    with st.expander(f"ℹ️ {T('details')}", expanded=False):
+        st.markdown(f"**NPV:** {T('npv_details')}")
+        st.markdown("---")
+        st.markdown(f"**IRR:** {T('irr_details')}")
+        st.markdown("---")
+        st.markdown(f"**Payback:** {T('payback_details')}")
+        st.markdown("---")
+        st.markdown(f"**Senaryo:** {T('scenario_details')}")
+        st.markdown("---")
+        st.markdown(f"**Duyarlılık:** {T('sens_details')}")
+
+    # ---------------------------
+    # 3) Senaryo Ayarları
+    # ---------------------------
+    with st.container(border=True):
+        s1, s2, s3 = st.columns([2, 2, 2], vertical_alignment="center")
+
+        with s1:
+            scenario = st.radio(
+                T("scenario"),
+                [T("base"), T("best"), T("worst")],
+                horizontal=True,
+                key="inv_eval_scenario",
+            )
+        with s2:
+            cf_mult = st.number_input(T("cf_mult"), value=1.00, format="%.2f", key="inv_eval_cf_mult")
+        with s3:
+            wacc_shift_pp = st.number_input(T("wacc_shift"), value=0.0, format="%.2f", key="inv_eval_wacc_shift")
+
+    # Senaryo mantığı:
+    # - Base: multiplier=1, shift=0 varsayılan
+    # - Best/Worst: kullanıcı multiplier ve WACC shift ile oynar (esnek)
+    scen_mult = _safe_float(cf_mult, 1.0)
+    scen_shift = _safe_float(wacc_shift_pp, 0.0) / 100.0
+    r_scen = max(-0.999, r + scen_shift)  # güvenlik
+
+    # ---------------------------
+    # 4) Nakit Akışları
+    # ---------------------------
+    with st.container(border=True):
+        st.subheader(T("inv_eval_title"))
+
+        c0 = st.number_input(T("cf0"), value=-100000.0, step=1000.0, format="%.2f", key="inv_eval_cf0")
+
+        cols = st.columns(3)
+        base_cfs = []
+        for i in range(1, int(n) + 1):
+            with cols[(i - 1) % 3]:
+                cf_i = st.number_input(
+                    f"{T('cf')} {i}",
+                    value=30000.0,
+                    step=1000.0,
+                    format="%.2f",
+                    key=f"inv_eval_cf_{i}",
+                )
+                base_cfs.append(_safe_float(cf_i, 0.0))
+
+    # Senaryoya göre akışları uygula:
+    # İstersen Best/Worst’ta otomatik farklı multiplier da verebiliriz,
+    # ama sen zaten CFO esnekliği için manuel multiplier koymuşsun.
+    if scenario == T("base"):
+        cfs = base_cfs[:]
+        r_used = r
+    else:
+        cfs = [cf * scen_mult for cf in base_cfs]
+        r_used = r_scen
+
+    # ---------------------------
+    # 5) Sekmeler (NPV / IRR / Payback)
+    # ---------------------------
+    tab1, tab2, tab3 = st.tabs([T("tab_npv"), T("tab_irr"), T("tab_payback")])
+
+    do_calc = st.button(T("calc"), type="primary")
+
+    if do_calc:
+        # ---- Hesaplar (ortak) ----
+        npv_val = npv_from_flows(_safe_float(c0, 0.0), cfs, r_used)
+        pv_sum = pv_sum_from_flows(cfs, r_used)
+        irr_val = irr_from_flows(_safe_float(c0, 0.0), cfs)
+
+        pb = payback_period(_safe_float(c0, 0.0), cfs)
+        dpb = discounted_payback_period(_safe_float(c0, 0.0), cfs, r_used)
+
+        # Break-even WACC (NPV=0) aralığı: 0%..300%
+        be = find_breakeven_rate(_safe_float(c0, 0.0), cfs, 0.0, 3.0)  # decimal
+
+        # =========================
+        # TAB 1: NPV
+        # =========================
+        with tab1:
+            m1, m2, m3 = st.columns(3)
+            m1.metric(T("npv"), f"{fmt(npv_val)} {ccy}")
+            m2.metric(T("pv_sum"), f"{fmt(pv_sum)} {ccy}")
+            m3.metric(T("breakeven"), ("—" if be is None else f"%{fmt(be*100)}"))
+
+            st.write("---")
+            st.caption(T("sens_note"))
+
+            # WACC duyarlılık tablosu (±5 puan)
+            rows = []
+            for pp in range(-5, 6):  # -5 .. +5
+                rr = (r_used + (pp / 100.0))
+                rr = max(-0.999, rr)
+                rows.append(
+                    {
+                        "WACC (%)": (rr * 100.0),
+                        "NPV": npv_from_flows(_safe_float(c0, 0.0), cfs, rr),
+                    }
+                )
+
+            df = pd.DataFrame(rows)
+            df["WACC (%)"] = df["WACC (%)"].apply(lambda x: float(f"{x:.2f}"))
+            df["NPV"] = df["NPV"].apply(lambda x: f"{fmt(x)} {ccy}")
+            st.dataframe(df, use_container_width=True, hide_index=True)
+
+            st.write("---")
+            st.subheader(T("chart"))
+
+            # Grafik: NPV vs WACC (0..max(50, wacc+10))
+            max_r_pct = int(max(50, round((r_used * 100) + 10)))
+            xs = list(range(0, max_r_pct + 1))
+            ys = [npv_from_flows(_safe_float(c0, 0.0), cfs, x / 100.0) for x in xs]
+
+            fig = plt.figure()
+            plt.plot(xs, ys)
+            plt.axhline(0)
+            plt.xlabel("WACC (%)")
+            plt.ylabel(f"NPV ({ccy})")
+            st.pyplot(fig, clear_figure=True)
+
+        # =========================
+        # TAB 2: IRR
+        # =========================
+        with tab2:
+            if irr_val is None:
+                st.warning("IRR hesaplanamadı (yakınsamama / çoklu IRR olabilir). NPV-WACC eğrisini referans alın.")
+            else:
+                st.metric(T("irr"), f"%{fmt(irr_val*100)}")
+
+        # =========================
+        # TAB 3: PAYBACK
+        # =========================
+        with tab3:
+            cA, cB = st.columns(2)
+            with cA:
+                if pb is None:
+                    st.warning(T("payback_never"))
+                else:
+                    st.metric(T("payback"), f"{fmt(pb)}")
+            with cB:
+                if dpb is None:
+                    st.warning(T("payback_never"))
+                else:
+                    st.metric(T("payback_disc"), f"{fmt(dpb)}")
+
 
