@@ -16,7 +16,27 @@ st.set_page_config(
 )
 
 
-st.markdown("""<
+
+
+st.markdown("""
+<style>
+/* Force sticky top menu fully opaque and flush to top */
+.block-container { padding-top: 0rem !important; }
+div.block-container > div:first-child {
+  position: sticky !important;
+  top: 0 !important;
+  margin-top: 0 !important;
+  z-index: 9999 !important;
+}
+div.block-container > div:first-child > div {
+  background: #0b1220 !important;
+  opacity: 1 !important;
+  border-radius: 0 0 18px 18px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
 <style>
 /* Hide Streamlit default UI */
 #MainMenu {visibility: hidden;}
