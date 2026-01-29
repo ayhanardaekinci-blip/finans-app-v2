@@ -1108,6 +1108,23 @@ else:
 elif st.session_state.page == "npv":
     st.title(T("m_npv"))
     st.divider()
+# === PATCH:placeholders-right-menu:v1 START ===
+elif st.session_state.page == "install":
+    st.title(T("m_install"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "table":
+    st.title(T("m_table"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "deposit":
+    st.title(T("m_deposit"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+
+elif st.session_state.page == "disc":
+    st.title(T("m_disc"))
+    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
+# === PATCH:placeholders-right-menu:v1 END ===
 
     # ---------------------------
     # 1) Üst Parametreler
@@ -1284,23 +1301,7 @@ elif st.session_state.page == "npv":
                 else:
                     st.metric(T("payback_disc"), f"{fmt(dpb)}")
                     
-# === PATCH:placeholders-right-menu:v1 START ===
-elif st.session_state.page == "install":
-    st.title(T("m_install"))
-    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
 
-elif st.session_state.page == "table":
-    st.title(T("m_table"))
-    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
-
-elif st.session_state.page == "deposit":
-    st.title(T("m_deposit"))
-    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
-
-elif st.session_state.page == "disc":
-    st.title(T("m_disc"))
-    st.warning("Bu modül henüz bu dosyada tanımlı değil. İstersen birlikte ekleyelim.")
-# === PATCH:placeholders-right-menu:v1 END ===
 
 
 
