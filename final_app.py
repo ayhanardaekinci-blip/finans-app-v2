@@ -335,7 +335,7 @@ EN = {
                 "Break-even WACC is the threshold where NPV hits zero: above it, the project stops creating value."
                 ),
 }
-                FR = {
+FR = {
                 "app_name": "Calculateur Financier",
                 "subheader": "Département Trésorerie – Eczacıbaşı Santé",
                 "home": "🏠 Menu Principal",
@@ -466,7 +466,7 @@ EN = {
                 "Le CMPC seuil (VAN=0) indique le point à partir duquel le projet ne crée plus de valeur."
                 ),
 }
-                DE = {
+DE = {
                 "app_name": "Finanzrechner",
                 "subheader": "Treasury-Abteilung – Eczacıbaşı Gesundheit",
                 "home": "🏠 Hauptmenü",
