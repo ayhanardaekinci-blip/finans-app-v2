@@ -15,6 +15,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
+st.markdown("""
+<style>
+/* Hide Streamlit default UI */
+#MainMenu {visibility: hidden;}
+header {visibility: hidden;}
+footer {visibility: hidden;}
+/* Reduce top padding/margins */
+.block-container {padding-top: 1.2rem; padding-bottom: 2rem;}
+/* Make widget heights more consistent */
+div[data-testid="stTextInput"] input,
+div[data-testid="stNumberInput"] input,
+div[data-testid="stSelectbox"] div[role="combobox"] {
+  min-height: 44px;
+}
+/* Tighten spacing */
+div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stExpander"]) {margin-top: 0.25rem;}
+</style>
+""", unsafe_allow_html=True)
+
 # =========================================================
 # 2) DİL SÖZLÜKLERİ
 # =========================================================
@@ -123,7 +143,7 @@ TR = {
     "sensitivity": "WACC Duyarlılık (±5 puan)",
     "sens_note": "WACC ±5 puan aralığında NPV'nin nasıl değiştiğini gösterir.",
     "chart": "NPV - WACC Eğrisi",
-    "details": "Detaylı Notlar (CFO Seviyesi)",
+    "details": "ℹ️ Bilgi",
     "npv_details": (
         "NPV, gelecekte beklenen nakit akışlarının bugünkü değerleri toplamından başlangıç yatırımının çıkarılmasıdır. "
         "NPV>0 ise proje, belirlenen iskonto oranında değer yaratır.\n\n"
@@ -1159,11 +1179,14 @@ elif st.session_state.page == "npv":
         c1, c2, c3, c4 = st.columns([3, 2, 2, 2], vertical_alignment="center")
 
         with c1:
-            proj = st.text_input(T("proj_name"), value="Project A", key="inv_eval_proj")
+            st.caption(T("proj_name"))
+        proj = st.text_input("", value="Project A", key="inv_eval_proj", label_visibility="collapsed")
         with c2:
-            ccy = st.selectbox(T("currency"), ["TRY", "USD", "EUR"], index=0, key="inv_eval_ccy")
+            st.caption(T("currency"))
+        ccy = st.selectbox("", ["TRY","USD","EUR"], index=0, key="inv_eval_ccy", label_visibility="collapsed")
         with c3:
-            wacc_pct = st.number_input(T("wacc"), value=30.0, format="%.2f", key="inv_eval_wacc")
+            st.caption(T("wacc"))
+        wacc_pct = st.number_input("", value=30.0, format="%.2f", key="inv_eval_wacc", label_visibility="collapsed")
         with c4:
             n = st.number_input(T("periods"), value=5, min_value=1, step=1, key="inv_eval_n")
 
@@ -1493,11 +1516,6 @@ elif st.session_state.page == "npv":
                 else:
                     st.metric(T("payback_disc"), f"{fmt(dpb)}")
                     
-
-
-
-
-
 
 
 elif st.session_state.page == "install":
