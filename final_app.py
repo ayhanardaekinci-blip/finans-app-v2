@@ -1267,6 +1267,25 @@ elif st.session_state.page == "npv":
         be = find_breakeven_rate(_safe_float(c0, 0.0), cfs, 0.0, 3.0)  # decimal
 
         # =========================
+        # CFO Executive Summary
+        # =========================
+        with st.container(border=True):
+            st.subheader("Executive Summary")
+            k1, k2, k3, k4 = st.columns(4)
+            k1.metric("NPV", f"{fmt(npv_val)} {ccy}")
+            k2.metric("IRR", ("—" if irr_val is None else f"%{fmt(irr_val*100)}"))
+            k3.metric("Payback", ("—" if pb is None else f"{fmt(pb)} yıl"))
+            k4.metric("Break-even WACC", ("—" if be is None else f"%{fmt(be*100)}"))
+
+            # Karar sinyalleri (basit)
+            sig1 = "✅" if npv_val > 0 else "⚠️"
+            sig2 = "✅" if (irr_val is not None and irr_val > r_used) else "⚠️"
+            st.caption(f"{sig1} NPV {'pozitif' if npv_val > 0 else 'negatif'} | "
+                       f"{sig2} IRR {'WACC üzerinde' if (irr_val is not None and irr_val > r_used) else 'WACC altında / hesaplanamadı'}")
+
+        st.write("")
+
+        # =========================
         # TAB 1: NPV
         # =========================
         with tab1:
